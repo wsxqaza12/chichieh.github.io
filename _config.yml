@@ -16,7 +16,7 @@ timezone: Asia/Taipei
 
 title: ChiChieh Huang # the main title
 
-tagline: HI~ 我主要從事 Generative AI 的產品開發，熱愛桌球與奇幻小說，想以中文向中文社群分享 AI 相關知識。 # it will display as the subtitle
+tagline: Hi~ 我專注於 Generative AI 產品開發，熱愛桌球與奇幻小說，並希望透過中文內容與更多人分享 AI 知識，讓技術更貼近社群。 # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   A minimal, responsive and feature-rich Jekyll theme for technical writing.
@@ -128,8 +128,8 @@ comments:
     input_position: # optional, default to 'bottom'
     lang: # optional, default to the value of `site.lang`
     reactions_enabled: # optional, default to the value of `1`
-  cusdis:
-    cusdis_app_id: 318e822c-01bd-4d34-9def-668094601fe0 
+  # cusdis:
+  #   cusdis_app_id: 318e822c-01bd-4d34-9def-668094601fe0 
 
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:

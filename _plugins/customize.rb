@@ -37,43 +37,46 @@ $medium_followers = $medium_followers.to_s.reverse.scan(/\d{1,3}/).join(',').rev
 
 
 Jekyll::Hooks.register :site, :pre_render do |site|
-  # 處理 Medium followers 顯示
-  followMe = <<-HTML
-  <div style="
-    text-align: left;
-    margin: 8px 0;
-    font-family: var(--body-font-family);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  ">
-    <span style="
-      color: var(--text-color);
-      font-size: 0.95em;
-    ">#{$medium_followers}+ followers on</span>
-    <a href="#{$medium_url}" target="_blank" style="
-      display: inline-flex;
-      align-items: center;
-      color: var(--text-color);
-      text-decoration: none;
-      font-weight: 500;
-    ">
-      <svg style="
-        width: 20px;
-        height: 20px;
-        margin: 0 4px;
-      " viewBox="0 0 24 24" fill="currentColor">
-        <path d="M13 12C13 15.3137 10.3137 18 7 18C3.68629 18 1 15.3137 1 12C1 8.68629 3.68629 6 7 6C10.3137 6 13 8.68629 13 12Z"/>
-        <path d="M23 12C23 14.7614 22.5523 17 22 17C21.4477 17 21 14.7614 21 12C21 9.23858 21.4477 7 22 7C22.5523 7 23 9.23858 23 12Z"/>
-        <path d="M17 12C17 14.7614 16.5523 17 16 17C15.4477 17 15 14.7614 15 12C15 9.23858 15.4477 7 16 7C16.5523 7 17 9.23858 17 12Z"/>
-      </svg>
-      <span style="color: var(--text-color);">Medium</span>
-    </a>
-  </div>
-  HTML
 
-  tagline = site.config['tagline']
-  site.config['tagline'] = "#{followMe}#{tagline}"
+  unless site.config['tagline'].include?($medium_followers)
+    # 處理 Medium followers 顯示
+    followMe = <<-HTML
+    <div style="
+      text-align: left;
+      margin: 8px 0;
+      font-family: var(--body-font-family);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    ">
+      <span style="
+        color: var(--text-color);
+        font-size: 0.95em;
+      ">#{$medium_followers}+ followers on</span>
+      <a href="#{$medium_url}" target="_blank" style="
+        display: inline-flex;
+        align-items: center;
+        color: var(--text-color);
+        text-decoration: none;
+        font-weight: 500;
+      ">
+        <svg style="
+          width: 20px;
+          height: 20px;
+          margin: 0 4px;
+        " viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13 12C13 15.3137 10.3137 18 7 18C3.68629 18 1 15.3137 1 12C1 8.68629 3.68629 6 7 6C10.3137 6 13 8.68629 13 12Z"/>
+          <path d="M23 12C23 14.7614 22.5523 17 22 17C21.4477 17 21 14.7614 21 12C21 9.23858 21.4477 7 22 7C22.5523 7 23 9.23858 23 12Z"/>
+          <path d="M17 12C17 14.7614 16.5523 17 16 17C15.4477 17 15 14.7614 15 12C15 9.23858 15.4477 7 16 7C16.5523 7 17 9.23858 17 12Z"/>
+        </svg>
+        <span style="color: var(--text-color);">Medium</span>
+      </a>
+    </div>
+    HTML
+
+    tagline = site.config['tagline']
+    site.config['tagline'] = "#{followMe}#{tagline}"
+  end
 
   # 處理最後更新時間
   meta_data = site.data.dig('locales', 'en', 'meta')
@@ -82,6 +85,20 @@ Jekyll::Hooks.register :site, :pre_render do |site|
     formatted_time = gmt_plus_8.strftime("%Y-%m-%d %H:%M:%S")
     site.data['locales']['en']['meta'] += "<br/>Last updated: #{formatted_time} +08:00"
   end
+end
+
+Jekyll::Hooks.register :posts, :pre_render do |post|
+  slug = post.data['slug']
+  postPath = post.relative_path
+  yesterday = (Date.today - 1).to_s
+
+  # 獲取 Medium 和部落格的瀏覽數
+  # mediumCount = $stats_data.fetch(slug, {}).fetch("meidum", 0)
+  # blogCount = $stats_data.fetch(slug, {}).fetch("siteViews", 0)
+
+  # 移除 "### 支持鼓勵" 後的所有內容
+  post.content = post.content.sub(/### 支持鼓勵.*/m, '')
+  post.content = post.content.gsub(/(_\[Post\])(.*)(converted from Medium by \[ZMediumToMarkdown\])(.*)(\._)/, '')
 
   # 添加固定懸浮的 Medium follow 按紐
   floatingButton = <<-HTML
@@ -151,27 +168,20 @@ Jekyll::Hooks.register :site, :pre_render do |site|
   </style>
   HTML
 
-  # 处理所有文章的内容
-  site.posts.docs.each do |post|
-    slug = post.data['slug']
-    postPath = post.relative_path
-
-    # 移除 Medium 尾標籤
-    post.content = post.content.gsub(/(_\[Post\])(.*)(converted from Medium by \[ZMediumToMarkdown\])(.*)(\._)/, '')
-
-    # 在頁尾加入 medium 連結
-    footerHTML = "\n\n---\n\n"
-    if postPath.match?(/^_posts\/(en|zh-tw|zh-cn)\/zmediumtomarkdown/)
-      footerHTML += <<-HTML
-      本文首次发表于 Medium ➡️ <a href="https://medium.com/p/#{slug}" target="_blank"><strong>点此查看</strong></a><br/>
-      HTML
-    end
-
+  # 如果這篇文章來自 Medium，添加 Medium 連結
+  footerHTML = "\n\n---\n\n"
+  if postPath.match?(/^_posts\/(en|zh-tw|zh-cn)\/zmediumtomarkdown/)
     footerHTML += <<-HTML
-    <a href="https://www.buymeacoffee.com/chichieh.huang" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+    本文首次發表於 Medium ➡️ <a href="https://medium.com/p/#{slug}" target="_blank"><strong>點此查看</strong></a><br/>
     HTML
-
-    post.content += floatingButton
-    post.content += footerHTML
   end
+
+  # 添加 BuyMeACoffee 贊助按鈕
+  footerHTML += <<-HTML
+  <a href="https://www.buymeacoffee.com/chichieh.huang" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+  HTML
+
+  # 更新文章內容
+  post.content += floatingButton
+  post.content += footerHTML
 end
