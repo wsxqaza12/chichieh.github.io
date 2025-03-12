@@ -37,7 +37,7 @@ $medium_followers = $medium_followers.to_s.reverse.scan(/\d{1,3}/).join(',').rev
 
 
 Jekyll::Hooks.register :site, :pre_render do |site|
-  # 处理 Medium followers 显示
+  # 處理 Medium followers 顯示
   followMe = <<-HTML
   <div style="
     text-align: left;
@@ -75,7 +75,7 @@ Jekyll::Hooks.register :site, :pre_render do |site|
   tagline = site.config['tagline']
   site.config['tagline'] = "#{followMe}#{tagline}"
 
-  # 处理最后更新时间
+  # 處理最後更新時間
   meta_data = site.data.dig('locales', 'en', 'meta')
   if meta_data
     gmt_plus_8 = Time.now.getlocal("+08:00")
@@ -156,10 +156,10 @@ Jekyll::Hooks.register :site, :pre_render do |site|
     slug = post.data['slug']
     postPath = post.relative_path
 
-    # 移除 Medium 转换标签
+    # 移除 Medium 尾標籤
     post.content = post.content.gsub(/(_\[Post\])(.*)(converted from Medium by \[ZMediumToMarkdown\])(.*)(\._)/, '')
 
-    # 添加页脚内容
+    # 在頁尾加入 medium 連結
     footerHTML = "\n\n---\n\n"
     if postPath.match?(/^_posts\/(en|zh-tw|zh-cn)\/zmediumtomarkdown/)
       footerHTML += <<-HTML
