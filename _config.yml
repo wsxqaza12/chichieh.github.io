@@ -14,9 +14,9 @@ timezone: Asia/Taipei
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Medium To Jekyll Starter # the main title
+title: ChiChieh Huang # the main title
 
-tagline: A text-focused Jekyll theme # it will display as the subtitle
+tagline: HI~ 我主要從事 Generative AI 的產品開發，熱愛桌球與奇幻小說，想以中文向中文社群分享 AI 相關知識。 # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   A minimal, responsive and feature-rich Jekyll theme for technical writing.
@@ -26,23 +26,23 @@ description: >- # used by seo meta and the atom feed
 url: https://wsxqaza12.github.io
 
 github:
-  username: github_username # change to your GitHub username
+  username: wsxqaza12 # change to your GitHub username
 
-twitter:
-  username: twitter_username # change to your Twitter username
+# twitter:
+#   username: twitter_username # change to your Twitter username
 
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: your_full_name
-  email: example@domain.com # change to your email address
+  name: ChiChieh Huang
+  email: cch.chichieh@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://twitter.com/username # change to your Twitter homepage
-    - https://github.com/username # change to your GitHub homepage
+    # - https://twitter.com/username # change to your Twitter homepage
+    - https://github.com/wsxqaza12 # change to your GitHub homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    - https://www.linkedin.com/in/chichieh-huang-5322881ba/
 
 # Site Verification Settings
 webmaster_verifications:
@@ -128,6 +128,8 @@ comments:
     input_position: # optional, default to 'bottom'
     lang: # optional, default to the value of `site.lang`
     reactions_enabled: # optional, default to the value of `1`
+  cusdis:
+    cusdis_app_id: 318e822c-01bd-4d34-9def-668094601fe0 
 
 # Self-hosted static assets, optional › https://github.com/cotes2020/chirpy-static-assets
 assets:
