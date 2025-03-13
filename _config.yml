@@ -19,11 +19,11 @@ title: ChiChieh Huang # the main title
 tagline: Hi~ 我專注於 Generative AI 產品開發，熱愛桌球與奇幻小說，並希望透過中文內容與更多人分享 AI 知識，讓技術更貼近社群。 # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  A minimal, responsive and feature-rich Jekyll theme for technical writing.
+  ChiChieh Huang 深耕生成式 AI 產品開發，專注於 LLM、RAG 系統、Prompt Engineering 及 AI Avatar、AI Agent 技術。她透過高品質的中文技術文章，幫助開發者掌握最新 AI 應用，推動生成式 AI 在華語社群的普及與創新發展。
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
-url: ""
+url: "https://chichieh-huang.com/"
 
 github:
   username: wsxqaza12 # change to your GitHub username
