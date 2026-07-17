@@ -1,27 +1,17 @@
-# Bundler cache
-.bundle
-vendor
-Gemfile.lock
+node_modules/
+dist/
+.astro/
+npm-debug.log*
 
-# Jekyll cache
-.jekyll-cache
-.jekyll-metadata
-_site
+# 由 scripts/sync-content.mjs 從 content-dna 產生，不進版控
+src/content/synced/*.md
 
-# RubyGems
-*.gem
+# 本機 checkout 的 content repo（CI 用）
+external/
 
-# NPM dependencies
-node_modules
-package-lock.json
-
-# IDE configurations
+# IDE
 .idea
 .vscode/*
 !.vscode/settings.json
-!.vscode/extensions.json
-!.vscode/tasks.json
 
-# Misc
-_sass/vendors
-assets/js/dist
+.DS_Store

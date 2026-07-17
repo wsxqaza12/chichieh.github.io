@@ -1,0 +1,32 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="wrap bar">
+    <span>© {year} ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span>
+    <span class="links">
+      <a href="https://github.com/wsxqaza12">GitHub</a>
+      <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>
+      <a href="/rss.xml">RSS</a>
+    </span>
+  </div>
+</footer>
+
+<style>
+  footer { border-top: 1px solid var(--line); }
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    padding-bottom: 2.5rem;
+    color: var(--ink-2);
+    font-size: 0.82rem;
+  }
+  .links { display: flex; gap: 1rem; }
+  .links a { color: var(--ink-2); }
+  .links a:hover { color: var(--accent); }
+</style>

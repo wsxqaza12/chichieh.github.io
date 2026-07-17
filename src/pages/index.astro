@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import PostRow from '../components/PostRow.astro';
+import { getAllPosts } from '../lib/posts';
+import { projects } from '../data/projects';
+
+const posts = (await getAllPosts()).filter((p) => !p.data.draft).slice(0, 6);
+const featured = projects.filter((p) => p.featured);
+---
+
+<Base>
+  <p class="hero">專注於 Generative AI 產品開發，<br />用中文把 AI 寫得更清楚。</p>
+  <p class="hero-sub">LLM・Agent・RAG — 也熱愛桌球與奇幻小說。</p>
+
+  <div class="sec-label">最新文章</div>
+  {posts.map((post) => <PostRow post={post} />)}
+  <p class="more"><a href="/posts/">所有文章 →</a></p>
+
+  <div class="sec-label">精選專案</div>
+  <div class="cards">
+    {featured.map((p) => (
+      <a class="card" href={p.link ?? '/projects/'}>
+        <span class="card-title">{p.name}</span>
+        <span class="card-desc">{p.summary}</span>
+      </a>
+    ))}
+  </div>
+  <p class="more"><a href="/projects/">所有專案 →</a></p>
+</Base>
+
+<style>
+  .hero {
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    font-weight: 600;
+    line-height: 1.6;
+    margin: 1.5rem 0 0.5rem;
+  }
+  .hero-sub { color: var(--ink-2); font-size: 0.95rem; margin: 0 0 2rem; }
+  .more { margin: 1rem 0 0; font-size: 0.9rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.9rem; margin-top: 0.75rem; }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    color: var(--ink);
+  }
+  .card:hover { text-decoration: none; border-color: var(--accent); }
+  .card:hover .card-title { color: var(--accent); }
+  .card-title { font-family: var(--serif); font-weight: 700; }
+  .card-desc { font-size: 0.85rem; color: var(--ink-2); line-height: 1.7; }
+</style>

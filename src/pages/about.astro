@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="關於" description="關於 ChiChieh Huang — Generative AI 產品開發者、技術寫作者與講者。">
+  <div class="head">
+    <img src="/assets/img/avatar.png" alt="ChiChieh Huang 的照片" width="96" height="96" />
+    <div>
+      <h1>關於琪婕</h1>
+      <p class="muted">Generative AI 產品開發者・技術寫作者・講者</p>
+    </div>
+  </div>
+
+  <section class="prose">
+    <p>
+      我是一名熱愛技術的自由接案開發者，也是位創業家。2023 年底注意到生成式 AI
+      的中文技術文章非常少，覺得可惜，於是開始以此為方向寫作——希望用淺顯易懂的語言，把
+      AI 的知識與創新帶給中文社群。
+    </p>
+
+    <h2>在做的事</h2>
+    <ul>
+      <li><strong>語言生成：</strong>LLM 應用、RAG 建置與評估、AI Agent 系統搭建</li>
+      <li><strong>語音技術：</strong>Text-to-Speech、Speech Recognition 與中文聲音克隆</li>
+      <li><strong>視覺與動畫：</strong>2D/3D Avatar 應用、text-to-image 與 text-to-motion</li>
+    </ul>
+
+    <h2>演講與媒體</h2>
+    <p>
+      累計近 20 場技術演講與工作坊，包含 2026 WiDS（Women in Data Science）講者、GDG
+      讀書會、R-Ladies、Twinkle AI 等社群分享；曾接受《商業周刊》、非凡新聞與公視採訪，
+      聊 AI Agent 的實際應用與觀察。
+    </p>
+
+    <h2>服務項目</h2>
+    <ul>
+      <li><strong>AI 解決方案諮詢：</strong>從需求分析到技術實現，為企業打造 GenAI 應用策略</li>
+      <li><strong>技術研討與工作坊：</strong>客製化的 AI 實戰培訓</li>
+      <li><strong>職涯發展諮詢：</strong>在 AI 時代找到適合的發展方向</li>
+    </ul>
+
+    <blockquote>"You can overcome anything, if and only if you love something enough."</blockquote>
+
+    <p class="contact">
+      <a href="mailto:cch.chichieh@gmail.com">Email</a> ·
+      <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a> ·
+      <a href="https://github.com/wsxqaza12">GitHub</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .head { display: flex; align-items: center; gap: 1.25rem; margin: 1.5rem 0 1rem; }
+  .head img { border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
+  .head h1 { font-size: 1.6rem; margin: 0; }
+  .head p { margin: 0.2rem 0 0; font-size: 0.9rem; }
+</style>

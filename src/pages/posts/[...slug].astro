@@ -1,0 +1,89 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getAllPosts, formatDate, readingTime, postUrl, type Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1] ?? null, older: posts[i + 1] ?? null },
+  }));
+}
+
+const { post, newer, older } = Astro.props as { post: Post; newer: Post | null; older: Post | null };
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const minutes = readingTime(post.body ?? '');
+---
+
+<Base
+  title={post.data.title}
+  description={post.data.description ?? post.data.title}
+  ogImage={post.data.hero}
+  ogType="article"
+>
+  <article class="prose">
+    <h1>{post.data.title}</h1>
+    <p class="byline">
+      {formatDate(post.data.date)} ·
+      <a href={`/posts/category/${post.data.category}/`}>{post.data.category}</a> ·
+      閱讀約 {minutes} 分鐘
+      {post.data.draft && <span class="draft-pill">草稿</span>}
+    </p>
+
+    {toc.length >= 3 && (
+      <details class="toc">
+        <summary>目錄</summary>
+        <ul>
+          {toc.map((h) => (
+            <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+          ))}
+        </ul>
+      </details>
+    )}
+
+    <Content />
+
+    {post.data.tags.length > 0 && (
+      <p class="tags">{post.data.tags.map((t) => <span># {t}</span>)}</p>
+    )}
+  </article>
+
+  <nav class="pager" aria-label="前後文章">
+    {older ? <a href={postUrl(older)}>← {older.data.title}</a> : <span />}
+    {newer ? <a class="next" href={postUrl(newer)}>{newer.data.title} →</a> : <span />}
+  </nav>
+</Base>
+
+<style>
+  .byline { color: var(--ink-2); font-size: 0.85rem; margin: 0 0 2rem; }
+  .byline a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+  .byline a:hover { color: var(--accent); }
+  .toc {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.9rem;
+    margin: 0 0 2rem;
+  }
+  .toc summary { cursor: pointer; color: var(--ink-2); }
+  .toc ul { list-style: none; padding: 0.3rem 0 0.2rem; margin: 0; }
+  .toc li { margin: 0.25rem 0; }
+  .toc li.d3 { padding-left: 1.25rem; }
+  .toc a { color: var(--ink); }
+  .toc a:hover { color: var(--accent); }
+  .tags { color: var(--ink-2); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.5rem; }
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
+  }
+  .pager a { color: var(--ink-2); max-width: 46%; }
+  .pager a:hover { color: var(--accent); }
+  .pager .next { text-align: right; }
+</style>

@@ -1,0 +1,28 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PostRow from '../../../components/PostRow.astro';
+import { getAllPosts, type Post } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  const categories = [...new Set(posts.map((p) => p.data.category))];
+  return categories.map((cat) => ({
+    params: { cat },
+    props: { posts: posts.filter((p) => p.data.category === cat) },
+  }));
+}
+
+const { cat } = Astro.params;
+const { posts } = Astro.props as { posts: Post[] };
+---
+
+<Base title={`${cat}文章`} description={`ChiChieh Huang 的${cat}類文章。`}>
+  <h1>{cat}</h1>
+  <p class="filters"><a href="/posts/">← 全部文章</a></p>
+  {posts.map((post) => <PostRow post={post} />)}
+</Base>
+
+<style>
+  h1 { font-size: 1.6rem; margin: 1rem 0 0.5rem; }
+  .filters { font-size: 0.9rem; margin: 0 0 1rem; }
+</style>

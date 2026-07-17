@@ -1,0 +1,64 @@
+---
+const nav = [
+  { href: '/posts/', label: '文章' },
+  { href: '/projects/', label: '專案' },
+  { href: '/about/', label: '關於' },
+];
+const path = Astro.url.pathname;
+---
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="/">ChiChieh Huang</a>
+    <nav aria-label="主選單">
+      {nav.map((item) => (
+        <a href={item.href} class:list={{ active: path.startsWith(item.href) }}>{item.label}</a>
+      ))}
+      <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色">
+        <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+        <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  header { border-bottom: 1px solid var(--line); }
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.4rem;
+    padding-bottom: 1.4rem;
+  }
+  .logo { font-family: var(--serif); font-weight: 700; font-size: 1.05rem; color: var(--ink); }
+  .logo:hover { text-decoration: none; color: var(--accent); }
+  nav { display: flex; align-items: center; gap: 1.4rem; }
+  nav a { color: var(--ink-2); font-size: 0.92rem; }
+  nav a:hover, nav a.active { color: var(--accent); text-decoration: none; }
+  #theme-toggle {
+    background: none; border: 1px solid var(--line); border-radius: 99px;
+    color: var(--ink-2); cursor: pointer; width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center; padding: 0;
+  }
+  #theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+  .moon { display: none; }
+  :global(:root[data-theme='dark']) .moon { display: block; }
+  :global(:root[data-theme='dark']) .sun { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .moon { display: block; }
+    :global(:root:not([data-theme='light'])) .sun { display: none; }
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  btn?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const current = root.dataset.theme ?? (systemDark ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+</script>
