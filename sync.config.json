@@ -10,6 +10,23 @@
     { "dir": "待發表的文章", "category": "趨勢談", "draft": true }
   ],
   "excludePatterns": ["_Draft", "_FB", "_LinkedIn", "_社群版", "_en", "Facebook_", "LinkedIn_", "Discord "],
+  "titleOverrides": {
+    "mutiagent.md": "Multi-Agent 系統的踩坑分享",
+    "Anthropic情緒.md": "AI 的情緒？從 Anthropic 的新研究說起",
+    "Harness Engineering.md": "Harness Engineering：從李宏毅的新課談起",
+    "CK Wu Paper.md": "Answer, Refuse, or Guess?：讀 CK Wu 的風險決策論文",
+    "D2E.md": "D2E：用桌面資料訓練 Embodied AI",
+    "ngrok.md": "從 ngrok 的文章重新理解 Prompt Caching",
+    "VibeVoice.md": "微軟開源 TTS：VibeVoice",
+    "Step-DeepResearch.md": "StepFun 開源的 Step-DeepResearch",
+    "AILogora Infra.md": "AILogora 上線了：技術棧與踩坑記錄",
+    "openclaw第一篇.md": "養龍蝦一週記：OpenClaw 入門心得",
+    "openclaw網路.md": "OpenClaw 的底層網路坑",
+    "推薦 agent-borker.md": "實測推薦 agent-broker：讓 Agent 們在 Discord 溝通",
+    "antigravity白瞟.md": "Antigravity 白瞟的新方式",
+    "Karpathy_2025總結.md": "Karpathy 的 2025 總結筆記",
+    "龍蝦_Agent_Skill_Workflow.md": "我在龍蝦上設計 Skill 與 Workflow 的做法"
+  },
   "excludeFiles": [
     "AI Avatar 虛擬人偶的製作與種類.md",
     "DeepSeek 本地部署.md",

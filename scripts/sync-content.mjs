@@ -132,7 +132,8 @@ for (const source of config.sources) {
     seen.add(slug);
 
     const fm = {
-      title: parsed.data.title ?? title,
+      // 優先序：文內手寫 frontmatter > 網站側 titleOverrides > 自動抽取
+      title: parsed.data.title ?? config.titleOverrides?.[file] ?? title,
       date: new Date(date),
       description: parsed.data.description ?? makeDescription(body),
       category: parsed.data.category ?? source.category,
