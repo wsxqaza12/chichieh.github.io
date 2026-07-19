@@ -82,6 +82,17 @@ function extractTags(body) {
   return { tags: [], body };
 }
 
+// FB 式寫作常用「整行粗體」當章節標記，轉成 h2 才能進目錄。
+// 只轉短的標題行（2–30 字、結尾不是句讀），整句強調的粗體不動。
+function boldLinesToHeadings(body) {
+  return body.replace(/^\*\*([^*\n]+)\*\*\s*$/gm, (match, inner) => {
+    const text = inner.trim();
+    if (text.length < 2 || text.length > 40) return match;
+    if (/[。，、；,]$/.test(text)) return match;
+    return `## ${text}`;
+  });
+}
+
 function makeDescription(body) {
   const text = body
     .replace(/```[\s\S]*?```/g, ' ')
@@ -118,7 +129,7 @@ for (const source of config.sources) {
 
     let { title, body } = extractTitle(parsed.content.trim(), file.replace(/\.md$/, '').trim());
     const tagResult = extractTags(body);
-    body = tagResult.body;
+    body = boldLinesToHeadings(tagResult.body);
     if (!body) continue;
 
     const relPath = path.join(source.dir, file);
