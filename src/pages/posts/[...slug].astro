@@ -18,49 +18,82 @@ const minutes = readingTime(post.body ?? '');
 ---
 
 <Base
-  narrow
   title={post.data.title}
   description={post.data.description ?? post.data.title}
   ogImage={post.data.hero}
   ogType="article"
 >
-  <article class="prose">
-    <h1>{post.data.title}</h1>
-    <p class="byline">
-      {formatDate(post.data.date)} ·
-      <a href={`/posts/category/${post.data.category}/`}>{post.data.category}</a> ·
-      閱讀約 {minutes} 分鐘
-      {post.data.draft && <span class="draft-pill">草稿</span>}
-    </p>
+  <div class="layout">
+    <article class="prose">
+      <h1>{post.data.title}</h1>
+      <p class="byline">
+        {formatDate(post.data.date)} ·
+        <a href={`/posts/category/${post.data.category}/`}>{post.data.category}</a> ·
+        閱讀約 {minutes} 分鐘
+        {post.data.draft && <span class="draft-pill">草稿</span>}
+      </p>
 
-    {toc.length >= 3 && (
-      <details class="toc">
-        <summary>目錄</summary>
-        <ul>
-          {toc.map((h) => (
-            <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
-          ))}
-        </ul>
-      </details>
+      {toc.length >= 3 && (
+        <details class="toc">
+          <summary>目錄</summary>
+          <ul>
+            {toc.map((h) => (
+              <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+            ))}
+          </ul>
+        </details>
+      )}
+
+      <Content />
+
+      {post.data.tags.length > 0 && (
+        <p class="tags">{post.data.tags.map((t) => <span># {t}</span>)}</p>
+      )}
+
+      <nav class="pager" aria-label="前後文章">
+        {older ? <a href={postUrl(older)}>← {older.data.title}</a> : <span />}
+        {newer ? <a class="next" href={postUrl(newer)}>{newer.data.title} →</a> : <span />}
+      </nav>
+    </article>
+
+    {toc.length >= 2 && (
+      <aside class="toc-rail" aria-label="章節目錄">
+        <nav>
+          <p class="rail-label">本頁章節</p>
+          <ul>
+            {toc.map((h) => (
+              <li class={`d${h.depth}`}>
+                <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
     )}
-
-    <Content />
-
-    {post.data.tags.length > 0 && (
-      <p class="tags">{post.data.tags.map((t) => <span># {t}</span>)}</p>
-    )}
-  </article>
-
-  <nav class="pager" aria-label="前後文章">
-    {older ? <a href={postUrl(older)}>← {older.data.title}</a> : <span />}
-    {newer ? <a class="next" href={postUrl(newer)}>{newer.data.title} →</a> : <span />}
-  </nav>
+  </div>
 </Base>
 
 <style>
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 720px);
+    justify-content: center;
+  }
+  /* 寬螢幕：文章維持 720px 閱讀欄，右側加懸浮章節目錄。
+     容器放寬到 1080px 才裝得下 720 + 220 + gap，避免文字欄被擠窄。 */
+  @media (min-width: 1100px) {
+    :global(.wrap) { max-width: 1080px; }
+    .layout { grid-template-columns: minmax(0, 720px) 220px; gap: 3.5rem; }
+    .toc { display: none; }
+  }
+  @media (max-width: 1099.9px) {
+    .toc-rail { display: none; }
+  }
+
   .byline { color: var(--ink-2); font-size: 0.85rem; margin: 0 0 2rem; }
   .byline a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
   .byline a:hover { color: var(--accent); }
+
   .toc {
     border: 1px solid var(--line);
     border-radius: 10px;
@@ -74,6 +107,33 @@ const minutes = readingTime(post.body ?? '');
   .toc li.d3 { padding-left: 1.25rem; }
   .toc a { color: var(--ink); }
   .toc a:hover { color: var(--accent); }
+
+  .toc-rail nav {
+    position: sticky;
+    top: 2.5rem;
+    max-height: calc(100vh - 5rem);
+    overflow-y: auto;
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+  .rail-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-2);
+    margin: 0 0 0.6rem;
+  }
+  .toc-rail ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
+  .toc-rail li.d3 a { padding-left: 1.9rem; }
+  .toc-rail a {
+    display: block;
+    color: var(--ink-2);
+    padding: 0.22rem 0 0.22rem 0.9rem;
+    border-left: 2px solid transparent;
+    margin-left: -1.5px;
+  }
+  .toc-rail a:hover { color: var(--ink); text-decoration: none; }
+  .toc-rail a.active { color: var(--accent); border-left-color: var(--accent); }
+
   .tags { color: var(--ink-2); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.5rem; }
   .pager {
     display: flex;
@@ -88,3 +148,37 @@ const minutes = readingTime(post.body ?? '');
   .pager a:hover { color: var(--accent); }
   .pager .next { text-align: right; }
 </style>
+
+<script>
+  // Scroll-spy：捲動時高亮右側目錄的當前章節
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
+  if (links.length > 0) {
+    const headings = [...links]
+      .map((a) => document.getElementById(a.dataset.tocLink!))
+      .filter((el): el is HTMLElement => el !== null);
+
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      let current: string | null = null;
+      for (const h of headings) {
+        if (h.getBoundingClientRect().top <= 130) current = h.id;
+        else break;
+      }
+      for (const a of links) {
+        a.classList.toggle('active', a.dataset.tocLink === (current ?? headings[0]?.id));
+      }
+    };
+    document.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true }
+    );
+    update();
+  }
+</script>
