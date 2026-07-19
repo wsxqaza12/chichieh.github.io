@@ -1,0 +1,74 @@
+---
+import Base from '../../layouts/Base.astro';
+import { achievements, talks, media } from '../../data/experience';
+import { getAllPosts, postUrl } from '../../lib/posts';
+
+const posts = (await getAllPosts()).filter((p) => !p.data.draft);
+const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefined);
+---
+
+<Base title="經歷" description="ChiChieh Huang 的演講、獎項與媒體報導。">
+  <h1>經歷</h1>
+  <p class="muted intro">講過的、得過的、被報導過的。相關心得都有文章可以讀。</p>
+
+  <div class="sec-label">獎項與里程碑</div>
+  <div class="grid">
+    {achievements.map((a) => (
+      <article class="card">
+        <h2>{a.title}</h2>
+        <p class="desc">{a.detail}</p>
+        {a.year && <p class="year">{a.year}</p>}
+      </article>
+    ))}
+  </div>
+
+  <div class="sec-label">演講與工作坊</div>
+  {talks.map((t) => {
+    const post = findPost(t.postId);
+    return (
+      <article class="row">
+        <div class="row-head">
+          <h2>{t.event}</h2>
+          {t.year && <span class="year">{t.year}</span>}
+        </div>
+        {t.topic && <p class="topic">「{t.topic}」</p>}
+        {t.detail && <p class="desc">{t.detail}</p>}
+        {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
+      </article>
+    );
+  })}
+
+  <div class="sec-label">媒體報導</div>
+  {media.map((m) => {
+    const post = findPost(m.postId);
+    return (
+      <article class="row">
+        <div class="row-head">
+          <h2>{m.outlet}</h2>
+          {m.year && <span class="year">{m.year}</span>}
+        </div>
+        <p class="desc">{m.detail}</p>
+        {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
+      </article>
+    );
+  })}
+</Base>
+
+<style>
+  h1 { font-size: 1.6rem; margin: 1rem 0 0.25rem; }
+  .intro { font-size: 0.92rem; margin: 0 0 1.5rem; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.75rem; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 1.15rem 1.3rem; }
+  .card h2 { font-size: 1rem; margin: 0 0 0.4rem; line-height: 1.6; }
+  .card .year { margin: 0.5rem 0 0; }
+
+  .row { padding: 1.2rem 0; border-top: 1px solid var(--line); }
+  .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .row h2 { font-size: 1.05rem; margin: 0; }
+  .topic { font-family: var(--serif); color: var(--ink); margin: 0.3rem 0 0; }
+  .desc { font-size: 0.9rem; color: var(--ink-2); line-height: 1.8; margin: 0.35rem 0 0; }
+  .year { color: var(--ink-2); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .link { font-size: 0.85rem; margin: 0.5rem 0 0; }
+</style>

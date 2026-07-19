@@ -148,6 +148,8 @@ for (const source of config.sources) {
   if (!fs.existsSync(dir)) continue;
 
   for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.md'))) {
+    // includeFiles = 白名單制（如 活動 資料夾只收精選）；沒設就全收再走排除規則
+    if (source.includeFiles && !source.includeFiles.includes(file)) continue;
     if (config.excludeFiles.includes(file)) continue;
     if (config.excludePatterns.some((p) => file.includes(p))) continue;
 

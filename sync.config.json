@@ -7,6 +7,18 @@
   "sources": [
     { "dir": "寫過的文章/技術", "category": "技術" },
     { "dir": "寫過的文章/趨勢談", "category": "趨勢談" },
+    {
+      "dir": "寫過的文章/活動",
+      "category": "活動",
+      "includeFiles": [
+        "WiDS講者心得.md",
+        "商周.md",
+        "非凡新聞.md",
+        "公視媒體經驗.md",
+        "Pahub.md",
+        "R-Ladies.md"
+      ]
+    },
     { "dir": "待發表的文章", "category": "趨勢談", "draft": true }
   ],
   "excludePatterns": ["_Draft", "_FB", "_LinkedIn", "_社群版", "_en", "Facebook_", "LinkedIn_", "Discord "],
@@ -25,7 +37,13 @@
     "推薦 agent-borker.md": "實測推薦 agent-broker：讓 Agent 們在 Discord 溝通",
     "antigravity白瞟.md": "Antigravity 白瞟的新方式",
     "Karpathy_2025總結.md": "Karpathy 的 2025 總結筆記",
-    "龍蝦_Agent_Skill_Workflow.md": "我在龍蝦上設計 Skill 與 Workflow 的做法"
+    "龍蝦_Agent_Skill_Workflow.md": "我在龍蝦上設計 Skill 與 Workflow 的做法",
+    "WiDS講者心得.md": "WiDS 2026 講者心得：我的團隊裡有五個 AI",
+    "商周.md": "《商業周刊》採訪心得：為什麼選 OpenClaw",
+    "非凡新聞.md": "上非凡新聞聊 OpenClaw：應用、風險與 NemoClaw",
+    "公視媒體經驗.md": "公視採訪與節目錄製初體驗",
+    "Pahub.md": "見到偶像 Pahud：AI Agent 趨勢與 MCP 的商業模式",
+    "R-Ladies.md": "R-Ladies 分享：從 Side Project 到 Business"
   },
   "excludeFiles": [
     "AI Avatar 虛擬人偶的製作與種類.md",
