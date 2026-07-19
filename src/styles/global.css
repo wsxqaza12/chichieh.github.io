@@ -41,8 +41,10 @@ body {
   line-height: 1.9;
   -webkit-font-smoothing: antialiased;
 }
-.wrap { max-width: 720px; margin: 0 auto; padding: 0 1.25rem; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 1.25rem; }
 main.wrap { padding-top: 2.5rem; padding-bottom: 4rem; min-height: 60vh; }
+/* 閱讀頁維持窄欄（每行 32–36 字），首頁與專案頁用寬版 */
+main.narrow { max-width: 720px; }
 
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; text-underline-offset: 4px; }

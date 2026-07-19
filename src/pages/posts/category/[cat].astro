@@ -16,7 +16,7 @@ const { cat } = Astro.params;
 const { posts } = Astro.props as { posts: Post[] };
 ---
 
-<Base title={`${cat}文章`} description={`ChiChieh Huang 的${cat}類文章。`}>
+<Base narrow title={`${cat}文章`} description={`ChiChieh Huang 的${cat}類文章。`}>
   <h1>{cat}</h1>
   <p class="filters"><a href="/posts/">← 全部文章</a></p>
   {posts.map((post) => <PostRow post={post} />)}

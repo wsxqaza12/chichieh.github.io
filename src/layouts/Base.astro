@@ -8,6 +8,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   ogType?: string;
+  narrow?: boolean;
 }
 
 const {
@@ -15,6 +16,7 @@ const {
   description = 'ChiChieh Huang — 專注於 Generative AI 產品開發，用中文把 AI 寫得更清楚。LLM、Agent、RAG 技術文章與趨勢觀察。',
   ogImage = '/assets/img/avatar.png',
   ogType = 'website',
+  narrow = false,
 } = Astro.props;
 
 const pageTitle = title ? `${title} | ChiChieh Huang` : 'ChiChieh Huang';
@@ -52,7 +54,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <Header />
-    <main class="wrap">
+    <main class:list={['wrap', { narrow }]}>
       <slot />
     </main>
     <Footer />
