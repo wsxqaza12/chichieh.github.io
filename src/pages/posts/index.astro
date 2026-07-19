@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/PostRow.astro';
+import { getAllPosts } from '../../lib/posts';
+
+const posts = await getAllPosts();
+const categories = [...new Set(posts.map((p) => p.data.category))];
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const y = post.data.date.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(post);
+}
+---
+
+<Base narrow title="文章" description="ChiChieh Huang 的技術文章與 AI 趨勢觀察。">
+  <h1>文章</h1>
+  <p class="filters">
+    <span class="on">全部 {posts.length}</span>
+    {categories.map((cat) => (
+      <a href={`/posts/category/${cat}/`}>{cat} {posts.filter((p) => p.data.category === cat).length}</a>
+    ))}
+  </p>
+  {[...byYear.entries()].map(([year, list]) => (
+    <section>
+      <div class="sec-label">{year}</div>
+      {list.map((post) => <PostRow post={post} />)}
+    </section>
+  ))}
+</Base>
+
+<style>
+  h1 { font-size: 1.6rem; margin: 1rem 0 0.5rem; }
+  .filters { display: flex; gap: 1.1rem; font-size: 0.9rem; margin: 0 0 1rem; }
+  .filters .on { color: var(--ink); font-weight: 500; }
+</style>

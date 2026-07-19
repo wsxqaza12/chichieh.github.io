@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import { projects } from '../../data/projects';
+---
+
+<Base title="專案" description="ChiChieh Huang 的開源專案與作品集。">
+  <h1>專案</h1>
+  <p class="muted intro">做過的、正在做的。開源的都附上 repo，歡迎交流。</p>
+  <div class="grid">
+    {projects.map((p) => (
+      <article class="card">
+        <h2>
+          {p.link ? <a href={p.link}>{p.name}</a> : p.name}
+          {p.status && <span class="status">{p.status}</span>}
+        </h2>
+        <p class="desc">{p.summary}</p>
+        <p class="stack">{p.stack.map((s) => <span>{s}</span>)}</p>
+      </article>
+    ))}
+  </div>
+</Base>
+
+<style>
+  h1 { font-size: 1.6rem; margin: 1rem 0 0.25rem; }
+  .intro { font-size: 0.92rem; margin: 0 0 1.75rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 1.2rem 1.35rem; }
+  .card h2 { font-size: 1.05rem; margin: 0 0 0.4rem; display: flex; align-items: baseline; gap: 0.6rem; }
+  .card h2 a { color: var(--ink); }
+  .card h2 a:hover { color: var(--accent); text-decoration: none; }
+  .status {
+    font-size: 0.72rem; font-family: var(--sans); font-weight: 400;
+    color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 99px; padding: 0.02rem 0.55rem; white-space: nowrap;
+  }
+  .desc { font-size: 0.9rem; color: var(--ink-2); line-height: 1.8; margin: 0 0 0.75rem; }
+  .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; }
+  .stack span {
+    font-size: 0.75rem; color: var(--ink-2);
+    border: 1px solid var(--line); border-radius: 99px; padding: 0.05rem 0.6rem;
+  }
+</style>

@@ -1,0 +1,16 @@
+---
+import type { Post } from '../lib/posts';
+import { postUrl, formatMonth } from '../lib/posts';
+
+interface Props { post: Post }
+const { post } = Astro.props;
+---
+
+<div class="post-row">
+  <span>
+    <a class="tag-pill" href={`/posts/category/${post.data.category}/`}>{post.data.category}</a>
+    <a class="title-link" href={postUrl(post)}>{post.data.title}</a>
+    {post.data.draft && <span class="draft-pill">草稿</span>}
+  </span>
+  <time datetime={post.data.date.toISOString()}>{formatMonth(post.data.date)}</time>
+</div>

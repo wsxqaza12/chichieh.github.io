@@ -1,0 +1,54 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: [README.md, LICENSE]
+  # content-dna push 之後由 repository_dispatch 觸發重建
+  repository_dispatch:
+    types: [content-updated]
+  workflow_dispatch:
+  schedule:
+    # 每日保底重建（台北 09:00），確保 content-dna 的更新至少一天內上站
+    - cron: '0 1 * * *'
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_TOKEN: ${{ secrets.CONTENT_DNA_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # 需要在 repo secrets 加 CONTENT_DNA_TOKEN（可讀 wsxqaza12/content-dna 的 fine-grained PAT）。
+      # 沒有 token 時會跳過，只用 repo 內建的 Medium 遷移文章建站。
+      - name: Checkout content-dna
+        if: env.HAS_TOKEN == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: wsxqaza12/content-dna
+          token: ${{ secrets.CONTENT_DNA_TOKEN }}
+          path: external/content-dna
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # 維持既有部署模式：推到 gh-pages branch，chichieh-huang.com（Cloudflare）從那裡供應
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          force_orphan: true

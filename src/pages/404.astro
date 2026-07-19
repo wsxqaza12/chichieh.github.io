@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base narrow title="找不到頁面">
+  <div class="lost">
+    <p class="crab" aria-hidden="true">🦞</p>
+    <h1>這一頁被龍蝦搬走了</h1>
+    <p class="muted">網址可能打錯了，或這篇文章已經搬家。</p>
+    <p><a href="/">回首頁</a> · <a href="/posts/">看所有文章</a></p>
+  </div>
+</Base>
+
+<style>
+  .lost { text-align: center; padding: 4rem 0; }
+  .crab { font-size: 3rem; margin: 0; }
+  h1 { font-size: 1.5rem; margin: 0.75rem 0 0.25rem; }
+</style>
