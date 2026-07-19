@@ -5,6 +5,7 @@ npm-debug.log*
 
 # 由 scripts/sync-content.mjs 從 content-dna 產生，不進版控
 src/content/synced/*.md
+public/content-images/
 
 # 本機 checkout 的 content repo（CI 用）
 external/

@@ -9,6 +9,7 @@ import matter from 'gray-matter';
 
 const config = JSON.parse(fs.readFileSync('sync.config.json', 'utf8'));
 const OUT = 'src/content/synced';
+const IMG_OUT = 'public/content-images';
 
 const contentDir =
   process.env.CONTENT_DIR ?? config.contentDirCandidates.find((d) => fs.existsSync(d));
@@ -17,6 +18,7 @@ fs.mkdirSync(OUT, { recursive: true });
 for (const f of fs.readdirSync(OUT)) {
   if (f.endsWith('.md')) fs.unlinkSync(path.join(OUT, f));
 }
+fs.rmSync(IMG_OUT, { recursive: true, force: true });
 
 if (!contentDir) {
   console.warn('sync: content repo not found — building with migrated posts only.');
@@ -112,6 +114,32 @@ function slugify(name) {
     .replace(/^-+|-+$/g, '');
 }
 
+// 文章裡的相對路徑圖片（如 ![](images/foo.png)）：
+// 把實際存在的檔案複製到 public/content-images/，並改寫 markdown 裡的路徑。
+// 網址（https://…）與絕對路徑（/assets/…）不動。
+let imageCount = 0;
+function localizeImages(body, sourceDir) {
+  return body.replace(
+    /(!\[[^\]]*\]\()([^)]+)(\))/g,
+    (match, open, rawUrl, close) => {
+      // 容許檔名帶空格；去掉 <> 包裹與結尾的 "title"
+      const url = rawUrl.trim().replace(/^<|>$/g, '').replace(/\s+"[^"]*"$/, '').trim();
+      if (/^[a-z][a-z0-9+.-]*:/i.test(url) || url.startsWith('/') || url.startsWith('#')) return match;
+      const relPath = path.posix.normalize(path.posix.join(sourceDir, decodeURI(url)));
+      const srcFile = path.join(contentDir, relPath);
+      if (!fs.existsSync(srcFile)) {
+        console.warn(`sync: image not found, left as-is: ${relPath}`);
+        return match;
+      }
+      const destFile = path.join(IMG_OUT, relPath);
+      fs.mkdirSync(path.dirname(destFile), { recursive: true });
+      fs.copyFileSync(srcFile, destFile);
+      imageCount++;
+      return `${open}/content-images/${relPath.split('/').map(encodeURIComponent).join('/')}${close}`;
+    }
+  );
+}
+
 let count = 0;
 const seen = new Set();
 
@@ -129,7 +157,7 @@ for (const source of config.sources) {
 
     let { title, body } = extractTitle(parsed.content.trim(), file.replace(/\.md$/, '').trim());
     const tagResult = extractTags(body);
-    body = boldLinesToHeadings(tagResult.body);
+    body = localizeImages(boldLinesToHeadings(tagResult.body), source.dir);
     if (!body) continue;
 
     const relPath = path.join(source.dir, file);
@@ -158,4 +186,4 @@ for (const source of config.sources) {
   }
 }
 
-console.log(`synced ${count} posts from ${contentDir} → ${OUT}/`);
+console.log(`synced ${count} posts (${imageCount} images) from ${contentDir} → ${OUT}/`);
