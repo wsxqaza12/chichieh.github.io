@@ -28,9 +28,10 @@ if (!contentDir) {
 // 一次掃過 git 歷史，建出「檔案 → 首次 commit 時間」的映射（比逐檔 git log 快得多）
 const firstCommitDate = new Map();
 try {
+  // core.quotepath=false：不設的話中文路徑會輸出成 "\345..." 跳脫字串，比對永遠失敗（CI 的預設值）
   const log = execFileSync(
     'git',
-    ['log', '--diff-filter=A', '--name-only', '--format=@%aI', '--reverse'],
+    ['-c', 'core.quotepath=false', 'log', '--diff-filter=A', '--name-only', '--format=@%aI', '--reverse'],
     { cwd: contentDir, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }
   );
   let current = null;
