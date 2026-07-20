@@ -5,6 +5,7 @@ export interface Achievement {
   title: string;
   detail: string;
   year?: string;
+  postId?: string;
 }
 
 export interface Talk {
@@ -23,6 +24,12 @@ export interface Media {
 }
 
 export const achievements: Achievement[] = [
+  {
+    title: 'Anthropic 全球 Hackathon 入選（錄取率約 2.4%）',
+    detail: '兩萬多人取五百的全球賽，六天 solo 打造 Cairn——AI 時代的社群知識地圖，以 Claude Managed Agents 實作 custodian agent「Moss」。',
+    year: '2026',
+    postId: 'antropic-hackathon',
+  },
   {
     title: 'NVIDIA × LangChain Generative AI Agents Developer Contest — Top 100',
     detail: '以 LLMAvatarTalk（ASR × LLM × TTS × Audio2Face × Metahuman 的互動虛擬助理）入選前百強。',

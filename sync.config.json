@@ -16,7 +16,8 @@
         "非凡新聞.md",
         "公視媒體經驗.md",
         "Pahub.md",
-        "R-Ladies.md"
+        "R-Ladies.md",
+        "Antropic_hackathon.md"
       ]
     },
     { "dir": "待發表的文章", "category": "趨勢談", "draft": true }
@@ -43,7 +44,8 @@
     "非凡新聞.md": "上非凡新聞聊 OpenClaw：應用、風險與 NemoClaw",
     "公視媒體經驗.md": "公視採訪與節目錄製初體驗",
     "Pahub.md": "見到偶像 Pahud：AI Agent 趨勢與 MCP 的商業模式",
-    "R-Ladies.md": "R-Ladies 分享：從 Side Project 到 Business"
+    "R-Ladies.md": "R-Ladies 分享：從 Side Project 到 Business",
+    "Antropic_hackathon.md": "Anthropic 全球 Hackathon：六天極限開發，一個人做出 Cairn"
   },
   "excludeFiles": [
     "AI Avatar 虛擬人偶的製作與種類.md",

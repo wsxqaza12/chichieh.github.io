@@ -13,13 +13,19 @@ const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefin
 
   <div class="sec-label">獎項與里程碑</div>
   <div class="grid">
-    {achievements.map((a) => (
-      <article class="card">
-        <h2>{a.title}</h2>
-        <p class="desc">{a.detail}</p>
-        {a.year && <p class="year">{a.year}</p>}
-      </article>
-    ))}
+    {achievements.map((a) => {
+      const post = findPost(a.postId);
+      return (
+        <article class="card">
+          <h2>{a.title}</h2>
+          <p class="desc">{a.detail}</p>
+          <p class="card-foot">
+            {a.year && <span class="year">{a.year}</span>}
+            {post && <a href={postUrl(post)}>閱讀心得 →</a>}
+          </p>
+        </article>
+      );
+    })}
   </div>
 
   <div class="sec-label">演講與工作坊</div>
@@ -62,7 +68,7 @@ const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefin
   @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
   .card { border: 1px solid var(--line); border-radius: 10px; padding: 1.15rem 1.3rem; }
   .card h2 { font-size: 1rem; margin: 0 0 0.4rem; line-height: 1.6; }
-  .card .year { margin: 0.5rem 0 0; }
+  .card-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0.5rem 0 0; font-size: 0.85rem; }
 
   .row { padding: 1.2rem 0; border-top: 1px solid var(--line); }
   .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }

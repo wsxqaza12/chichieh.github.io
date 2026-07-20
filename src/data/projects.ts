@@ -10,8 +10,9 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'Cairn',
-    summary: '自己會長大的社群 wiki——人丟進知識碎片，AI custodian 把它們整理成卡片與知識地圖。',
-    stack: ['Next.js', 'Supabase', 'Anthropic SDK', 'MCP'],
+    summary: '自己會長大的社群 wiki——人留下真實經驗，custodian agent「Moss」負責整理、連結與維護。Anthropic 全球 Hackathon 作品（錄取率 2.4%）。',
+    stack: ['Next.js', 'Supabase', 'Claude Managed Agents', 'MCP'],
+    link: 'https://youtu.be/n_OpVfxD7EA',
     status: '開發中',
     featured: true,
   },
