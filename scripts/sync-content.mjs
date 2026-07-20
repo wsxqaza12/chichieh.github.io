@@ -163,8 +163,10 @@ for (const source of config.sources) {
     if (!body) continue;
 
     const relPath = path.join(source.dir, file);
+    // 優先序：文內 frontmatter > 網站側 dateOverrides > git 首次 commit > 檔案 mtime
     const date =
       parsed.data.date ??
+      config.dateOverrides?.[file] ??
       firstCommitDate.get(relPath) ??
       fs.statSync(fullPath).mtime.toISOString();
 
