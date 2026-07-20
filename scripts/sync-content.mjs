@@ -143,6 +143,7 @@ function localizeImages(body, sourceDir) {
 
 let count = 0;
 const seen = new Set();
+const dateReport = []; // --emit-dates 用：列出每篇（非草稿）的生效日期，方便回填 dateOverrides
 
 for (const source of config.sources) {
   const dir = path.join(contentDir, source.dir);
@@ -187,8 +188,14 @@ for (const source of config.sources) {
     };
 
     fs.writeFileSync(path.join(OUT, `${slug}.md`), matter.stringify(body, fm));
+    if (!fm.draft) dateReport.push([file, new Date(date).toISOString().slice(0, 10)]);
     count++;
   }
+}
+
+if (process.argv.includes('--emit-dates')) {
+  dateReport.sort((a, b) => a[1].localeCompare(b[1]));
+  console.log(JSON.stringify(Object.fromEntries(dateReport), null, 2));
 }
 
 console.log(`synced ${count} posts (${imageCount} images) from ${contentDir} → ${OUT}/`);

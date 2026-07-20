@@ -5,8 +5,14 @@
     "./external/content-dna"
   ],
   "sources": [
-    { "dir": "寫過的文章/技術", "category": "技術" },
-    { "dir": "寫過的文章/趨勢談", "category": "趨勢談" },
+    {
+      "dir": "寫過的文章/技術",
+      "category": "技術"
+    },
+    {
+      "dir": "寫過的文章/趨勢談",
+      "category": "趨勢談"
+    },
     {
       "dir": "寫過的文章/活動",
       "category": "活動",
@@ -20,9 +26,22 @@
         "Antropic_hackathon.md"
       ]
     },
-    { "dir": "待發表的文章", "category": "趨勢談", "draft": true }
+    {
+      "dir": "待發表的文章",
+      "category": "趨勢談",
+      "draft": true
+    }
   ],
-  "excludePatterns": ["_Draft", "_FB", "_LinkedIn", "_社群版", "_en", "Facebook_", "LinkedIn_", "Discord "],
+  "excludePatterns": [
+    "_Draft",
+    "_FB",
+    "_LinkedIn",
+    "_社群版",
+    "_en",
+    "Facebook_",
+    "LinkedIn_",
+    "Discord "
+  ],
   "titleOverrides": {
     "mutiagent.md": "Multi-Agent 系統的踩坑分享",
     "Anthropic情緒.md": "AI 的情緒？從 Anthropic 的新研究說起",
@@ -48,9 +67,9 @@
     "Antropic_hackathon.md": "Anthropic 全球 Hackathon：六天極限開發，一個人做出 Cairn"
   },
   "dateOverrides": {
-    "VibeVoice.md": "2025-08-28",
     "Vibe Coding 工具.md": "2025-08-15",
     "Vibe Coding 時代的架構陷阱心得.md": "2025-08-22",
+    "VibeVoice.md": "2025-08-28",
     "AILogora Infra.md": "2025-09-26",
     "CK Wu Paper.md": "2025-10-05",
     "D2E.md": "2025-10-20",
@@ -79,15 +98,27 @@
     "Step-DeepResearch.md": "2026-01-28",
     "龍蝦 Line 經驗.md": "2026-02-05",
     "R-Ladies.md": "2026-02-10",
+    "AI 記憶..md": "2026-03-02",
+    "antigravity白瞟.md": "2026-03-04",
+    "公視媒體經驗.md": "2026-03-15",
+    "龍蝦_Agent_Skill_Workflow.md": "2026-03-20",
+    "OpenClaw 免費 API 來源整理.md": "2026-03-26",
+    "養蝦育兒須知-工具篇.md": "2026-03-26",
+    "Agent 經濟體正在成形.md": "2026-03-26",
+    "Pahub.md": "2026-04-05",
+    "非凡新聞.md": "2026-04-05",
     "推薦 agent-borker.md": "2026-04-06",
     "Anthropic情緒.md": "2026-04-12",
     "Harness Engineering.md": "2026-04-14",
     "mutiagent.md": "2026-04-17",
     "商周.md": "2026-04-18",
     "Antropic_hackathon.md": "2026-04-28",
+    "資安問題_改寫版.md": "2026-05-10",
     "知識的分類.md": "2026-05-22",
     "WiDS講者心得.md": "2026-05-29",
-    "Agent框架比較_員工助理還是工具人.md": "2026-06-09"
+    "Agent框架比較_員工助理還是工具人.md": "2026-06-09",
+    "YC的極簡 AI Coding 心法.md": "2026-06-20",
+    "MCP.md": "2026-07-05"
   },
   "excludeFiles": [
     "AI Avatar 虛擬人偶的製作與種類.md",
