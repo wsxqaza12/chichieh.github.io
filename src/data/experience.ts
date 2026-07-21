@@ -28,6 +28,8 @@ export interface Media {
   detail: string;
   year?: string;
   postId?: string;
+  /** 報導畫面／新聞截圖 */
+  photo?: string;
 }
 
 export const achievements: Achievement[] = [
