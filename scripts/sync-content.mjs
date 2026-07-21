@@ -126,12 +126,16 @@ function localizeImages(body, sourceDir) {
       // 容許檔名帶空格；去掉 <> 包裹與結尾的 "title"
       const url = rawUrl.trim().replace(/^<|>$/g, '').replace(/\s+"[^"]*"$/, '').trim();
       if (/^[a-z][a-z0-9+.-]*:/i.test(url) || url.startsWith('/') || url.startsWith('#')) return match;
-      const relPath = path.posix.normalize(path.posix.join(sourceDir, decodeURI(url)));
-      const srcFile = path.join(contentDir, relPath);
-      if (!fs.existsSync(srcFile)) {
-        console.warn(`sync: image not found, left as-is: ${relPath}`);
+      // 先找文章旁邊；找不到就回頭找草稿區（文章從 raw/想寫的文章 搬出來時，圖片常留在原地）
+      const bases = [sourceDir, ...(config.imageFallbackDirs ?? [])];
+      const relPath = bases
+        .map((base) => path.posix.normalize(path.posix.join(base, decodeURI(url))))
+        .find((p) => fs.existsSync(path.join(contentDir, p)));
+      if (!relPath) {
+        console.warn(`sync: image not found, left as-is: ${path.posix.join(sourceDir, decodeURI(url))}`);
         return match;
       }
+      const srcFile = path.join(contentDir, relPath);
       const destFile = path.join(IMG_OUT, relPath);
       fs.mkdirSync(path.dirname(destFile), { recursive: true });
       fs.copyFileSync(srcFile, destFile);

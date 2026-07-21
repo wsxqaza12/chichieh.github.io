@@ -32,6 +32,7 @@
       "draft": true
     }
   ],
+  "imageFallbackDirs": ["想寫的文章", "raw", "待發表的文章"],
   "excludePatterns": [
     "_Draft",
     "_FB",
