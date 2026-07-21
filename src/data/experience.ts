@@ -9,11 +9,14 @@ export interface Achievement {
 }
 
 export interface Talk {
+  /** YYYY-MM-DD 或 YYYY-MM（只知道月份時）。晚於建置日的自動進「即將登場」 */
+  date: string;
   event: string;
   topic?: string;
   detail?: string;
-  year?: string;
   postId?: string;
+  /** 大型場次，名稱以強調色顯示 */
+  major?: boolean;
 }
 
 export interface Media {
@@ -45,42 +48,66 @@ export const achievements: Achievement[] = [
     year: '2019',
   },
   {
-    title: '近 20 場技術演講與工作坊',
-    detail: '從 LLM、RAG 到 AI Agent 實戰，持續在社群分享第一手經驗。',
+    title: '2026 年 25+ 場演講、工作坊與企業內訓',
+    detail: '從 AWS Summit、台灣人工智慧年會到社群讀書會與企業內訓，持續分享 AI Agent 第一手實戰。',
+    year: '2026',
   },
 ];
 
+// 2026 年演講、工作坊與企業內訓（日期只知道月份的先標到月）
 export const talks: Talk[] = [
+  { date: '2026-01', event: 'GenAI 小聚', topic: '三刀流工程師' },
+  { date: '2026-01', event: 'Twinkle AI × GDG 一週年活動', detail: '介紹 AILogora，70 餘人線下聚會。' },
   {
+    date: '2026-01',
+    event: 'R-Ladies Taipei × 台北大學統計系',
+    topic: '從 Side Project 到 Business：AILogora 開發實錄與 Vibe Coding 實踐',
+    postId: 'r-ladies',
+  },
+  { date: '2026-02', event: 'Jac 公司內部分享', topic: '萬能龍蝦助理' },
+  { date: '2026-02-11', event: 'GenAI 小聚', topic: '富養龍蝦大全' },
+  { date: '2026-02', event: 'Karl 公司內部分享', topic: '萬能龍蝦助理' },
+  { date: '2026-02', event: 'Kevin BRP OpenClaw Workshop' },
+  { date: '2026-03', event: 'Taiwan OpenClaw Meetup（MixerBox）' },
+  { date: '2026-03', event: 'AppWorks AI Circle' },
+  { date: '2026-03', event: 'NACC 分享' },
+  { date: '2026-03', event: 'GDG 讀書會' },
+  { date: '2026-04', event: '中山醫學大學（兩場）' },
+  { date: '2026-04', event: '百商企業內訓（兩場）' },
+  {
+    date: '2026-04',
+    event: '政大 GDG On Campus 讀書會 #1',
+    topic: '在 AI 快速變化的時代，找回思考的自主權',
+    detail: '帶領一學期的讀書會，從 AI FOMO 聊到資訊焦慮與判斷力。',
+  },
+  { date: '2026-04', event: 'Taiwan OpenClaw Meetup 商業場（MixerBox）' },
+  { date: '2026-05', event: '政大 GDG On Campus 讀書會 #2' },
+  { date: '2026-05', event: '政大 GDG On Campus 讀書會 #3' },
+  { date: '2026-05-18', event: 'AIA × Claude Code' },
+  {
+    date: '2026-05-24',
     event: 'WiDS Taiwan（Women in Data Science）',
     topic: '我的團隊裡有五個 AI：打造你的 Agent 團隊',
     detail: '線上＋線下約 200 人論壇講者，分享五個月實測 Agent 團隊的效能邊界。',
-    year: '2026',
     postId: 'wids講者心得',
+    major: true,
   },
   {
-    event: '政大 GDG On Campus 讀書會',
-    topic: '在 AI 快速變化的時代，找回思考的自主權',
-    detail: '帶領一學期的讀書會，從 AI FOMO 聊到資訊焦慮與判斷力。',
-    year: '2026',
+    date: '2026-07-16',
+    event: 'AWS Summit Taipei 2026',
+    topic: '從 AI Session 到 Shared Memory：打造 AI Native 的知識基礎建設',
+    major: true,
   },
   {
-    event: 'R-Ladies Taipei × 台北大學統計系',
-    topic: '從 Side Project 到 Business：AILogora 開發實錄與 Vibe Coding 實踐',
-    year: '2026',
-    postId: 'r-ladies',
+    date: '2026-07-16',
+    event: 'Agile Taiwan',
+    topic: '從龍蝦到 Cairn，當 Agent 成為團隊成員，記憶要怎麼共享？',
+    major: true,
   },
-  {
-    event: 'GenAI 小聚',
-    topic: '復養龍蝦：OpenClaw 實戰／Vibe Kanban × Tailscale 生產力組合',
-    detail: '多次受邀分享 coding agent 工作流。',
-    year: '2026',
-  },
-  {
-    event: 'Twinkle AI × GDG 一週年活動',
-    topic: '介紹 AILogora',
-    detail: '70 餘人線下聚會。',
-  },
+  { date: '2026-08-04', event: 'AIA 小聚' },
+  { date: '2026-08-18', event: '2026 台灣人工智慧年會', major: true },
+  { date: '2026-10-18', event: '桂格 企業內訓' },
+  { date: '2026-12-18', event: '新創企業發展協會' },
 ];
 
 export const media: Media[] = [

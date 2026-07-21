@@ -5,6 +5,12 @@ import { getAllPosts, postUrl } from '../../lib/posts';
 
 const posts = (await getAllPosts()).filter((p) => !p.data.draft);
 const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefined);
+
+// 每日排程會重建網站，所以「即將登場」會自動隨建置日期輪替到「已完成」
+const today = new Date().toISOString().slice(0, 10);
+const upcoming = talks.filter((t) => t.date > today).sort((a, b) => a.date.localeCompare(b.date));
+const past = talks.filter((t) => t.date <= today).sort((a, b) => b.date.localeCompare(a.date));
+const fmtDate = (d: string) => d.replaceAll('-', '/');
 ---
 
 <Base title="經歷" description="ChiChieh Huang 的演講、獎項與媒體報導。">
@@ -28,14 +34,30 @@ const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefin
     })}
   </div>
 
-  <div class="sec-label">演講與工作坊</div>
-  {talks.map((t) => {
+  {upcoming.length > 0 && (
+    <>
+      <div class="sec-label">即將登場</div>
+      {upcoming.map((t) => (
+        <article class="row up">
+          <div class="row-head">
+            <h2 class:list={{ major: t.major }}>{t.event}</h2>
+            <span class="year">{fmtDate(t.date)}</span>
+          </div>
+          {t.topic && <p class="topic">「{t.topic}」</p>}
+          {t.detail && <p class="desc">{t.detail}</p>}
+        </article>
+      ))}
+    </>
+  )}
+
+  <div class="sec-label">演講與工作坊（{past.length} 場）</div>
+  {past.map((t) => {
     const post = findPost(t.postId);
     return (
       <article class="row">
         <div class="row-head">
-          <h2>{t.event}</h2>
-          {t.year && <span class="year">{t.year}</span>}
+          <h2 class:list={{ major: t.major }}>{t.event}</h2>
+          <span class="year">{fmtDate(t.date)}</span>
         </div>
         {t.topic && <p class="topic">「{t.topic}」</p>}
         {t.detail && <p class="desc">{t.detail}</p>}
@@ -71,6 +93,8 @@ const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefin
   .card-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0.5rem 0 0; font-size: 0.85rem; }
 
   .row { padding: 1.2rem 0; border-top: 1px solid var(--line); }
+  .row.up { border-left: 3px solid var(--accent); padding-left: 1.1rem; border-top: none; margin-bottom: 0.25rem; }
+  h2.major { color: var(--accent); }
   .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
   .row h2 { font-size: 1.05rem; margin: 0; }
   .topic { font-family: var(--serif); color: var(--ink); margin: 0.3rem 0 0; }
