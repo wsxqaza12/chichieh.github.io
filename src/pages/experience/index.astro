@@ -50,7 +50,7 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
     </>
   )}
 
-  <div class="sec-label">演講與工作坊（{past.length} 場）</div>
+  <div class="sec-label">演講與工作坊（{past.reduce((n, t) => n + (t.count ?? 1), 0)} 場）</div>
   {past.map((t) => {
     const post = findPost(t.postId);
     return (

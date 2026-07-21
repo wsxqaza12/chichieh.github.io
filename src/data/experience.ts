@@ -17,6 +17,8 @@ export interface Talk {
   postId?: string;
   /** 大型場次，名稱以強調色顯示 */
   major?: boolean;
+  /** 同一系列的實際場次數（預設 1），總場數會加總 */
+  count?: number;
 }
 
 export interface Media {
@@ -64,25 +66,29 @@ export const talks: Talk[] = [
     topic: '從 Side Project 到 Business：AILogora 開發實錄與 Vibe Coding 實踐',
     postId: 'r-ladies',
   },
-  { date: '2026-02', event: 'Jac 公司內部分享', topic: '萬能龍蝦助理' },
+  {
+    date: '2026-02',
+    event: '企業內部技術分享',
+    topic: '萬能龍蝦助理',
+    detail: '受邀至兩家企業分享 OpenClaw 實戰。',
+    count: 2,
+  },
   { date: '2026-02-11', event: 'GenAI 小聚', topic: '富養龍蝦大全' },
-  { date: '2026-02', event: 'Karl 公司內部分享', topic: '萬能龍蝦助理' },
-  { date: '2026-02', event: 'Kevin BRP OpenClaw Workshop' },
+  { date: '2026-02', event: 'BRP OpenClaw 工作坊' },
   { date: '2026-03', event: 'Taiwan OpenClaw Meetup（MixerBox）' },
   { date: '2026-03', event: 'AppWorks AI Circle' },
-  { date: '2026-03', event: 'NACC 分享' },
+  { date: '2026-03', event: 'NACC 專題分享' },
   { date: '2026-03', event: 'GDG 讀書會' },
-  { date: '2026-04', event: '中山醫學大學（兩場）' },
-  { date: '2026-04', event: '百商企業內訓（兩場）' },
+  { date: '2026-04', event: '中山醫學大學 校園演講', detail: '同月受邀兩場。', count: 2 },
+  { date: '2026-04', event: '百商 企業內訓', detail: '系列內訓共兩場。', count: 2 },
   {
     date: '2026-04',
-    event: '政大 GDG On Campus 讀書會 #1',
+    event: '政大 GDG On Campus 讀書會',
     topic: '在 AI 快速變化的時代，找回思考的自主權',
-    detail: '帶領一學期的讀書會，從 AI FOMO 聊到資訊焦慮與判斷力。',
+    detail: '帶領一學期讀書會，4–5 月共三場，從 AI FOMO 聊到資訊焦慮與判斷力。',
+    count: 3,
   },
   { date: '2026-04', event: 'Taiwan OpenClaw Meetup 商業場（MixerBox）' },
-  { date: '2026-05', event: '政大 GDG On Campus 讀書會 #2' },
-  { date: '2026-05', event: '政大 GDG On Campus 讀書會 #3' },
   { date: '2026-05-18', event: 'AIA × Claude Code' },
   {
     date: '2026-05-24',
@@ -107,7 +113,7 @@ export const talks: Talk[] = [
   { date: '2026-08-04', event: 'AIA 小聚' },
   { date: '2026-08-18', event: '2026 台灣人工智慧年會', major: true },
   { date: '2026-10-18', event: '桂格 企業內訓' },
-  { date: '2026-12-18', event: '新創企業發展協會' },
+  { date: '2026-12-18', event: '新創企業發展協會 演講' },
 ];
 
 export const media: Media[] = [
