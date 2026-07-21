@@ -55,6 +55,8 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
   <div class="sec-label">演講與工作坊（{past.reduce((n, t) => n + (t.count ?? 1), 0)} 場）</div>
   {past.map((t) => {
     const post = findPost(t.postId);
+    // 大場沒手動指定照片時，用心得文的封面（文章第一張圖）
+    const photo = t.photo ?? (t.major ? post?.data.hero : undefined);
     return (
       <article class="row">
         <div class="row-main">
@@ -66,7 +68,7 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
           {t.detail && <p class="desc">{t.detail}</p>}
           {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
         </div>
-        {t.photo && <img class="side-photo" src={t.photo} alt={`${t.event} 現場照片`} loading="lazy" />}
+        {photo && <img class="side-photo" src={photo} alt={`${t.event} 現場照片`} loading="lazy" />}
       </article>
     );
   })}
