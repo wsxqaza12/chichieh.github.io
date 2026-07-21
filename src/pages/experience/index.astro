@@ -74,6 +74,8 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
   <div class="sec-label">媒體報導</div>
   {media.map((m) => {
     const post = findPost(m.postId);
+    // 沒手動指定照片時，用心得文的封面（文章第一張圖）
+    const photo = m.photo ?? post?.data.hero;
     return (
       <article class="row">
         <div class="row-main">
@@ -84,7 +86,7 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
           <p class="desc">{m.detail}</p>
           {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
         </div>
-        {m.photo && <img class="side-photo" src={m.photo} alt={`${m.outlet} 報導畫面`} loading="lazy" />}
+        {photo && <img class="side-photo" src={photo} alt={`${m.outlet} 報導畫面`} loading="lazy" />}
       </article>
     );
   })}

@@ -117,8 +117,12 @@ function slugify(name) {
 
 // 文章裡的相對路徑圖片（如 ![](images/foo.png)）：
 // 把實際存在的檔案複製到 public/content-images/，並改寫 markdown 裡的路徑。
+// png/jpg 會壓縮並轉成 webp（限寬 1400）——原檔常是 2~3MB 的截圖。
 // 網址（https://…）與絕對路徑（/assets/…）不動。
 let imageCount = 0;
+const imageJobs = new Map(); // relPath -> { srcFile, destFile, toWebp }
+const RASTER = /\.(png|jpe?g)$/i;
+
 function localizeImages(body, sourceDir) {
   return body.replace(
     /(!\[[^\]]*\]\()([^)]+)(\))/g,
@@ -135,14 +139,44 @@ function localizeImages(body, sourceDir) {
         console.warn(`sync: image not found, left as-is: ${path.posix.join(sourceDir, decodeURI(url))}`);
         return match;
       }
-      const srcFile = path.join(contentDir, relPath);
-      const destFile = path.join(IMG_OUT, relPath);
-      fs.mkdirSync(path.dirname(destFile), { recursive: true });
-      fs.copyFileSync(srcFile, destFile);
-      imageCount++;
-      return `${open}/content-images/${relPath.split('/').map(encodeURIComponent).join('/')}${close}`;
+      const toWebp = RASTER.test(relPath);
+      const outRel = toWebp ? relPath.replace(RASTER, '.webp') : relPath;
+      imageJobs.set(relPath, {
+        srcFile: path.join(contentDir, relPath),
+        destFile: path.join(IMG_OUT, outRel),
+        toWebp,
+      });
+      return `${open}/content-images/${outRel.split('/').map(encodeURIComponent).join('/')}${close}`;
     }
   );
+}
+
+// 佇列裡的圖片統一處理：能壓的壓（webp），不能壓的照抄
+async function processImages() {
+  let sharp = null;
+  try {
+    sharp = (await import('sharp')).default;
+  } catch {
+    console.warn('sync: sharp unavailable, copying images without compression.');
+  }
+  for (const job of imageJobs.values()) {
+    fs.mkdirSync(path.dirname(job.destFile), { recursive: true });
+    if (sharp && job.toWebp) {
+      try {
+        await sharp(job.srcFile)
+          .rotate()
+          .resize({ width: 1400, withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toFile(job.destFile);
+        imageCount++;
+        continue;
+      } catch {
+        // 副檔名像圖片但內容不是（或損壞）：退回照抄
+      }
+    }
+    fs.copyFileSync(job.srcFile, job.destFile.replace(/\.webp$/, path.extname(job.srcFile)));
+    imageCount++;
+  }
 }
 
 let count = 0;
@@ -200,6 +234,8 @@ for (const source of config.sources) {
     count++;
   }
 }
+
+await processImages();
 
 if (process.argv.includes('--emit-dates')) {
   dateReport.sort((a, b) => a[1].localeCompare(b[1]));
