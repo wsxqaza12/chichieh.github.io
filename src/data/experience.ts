@@ -135,7 +135,7 @@ export const media: Media[] = [
   },
   {
     outlet: '公視',
-    detail: '新聞採訪＋節目錄製，以龍蝦（OpenClaw）使用者身分分享 AI Agent 的日常。',
+    detail: '新聞採訪 +《尖峰對談》節目，以龍蝦（OpenClaw）使用者身分分享 AI Agent 的日常。',
     year: '2026',
     postId: '公視媒體經驗',
   },
