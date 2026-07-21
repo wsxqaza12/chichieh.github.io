@@ -39,12 +39,14 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
       <div class="sec-label">即將登場</div>
       {upcoming.map((t) => (
         <article class="row up">
-          <div class="row-head">
-            <h2 class:list={{ major: t.major }}>{t.event}</h2>
-            <span class="year">{fmtDate(t.date)}</span>
+          <div class="row-main">
+            <div class="row-head">
+              <h2 class:list={{ major: t.major }}>{t.event}</h2>
+              <span class="year">{fmtDate(t.date)}</span>
+            </div>
+            {t.topic && <p class="topic">「{t.topic}」</p>}
+            {t.detail && <p class="desc">{t.detail}</p>}
           </div>
-          {t.topic && <p class="topic">「{t.topic}」</p>}
-          {t.detail && <p class="desc">{t.detail}</p>}
         </article>
       ))}
     </>
@@ -55,13 +57,16 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
     const post = findPost(t.postId);
     return (
       <article class="row">
-        <div class="row-head">
-          <h2 class:list={{ major: t.major }}>{t.event}</h2>
-          <span class="year">{fmtDate(t.date)}</span>
+        <div class="row-main">
+          <div class="row-head">
+            <h2 class:list={{ major: t.major }}>{t.event}</h2>
+            <span class="year">{fmtDate(t.date)}</span>
+          </div>
+          {t.topic && <p class="topic">「{t.topic}」</p>}
+          {t.detail && <p class="desc">{t.detail}</p>}
+          {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
         </div>
-        {t.topic && <p class="topic">「{t.topic}」</p>}
-        {t.detail && <p class="desc">{t.detail}</p>}
-        {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
+        {t.photo && <img class="side-photo" src={t.photo} alt={`${t.event} 現場照片`} loading="lazy" />}
       </article>
     );
   })}
@@ -92,7 +97,14 @@ const fmtDate = (d: string) => d.replaceAll('-', '/');
   .card h2 { font-size: 1rem; margin: 0 0 0.4rem; line-height: 1.6; }
   .card-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0.5rem 0 0; font-size: 0.85rem; }
 
-  .row { padding: 1.2rem 0; border-top: 1px solid var(--line); }
+  .row { padding: 1.2rem 0; border-top: 1px solid var(--line); display: flex; gap: 1.5rem; align-items: center; justify-content: space-between; }
+  .row-main { flex: 1; min-width: 0; }
+  .row-main .row-head { justify-content: flex-start; gap: 1rem; }
+  .side-photo {
+    width: 168px; height: 106px; object-fit: cover;
+    border-radius: 8px; border: 1px solid var(--line); flex-shrink: 0;
+  }
+  @media (max-width: 600px) { .side-photo { width: 112px; height: 76px; } }
   .row.up { border-left: 3px solid var(--accent); padding-left: 1.1rem; border-top: none; margin-bottom: 0.25rem; }
   h2.major { color: var(--accent); }
   .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }

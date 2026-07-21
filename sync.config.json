@@ -23,7 +23,8 @@
         "公視媒體經驗.md",
         "Pahub.md",
         "R-Ladies.md",
-        "Antropic_hackathon.md"
+        "Antropic_hackathon.md",
+        "AWS 跟 Agile 演講.md"
       ]
     },
     {
@@ -65,7 +66,8 @@
     "公視媒體經驗.md": "公視採訪與節目錄製初體驗",
     "Pahub.md": "見到偶像 Pahud：AI Agent 趨勢與 MCP 的商業模式",
     "R-Ladies.md": "R-Ladies 分享：從 Side Project 到 Business",
-    "Antropic_hackathon.md": "Anthropic 全球 Hackathon：六天極限開發，一個人做出 Cairn"
+    "Antropic_hackathon.md": "Anthropic 全球 Hackathon：六天極限開發，一個人做出 Cairn",
+    "AWS 跟 Agile 演講.md": "AWS Summit × Agile Taipei：兩場爆滿的 Agent Memory 分享"
   },
   "dateOverrides": {
     "Vibe Coding 工具.md": "2025-08-15",
@@ -119,7 +121,8 @@
     "知識的分類.md": "2026-05-22",
     "WiDS講者心得.md": "2026-05-29",
     "Agent框架比較_員工助理還是工具人.md": "2026-06-09",
-    "MCP.md": "2026-07-05"
+    "MCP.md": "2026-07-05",
+    "AWS 跟 Agile 演講.md": "2026-07-21"
   },
   "excludeFiles": [
     "AI Avatar 虛擬人偶的製作與種類.md",

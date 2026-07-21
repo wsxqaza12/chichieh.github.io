@@ -19,6 +19,8 @@ export interface Talk {
   major?: boolean;
   /** 同一系列的實際場次數（預設 1），總場數會加總 */
   count?: number;
+  /** 現場側拍（只給大場配，避免頁面變相簿） */
+  photo?: string;
 }
 
 export interface Media {
@@ -97,13 +99,18 @@ export const talks: Talk[] = [
     date: '2026-07-16',
     event: 'AWS Summit Taipei 2026',
     topic: '從 AI Session 到 Shared Memory：打造 AI Native 的知識基礎建設',
+    detail: '現場爆滿的 Agent Memory 分享。',
     major: true,
+    photo: '/assets/img/experience/aws-summit.jpg',
+    postId: 'aws-跟-agile-演講',
   },
   {
     date: '2026-07-16',
     event: 'Agile Taiwan',
     topic: '從龍蝦到 Cairn，當 Agent 成為團隊成員，記憶要怎麼共享？',
     major: true,
+    photo: '/assets/img/experience/agile-taiwan.jpg',
+    postId: 'aws-跟-agile-演講',
   },
   { date: '2026-08-04', event: 'AIA 小聚' },
   { date: '2026-08-18', event: '2026 台灣人工智慧年會', major: true },
