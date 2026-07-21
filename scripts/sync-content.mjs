@@ -176,6 +176,9 @@ for (const source of config.sources) {
     if (seen.has(slug)) slug = `${slug}-2`;
     seen.add(slug);
 
+    // 文章的第一張圖自動當封面（首頁小卡、OG image 用）
+    const firstImage = body.match(/!\[[^\]]*\]\(([^)]+?)(?:\s+"[^"]*")?\)/)?.[1]?.trim();
+
     const fm = {
       // 優先序：文內手寫 frontmatter > 網站側 titleOverrides > 自動抽取
       title: parsed.data.title ?? config.titleOverrides?.[file] ?? title,
@@ -185,6 +188,7 @@ for (const source of config.sources) {
       tags: parsed.data.tags ?? tagResult.tags,
       draft: parsed.data.draft ?? source.draft ?? false,
       source: 'content-dna',
+      ...(parsed.data.hero ?? firstImage ? { hero: parsed.data.hero ?? firstImage } : {}),
     };
 
     fs.writeFileSync(path.join(OUT, `${slug}.md`), matter.stringify(body, fm));
