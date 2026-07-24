@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>從零開始到實戰預訓練與應用心得分享 | ChiChieh Huang</title><meta name="description" content="前陣子參加了 GDG DevFest Taipei 2025，聽到 Liang-Hsun Huang 🧠🧪 分享「從零開始到實戰：預訓練與應用心得分享」，收穫超多，因此寫下來分…"><link rel="canonical" href="https://chichieh-huang.com/posts/%E5%BE%9E%E9%9B%B6%E9%96%8B%E5%A7%8B%E5%88%B0%E5%AF%A6%E6%88%B0%E9%A0%90%E8%A8%93%E7%B7%B4%E8%88%87%E6%87%89%E7%94%A8%E5%BF%83%E5%BE%97%E5%88%86%E4%BA%AB/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="從零開始到實戰預訓練與應用心得分享 | ChiChieh Huang"><meta property="og:description" content="前陣子參加了 GDG DevFest Taipei 2025，聽到 Liang-Hsun Huang 🧠🧪 分享「從零開始到實戰：預訓練與應用心得分享」，收穫超多，因此寫下來分…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/%E5%BE%9E%E9%9B%B6%E9%96%8B%E5%A7%8B%E5%88%B0%E5%AF%A6%E6%88%B0%E9%A0%90%E8%A8%93%E7%B7%B4%E8%88%87%E6%87%89%E7%94%A8%E5%BF%83%E5%BE%97%E5%88%86%E4%BA%AB/"><meta property="og:image" content="https://chichieh-huang.com/assets/img/avatar.png"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>從零開始到實戰預訓練與應用心得分享</h1> <p class="byline" data-astro-cid-egg7nqdx> 2025/12/15 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 5 分鐘
+ </p>  <p>前陣子參加了 GDG DevFest Taipei 2025，聽到 Liang-Hsun Huang 🧠🧪 分享「從零開始到實戰：預訓練與應用心得分享」，收穫超多，因此寫下來分享給大家，圖的來源是作者的投影片XD</p>
+<p>對正在做本地化模型或需要模型 customization 的人，這場真的很值得看一下。</p>
+<h2 id="文章太長全文請看留言連結">(文章太長全文請看留言連結)</h2>
+<p>一、為什麼還要自己訓練落地模型？
+講者一開頭用這句話直接破題，畢竟在大型雲端模型（如 Gemini 或 GPT）日益強大的今天，為什麼企業或社群仍需要自己訓練和微調模型呢? 主要是因為以下三個原因：</p>
+<ol>
+<li>
+<p>隱私性 (Privacy)：在金融或國防工業等特殊領域，政策通常不允許將敏感資料丟上雲端。</p>
+</li>
+<li>
+<p>領域專精 (Domain)：如果你的應用領域過於專業或在地化，雲端模型（訓練數據可能來自網路爬蟲）回答的內容往往「不夠對味」。</p>
+</li>
+<li>
+<p>成本考量 (Cost)：當模型的使用量或查詢量變大時，持續使用雲端模型的成本會變得非常昂貴，訓練一個可落地的微調模型是必要的解決方案。</p>
+</li>
+</ol>
+<p>Gemini 3 很強沒錯，但這不代表大家的需求都能直接被滿足，接下來我們就跟著講者的腳步，來看看如還從 0 到 1 打造一個專屬自己的地端模型。</p>
+<p>二、範例模型：Gemma 3
+Google 在今年初推出了 Gemma 3 系列模型，Gemma 在希臘文中有「珍貴的寶石」之意(講者介紹之前我都不知道XD)，這系列模型採用了與 Gemini 相同的技術訓練而成，主要可以分為幾種：</p>
+<p>• Gemma 3： 處理文字或視覺模態的輸入，輸出文字。
+• Gemma 3n： N代表多模態。
+• MedGemma： 偏向醫學相關領域的模型。
+• EmbeddingGemma： 向量嵌入模型。</p>
+<p>這次案例主角是 Gemma-3-270m，屬於文字模態輸入/輸出的模型，也是一個小到不可思議的模型，可以對比以前的 Bert 與 ChatGPT-2 的大小來想像。官方手冊上這個模型擁有 128K 的 Context Size，支援超過 140 種語言，非常適合部署在資源受限的終端裝置如手機上，光看規格覺得非常棒，但這樣的模型在繁體中文表現上究竟如何呢?</p>
+<p>經講者測試後發現，當使用繁體中文問 Gemma-3-270m 時，模型經常預設用簡體中文來回答；除此之外，由於 270M 的參數量相對較小，模型回答的內容通常也較簡短，知識量有限。因此，這次實戰的目標就是為了大幅加強它處理繁體中文的能力。</p>
+<p>三、建資料集：打造 FineWeb-Edu-zhtw
+為了讓模型真正學會高品質的繁體中文，光有大量資料不夠，資料的乾淨程度、品質等才是關鍵，但 Hugging Face 的繁中資料很多都是垃圾，不能直接拿來預訓練，這是所有做繁中模型的人都知道的痛。近期他們借鏡 FineWeb 與 FineWeb-Edu 的做法，FineWeb 是近年 Hugging Face 整理出的廣乏大型網路語料，包含各國語系，但是文本品質不一；而 FineWeb-Edu 更進一步，只保留「教科書等級」的內容，品質高到足以用來訓練模型的基礎語言能力。</p>
+<p>因此為了從 FineWeb-zhtw 中挑選出高品質的教育內容，他們想要打造一套 繁中 classifier，去把大量網路文本裡的「教科書等級內容」挑出來製作成 FineWeb-Edu-zhtw 訓練集，從下圖就能很明顯地看到，要達到這個目的有兩階段的工作需要做。</p>
+<ol>
+<li>訓練 Classifier-zhtw
+這個 Classifier 是他們自己標資料與訓練模型，一路磨出來的。</li>
+</ol>
+<p>• 使用工具： 他們利用 embeddinggemma-300m 作為基礎，疊加一個 classification head 來構築這個分類器。
+• 標註資料： 透過與台灣大哥大合作，並結合 Twinkle AI 社群夥伴提供的優秀 Prompt，他們使用了Magistral-Small-2506 去對文本進行 0 到 3 分的教育價值評分，最終累積了 500 萬筆的 annotations。</p>
+<ol start="2">
+<li>Fineweb-Edu-zhtw
+最後使用上面的 Classifier-zhtw 篩選出繁體中文首個「教科書等級文本」，包含了大約 200 萬筆樣本、約 20 億 (2B) Tokens 的高品質資料，目前也已經開源。</li>
+</ol>
+<p>如此一來，資料集就準備好了，接下來馬上看到怎麼樣做 Pre-training。</p>
+<p>四、模型 Pre-training
+在前一段我們把繁體中文資料集完整準備好之後，接下來的問題就是，模型到底要怎麼把這些新知識「吃進去」？</p>
+<p>這是今天最核心也是最容易被忽略的環節：Pre-training（預訓練）。
+很多人以為有資料就餵下去就會學會，但講者提到他的經驗完全不是這樣，小模型像 Gemma-3-270m 其實非常脆弱，學習率、語料比例、token 數任何一個配錯，都會讓模型不是忘記原本的能力，就是根本洗不起來。</p>
+<p>這部分有許多坑與技術，但講者很貼心的幫新的幫大家整理了幾個關鍵點：</p>
+<ol>
+<li>
+<p>ChinChill’s law：小模型需要的 token 量其實比想像中來的多，
+270M 的模型大概要 4B tokens 才能有效更新語言能力。</p>
+</li>
+<li>
+<p>調和比例： 為了避免災難性遺忘（模型忘記原本學會的知識，如小孩被丟去美國回來不會講國語一樣），訓練前必須混合一定比例的原文本，這邊採用 1:1 的中英比例。</p>
+</li>
+<li>
+<p>訓練細節與經驗： 訓練環境使用了 8 顆 B200 GPU，講者特別強調，對於小參數量的模型，Learning Rate 是關鍵，如果設定太小，知識會「洗不上去」，建議朝 10 的負 4 次方這個方向去調整。</p>
+</li>
+<li>
+<p>訓練參數參考：請看易讀版</p>
+</li>
+</ol>
+<p>訓練後的模型命名為 gemma-3-tw-270m，通過困惑度 (Perplexity Score, PPL，越低越好) 評測，模型在處理繁體中文文本時，PPL 顯著下降，降幅超過 50%，證明繁體中文能力確實大幅提升，這模型也都有開源。</p>
+<p>四、模型 Post-training/SFT
+五、應用範例
+六、結語</p>
+<p>因為篇幅限制就不多說了，整體我覺得是非常實用的演講，從資料準備、訓練到應用角度都有涵蓋到，非常推薦大家看看。</p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/我開始相信aiagent真的會被拿去做事/" data-astro-cid-egg7nqdx>← 我開始相信AIAgent真的會被拿去做事</a> <a class="next" href="/posts/可觀測性那篇寫完之後我覺得下一步就是-eval/" data-astro-cid-egg7nqdx>可觀測性那篇寫完之後，我覺得下一步就是 eval →</a> </nav> </article>  </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>

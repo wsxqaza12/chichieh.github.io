@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>淺談 MCP 產品化：當工具越接越多，我們要怎麼設計邊界？ | ChiChieh Huang</title><meta name="description" content="其實我之前一直有個疑問，MCP 這個協議到底會不會繼續發展下去？ 因為很多技術剛出來的時候都很熱，大家一窩蜂做 demo、包工具、接外部 API，但過一陣子就發現 producti…"><link rel="canonical" href="https://chichieh-huang.com/posts/mcp/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="淺談 MCP 產品化：當工具越接越多，我們要怎麼設計邊界？ | ChiChieh Huang"><meta property="og:description" content="其實我之前一直有個疑問，MCP 這個協議到底會不會繼續發展下去？ 因為很多技術剛出來的時候都很熱，大家一窩蜂做 demo、包工具、接外部 API，但過一陣子就發現 producti…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/mcp/"><meta property="og:image" content="https://chichieh-huang.com/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image.webp"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>淺談 MCP 產品化：當工具越接越多，我們要怎麼設計邊界？</h1> <p class="byline" data-astro-cid-egg7nqdx> 2026/07/05 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 11 分鐘
+ </p> <details class="toc" data-astro-cid-egg7nqdx> <summary data-astro-cid-egg7nqdx>目錄</summary> <ul data-astro-cid-egg7nqdx> <li class="d2" data-astro-cid-egg7nqdx><a href="#實際開發會撞上的三面牆" data-astro-cid-egg7nqdx>實際開發會撞上的三面牆</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#為了解決這些問題出現了哪些解法" data-astro-cid-egg7nqdx>為了解決這些問題，出現了哪些解法？</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#第三面牆的解法agent-backed-mcp-tool" data-astro-cid-egg7nqdx>第三面牆的解法：Agent-backed MCP Tool</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#這個方向有人在做了嗎" data-astro-cid-egg7nqdx>這個方向有人在做了嗎？</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#什麼時候該殺雞用牛刀用-agent" data-astro-cid-egg7nqdx>什麼時候該殺雞用牛刀（用 Agent）？</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#回頭看-mcp-的四個演進階段" data-astro-cid-egg7nqdx>回頭看 MCP 的四個演進階段</a></li> </ul> </details> <p><img src="/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image.webp" alt="alt text"></p>
+<p>其實我之前一直有個疑問，MCP 這個協議到底會不會繼續發展下去？</p>
+<p>因為很多技術剛出來的時候都很熱，大家一窩蜂做 demo、包工具、接外部 API，但過一陣子就發現 production 根本不好用，最後慢慢變成一堆 side project 的墳場。一開始我對 MCP 也沒有到非常篤定，覺得它大概也就是個讓 Agent 方便去接內部知識庫或各種商業軟體的標準而已，主要是為了解決每次都要重寫串接邏輯的麻煩。</p>
+<p>但最近因為自己實作比較多，我又回去翻了一次 Anthropic 對 MCP 的說法，順便看了後來陸續冒出來的作法（像 Code Execution、Tool Search、Gateway 等等）。</p>
+<p>我自己的感覺是，MCP 正在從單純的「Connector」，慢慢往「Agent Infrastructure」的方向成長。而且當你真的要把它推上 production，真正讓人頭痛的問題，早就已經不是「接不接得到工具」了。</p>
+<p>真正麻煩的是，當我們自己的產品本身就有一大堆功能想開給 Agent 用時，到底該讓 LLM 看見多少東西？這說白了其實是產品設計問題，早就超越技術整合的範疇了。</p>
+<p>這篇文章是我最近在實作與研究 MCP 過程中的一些個人觀點與架構梳理。因為技術演進得很快，很多作法都還在收斂中，如有理解錯誤的地方，還請不吝指教。</p>
+<h2 id="實際開發會撞上的三面牆">實際開發會撞上的三面牆</h2>
+<p>舉個大家在開發時很常遇到的情境，假設我們今天要做一個「客服系統」的 MCP Server，為了讓 Agent 能幫忙處理客訴，我們很自然會在 Server 裡寫出一堆 granular（細粒度）的 tools：</p>
+<ul>
+<li><code>search_knowledge_base</code>（查 FAQ）</li>
+<li><code>get_customer_orders</code>（撈歷史訂單）</li>
+<li><code>check_delivery_status</code>（查物流進度）</li>
+<li><code>calculate_refund_amount</code>（試算退款）</li>
+<li><code>issue_refund</code>（執行退款）</li>
+<li><code>update_ticket_status</code>（更新工單）</li>
+<li><code>send_notification_email</code>（寄信通知）</li>
+</ul>
+<p>這些確實都是合法、也很有用的 MCP tools，很多人的直覺也是「既然要做 Agent，就把這些細碎的工具全開給它，讓它自己去組合運用」。</p>
+<p>但問題就來了，當你系統裡有幾十個、甚至上百個這類的小工具時，無論你是要給內部專屬 Agent 使用，還是要把能力開放給外部 Client，只要你一股腦全攤給最前端的 LLM，馬上就會撞到三面牆。</p>
+<p>第一面牆是 <strong>Context（上下文容量問題）</strong>。LLM 會看到一大坨 tool name、description 還有 input schema。這些東西雖然不是實際內容，但照樣會吃掉寶貴的 context window，甚至干擾模型的判斷。</p>
+<p>這點 Anthropic 官方也有在正視，滿推薦大家去看他們 2025 年 11 月出的那篇 Code Execution with MCP，裡面提到現在開發者動不動就讓 Agent 接上幾百幾千個 tools，一旦工具變多，tool definitions 會直接塞爆 context window，中間回傳的 tool results 也會吃掉超多 token。就像他們文中舉例的，如果 Agent 連了上千個 tools，模型可能連使用者的問題都還沒讀到，就得先吃下幾十萬 token 的工具說明，光想就覺得很浪費錢。</p>
+<p>第二面牆是 <strong>Exposure（封裝與內外邊界問題）</strong>。這在你把系統從 Internal 走向 External 時特別明顯。產品底層的 API、內部權限控管或防詐欺邏輯，絕對不能毫無防備地暴露給外部 LLM 看。你必須有能力決定哪些工具該對外開放、哪些該包緊緊。</p>
+<p>第三面牆是 <strong>Orchestration（多步驟流程調度問題）</strong>。很多任務其實牽涉到固定且繁瑣的步驟。如果讓前端 LLM 自己去呼叫這堆細碎工具，它可能要先 call <code>撈訂單</code>，拿到一大包資料塞進 context 裡，再從裡面挑出特定訂單去 call <code>試算退款</code>，最後還要記得 call <code>更新工單</code>。這不僅浪費 token，還很容易在中間某一步通靈失敗就出錯。</p>
+<p>所以這時候 MCP 的重點已經從「怎麼把工具接起來」變成「怎麼設計 Agent 看得見的能力表面 (Capability Surface)」。Agent 看得到什麼就會以為自己能做什麼，它看不到的部分，我們就得在後端幫它收尾。</p>
+<h2 id="為了解決這些問題出現了哪些解法">為了解決這些問題，出現了哪些解法？</h2>
+<p>以第一面牆「工具太多會塞爆 context」這點來說，大家可能馬上會想到 Skill 的漸進式揭露 (Progressive Disclosure)：先讓模型看到 name 和 description，真的要用了才去讀完整的操作說明。</p>
+<p>Skill 的出現就是為了解決 workflow knowledge 太多的問題。那 MCP 在這裡有沒有辦法做到類似的事？</p>
+<p>官方架構文件寫得很明白，MCP 專注做 context exchange protocol，它不管你怎麼管理塞進來的 context，所以 MCP 本身不會直接變成 Skill。不過滿有趣的是，MCP 周邊開始長出一些補充層，全都是在解決規模放大之後會遇到的痛點。</p>
+<p>為了解決中間資料塞爆 context 的問題，出現了 <strong>Code Execution with MCP</strong>。</p>
+<p>這篇文章我一開始看的時候稍微卡了一下，後來換個白話一點的方式來想，傳統直接 tool calling 的作法就是每一步都得經過 LLM：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>LLM 決定呼叫 tool A</span></span>
+<span class="line"><span>tool A 回傳結果給 LLM</span></span>
+<span class="line"><span>LLM 看完結果，再決定呼叫 tool B</span></span>
+<span class="line"><span>tool B 回傳結果給 LLM</span></span></code></pre>
+<p>萬一 tool A 回傳了一大包資料，那包資料就會被硬塞進 context。如果下一步 tool B 剛好又需要這包資料，模型還得再把它完整寫進下一次的 tool call 裡。</p>
+<p>但 Code Execution with MCP 的做法轉了個彎，它讓 Agent 寫一段 code，直接在 execution environment 裡去呼叫這些 MCP tools：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="ts"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> transcript</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#D73A49;--shiki-dark:#F97583">await</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> gdrive.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">getDocument</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({ documentId })).content;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">await</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> salesforce.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">updateRecord</span><span style="color:#24292E;--shiki-dark:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  objectType: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"SalesMeeting"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  recordId,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  data: { Notes: transcript }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">});</span></span></code></pre>
+<p>這裡 transcript 當然還在，只是它變成 execution environment 裡的一個變數，只要你沒有手殘去 console.log、return 或是把它放回 message 裡，模型根本就不會看到這堆全文。</p>
+<p>所以「包成 code API」之所以能省下大量 context，關鍵根本不在於 API 這個形式有多高級，單純只是它成功把那些肥大的中間資料流擋在模型外面而已 😅。</p>
+<p>而為了防堵工具定義 (tool definitions) 太多，則出現了 <strong>Tool Search</strong>。</p>
+<p>OpenAI 的 Tool Search 讓模型在真的需要時才去動態搜尋、載入 tools，避免一開局就載入所有說明書。這點跟 Skill 的精神滿像的，差別只在 Skill 展開的是 workflow instruction，而 Tool Search 展開的是 tool definitions。這不是 MCP protocol 本身內建的標準能力，而是 OpenAI 在模型平台層做的 context management。</p>
+<p>那第二面牆「封裝與內外邊界」該怎麼解？也就是當我的產品裡接了一堆 Internal 的 MCP Server 跟內部流程，但我根本不想讓 External client 看光光的時候。</p>
+<p>這時候，<strong>MCP Gateway</strong> 就派上用場了。它處理的不只是對外的存取與權限控制，也包含 routing、log、tool exposure，甚至 context optimization。</p>
+<p>你可以把它想像成「公司總機」來看。外面打來的人根本不需要拿到全公司的通訊錄，也不用管你們部門內部流程怎麼跑，他只要知道「要做這件事，打這支電話」就夠了。剩下的權限檢查、轉接、留紀錄，全都是 Gateway 的事。</p>
+<p>像是 Docker 的 MCP Gateway 或 Cloudflare 的 MCP server portals 都在做類似的事。所以 Gateway 真的不光是為了省 token，它更是產品化之後絕對少不了的控制層，讓你決定到底哪些工具可以對外曝光，哪些後端能力得包緊緊。</p>
+<h2 id="第三面牆的解法agent-backed-mcp-tool">第三面牆的解法：Agent-backed MCP Tool</h2>
+<p>前面講了這幾個解法，但我最近看到另一個做法，不僅能順便避開第一面牆，也能大幅降低第三面牆的多步驟通靈失敗的問題。</p>
+<p>這個做法跳脫了在 MCP tool 後面接普通 function 的思維，直接給它接上一個小 Agent。舉剛剛客服系統的例子來說，我們對外（或對主 Agent）可能只開放一個高階的 action：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>process_customer_refund()</span></span></code></pre>
+<p>但在後台，這個 <code>process_customer_refund()</code> 其實得自己跑完一連串流程：</p>
+<ul>
+<li>撈取並分析歷史訂單</li>
+<li>判斷是否符合退款政策</li>
+<li>試算退款金額</li>
+<li>執行退款金流</li>
+<li>更新工單與寄信通知</li>
+</ul>
+<p>這時候 MCP tool 就只是一個入口，真正在裡面扛起重擔的其實是一整組 Agentic Workflow。這不僅大幅降低了前端 LLM 需要看到的 context，也把多步驟調度移到後端比較可控的 workflow 或 agent 裡，而不是讓前端 LLM 自己一路通靈。</p>
+<p>我自己暫時把它稱作 <code>Agent-backed MCP Tool</code>。</p>
+<p>對外它看起來就是一個再穩定不過的 MCP tool，但對內它其實包了一個 agent、workflow，或是一組能看情況隨機應變的流程。</p>
+<p>Code Execution 是讓「模型寫 code 去用 MCP」，Agent-backed MCP Tool 則是直接讓「MCP tool 後面養一群 agent」。</p>
+<p>這個差別還是滿大的，尤其如果是我們自己在做產品，我絕對會想選後者。因為外部的 LLM 根本沒必要知道我底下的退款政策怎麼判斷、多步驟流程怎麼跑，它只需要知道一句話：「這裡可以處理退款」。剩下的，我們後端系統自己搞定就好 💪。</p>
+<h2 id="這個方向有人在做了嗎">這個方向有人在做了嗎？</h2>
+<p>就我目前翻到的資料來看，這種 pattern 似乎還沒出現一個大家公認的名字，但類似概念的鄰居倒是不少。</p>
+<p>像 OpenAI Agents SDK 就提過一個 pattern 叫做 agents as tools，就是讓主要的 main agent 握有控制權，把底下的 specialist agents 當成特定的 capability 來呼叫。Microsoft Foundry 提到的 connected agents 也滿類似的，就是讓 primary agent 把任務往下包給不同的 purpose-built subagents。</p>
+<p>雖然這些都不能直接畫上等號，但大方向真的非常接近。也就是說，大家已經很習慣「主 Agent 去呼叫 Specialist Agent」，但我其實更好奇的是下一步：能不能讓 MCP tool 本身直接成為一個 agentic workflow 的入口？</p>
+<p>這如果在實際產品裡，其實是很自然就會長出來的架構。做產品的人心裡都很清楚，你不可能把所有內部吃飯的傢伙跟流程全都攤在 LLM 面前。這才比較像真正能落地、也比較健康的產品設計。</p>
+<h2 id="什麼時候該殺雞用牛刀用-agent">什麼時候該殺雞用牛刀（用 Agent）？</h2>
+<p>講到這邊還是得稍微拉回來一點。</p>
+<p>絕對不是每個 MCP tool 背後都要硬塞一個 Agent。如果只是再單純不過的查詢或 CRUD，乖乖寫個普通 function 當 tool 就好，像是 <code>get_order_status()</code> 或 <code>search_knowledge_base()</code> 這種，千萬別自己搞死自己。</p>
+<p>但如果今天這個 action 需要做複雜判斷、讀長篇上下文、還要處理一堆例外跟多步驟流程，例如剛剛提的 <code>process_customer_refund()</code> 或是 <code>analyze_user_complaint_history()</code>，那它就真的滿適合躲在 Agent-backed MCP Tool 後面。</p>
+<p>我目前的習慣大概會這樣分：</p>
+<ul>
+<li>只是單純查資料：用普通的 MCP tool</li>
+<li>固定的多步驟流程：寫死成 workflow</li>
+<li>需要處理龐大資料：用 code execution 在外面跑</li>
+<li>需要通靈、判斷跟吃上下文：用 Agent-backed tool</li>
+<li>牽涉到跨團隊記憶跟來源比對：才動用到 Memory-aware agent</li>
+</ul>
+<p>一開始先這樣切，比較不會搞成一場 multi-agent 的大拜拜。</p>
+<p>多 Agent 架構說實話聽起來超潮，但 debug 起來往往痛不欲生。我之前有幾個 side project 就是為了酷炫硬拆，當初畫架構圖覺得自己簡直是天才，結果系統一出 bug，在那邊查 log 根本不知道是哪一層的 Agent 在那邊亂通靈，找問題找到快崩潰 🤣。</p>
+<h2 id="回頭看-mcp-的四個演進階段">回頭看 MCP 的四個演進階段</h2>
+<p>總結來說，我目前看 MCP 一路發展下來，大概經歷了這幾個階段：</p>
+<p><strong>第一階段是扮演 Connector</strong>：讓大家有個標準的方式能接上各種工具和資料源，想解的是破碎化整合的問題。</p>
+<p><strong>第二階段進入 Capability Management</strong>：因為工具越長越多，LLM 的 context 吃不消。模型可能還沒開始讀使用者問題，就先被迫吃下一大堆工具說明。這也是為什麼後面會出現 Tool Search、Code Execution 這類做法。</p>
+<p><strong>第三階段則是 Product Gateway 的出現</strong>：當 MCP 真的開始被放進產品，自然會意識到 Internal 與 External MCP Server 的邊界。你不會想把內部用的細碎工具全亮給外部看，於是權限、log、routing 這些 Gateway 的需求就冒出來了。</p>
+<p><strong>第四階段走向 Agentic Backend</strong>：對外只開出乾淨又穩定的 MCP action，對內其實是靠著錯綜複雜的 workflow 甚至 specialist agent 在支撐大局。外部 context 暴露越少，Agent 反而可能跑得更穩。</p>
+<p>所以我現在看到一個新東西，已經不會單純只問「欸你們這有沒有支援 MCP？」，反而會更想知道：</p>
+<p>你們開給 Agent 的能力粒度切到多細？
+哪些東西是毫不保留讓 LLM 看到的？哪些是藏在後端自己消化的？
+那個 MCP tool 背後，到底就只是個 function，還是其實躲著一整個 Agent 在賣命？</p>
+<p>這些細節，可能才是 MCP 真正要進到 production、要落地產品化時，無可避免會撞上的痛點。尤其是當你在做自己的產品，而不光是去接別人的 Server 時，這感覺一定會更強烈。</p>
+<p>MCP 確實打開了一扇大門，讓 Agent 能輕易長出各種能力。但說真的，做產品的人沒必要傻傻地把所有能做的底牌都掀在檯面上。這大概是我這陣子折騰下來最大的感觸。</p>
+<p>不曉得大家最近有沒有實作 MCP、甚至把它推上 production 的經驗？滿好奇大家在設計這一層時，是會選擇把 tool 拆得極細，還是也傾向把高階 action 留給外部，髒活留給後端處理？歡迎留言分享你們的做法，有碰過類似踩坑慘況的朋友也歡迎在下面取暖 🫠。</p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/agent框架比較-員工助理還是工具人/" data-astro-cid-egg7nqdx>← Agent 是你的員工、助理、還是工具人？三個框架的底層差異</a> <a class="next" href="/posts/aws-跟-agile-演講/" data-astro-cid-egg7nqdx>AWS Summit × Agile Taipei：兩場爆滿的 Agent Memory 分享 →</a> </nav> </article> <aside class="toc-rail" aria-label="章節目錄" data-astro-cid-egg7nqdx> <nav data-astro-cid-egg7nqdx> <p class="rail-label" data-astro-cid-egg7nqdx>本頁章節</p> <ul data-astro-cid-egg7nqdx> <li class="d2" data-astro-cid-egg7nqdx> <a href="#實際開發會撞上的三面牆" data-toc-link="實際開發會撞上的三面牆" data-astro-cid-egg7nqdx>實際開發會撞上的三面牆</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#為了解決這些問題出現了哪些解法" data-toc-link="為了解決這些問題出現了哪些解法" data-astro-cid-egg7nqdx>為了解決這些問題，出現了哪些解法？</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#第三面牆的解法agent-backed-mcp-tool" data-toc-link="第三面牆的解法agent-backed-mcp-tool" data-astro-cid-egg7nqdx>第三面牆的解法：Agent-backed MCP Tool</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#這個方向有人在做了嗎" data-toc-link="這個方向有人在做了嗎" data-astro-cid-egg7nqdx>這個方向有人在做了嗎？</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#什麼時候該殺雞用牛刀用-agent" data-toc-link="什麼時候該殺雞用牛刀用-agent" data-astro-cid-egg7nqdx>什麼時候該殺雞用牛刀（用 Agent）？</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#回頭看-mcp-的四個演進階段" data-toc-link="回頭看-mcp-的四個演進階段" data-astro-cid-egg7nqdx>回頭看 MCP 的四個演進階段</a> </li> </ul> </nav> </aside> </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>
