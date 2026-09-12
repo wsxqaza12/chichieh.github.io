@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>大家都在講Memory但大家講的是同一件事嗎？ | ChiChieh Huang</title><meta name="description" content="以前我們可能會覺得，只要把 RAG 做好、把 Context Window 塞滿，AI 就可以變聰明了。結果實際去兜 Agent 系統才發現，很多時候你痛的根本不是它答不出新知識，…"><link rel="canonical" href="https://chichieh-huang.com/posts/memory1/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="大家都在講Memory但大家講的是同一件事嗎？ | ChiChieh Huang"><meta property="og:description" content="以前我們可能會覺得，只要把 RAG 做好、把 Context Window 塞滿，AI 就可以變聰明了。結果實際去兜 Agent 系統才發現，很多時候你痛的根本不是它答不出新知識，…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/memory1/"><meta property="og:image" content="https://chichieh-huang.com/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image.webp"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>大家都在講Memory但大家講的是同一件事嗎？</h1> <p class="byline" data-astro-cid-egg7nqdx> 2026/09/12 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 8 分鐘
+ </p>  <p>以前我們可能會覺得，只要把 RAG 做好、把 Context Window 塞滿，AI 就可以變聰明了。結果實際去兜 Agent 系統才發現，很多時候你痛的根本不是它答不出新知識，而是它忘記你們昨天才剛走過的血淚教訓。</p>
+<p>最近我花了不少時間在研究 AI Agent 的 Memory，越看越覺得這個領域有一個很有趣的問題：</p>
+<p>現在大家嘴巴裡講的「Memory」，其實常常根本不是同一件事。</p>
+<p>有人說 Memory 是把 ChatGPT 的歷史對話存起來；有人把 MEMORY.md 當成 Memory；Mem0、Zep 這類產品也在做 Memory；RAG 從 Vector DB 找資料，有時也被放進 Memory 的討論；再往模型底層看，fine-tuning、KV Cache、甚至模型參數裡的知識，也都有人用「記憶」來描述。</p>
+<p>全部混在一起之後，很容易變成：反正只要 AI 可以把以前的東西拿回來，都叫 Memory。</p>
+<p>但這樣其實很難討論，因為不同研究和產品，根本在解不同的問題。</p>
+<p>所以最近我想花幾篇文章，重新把 Agent Memory 到底是什麼整理一次。</p>
+<p>我不打算單純做 paper summary，比較想從我們現在真的在做系統時會碰到的場景出發：Memory 存在哪裡？Agent 到底要記什麼？一段資訊怎麼變成 Memory？記憶過期了怎麼辦？甚至到了多人 Agent 之後，誰有資格修改共享記憶？</p>
+<p>剛好去年底有一篇很完整的 Survey《Memory in the Age of AI Agents》。這篇 paper 點出現在 Agent Memory 相關的研究真的太分散了，傳統用「短期記憶 / 長期記憶」來分類，已經不太能描述現在的系統。</p>
+<p>今年二月我有分享一次，但沒有細部去探討，因此這次這整個大題目我目前預計會拆成 8 篇，分「第一季（打地基）」跟「第二季（深水區）」來連載。老實說，一口氣挖這麼大的坑我也滿怕自己填不完的 😅，技術演進很快，如內容有誤也請大家不吝指教🙏</p>
+<p>總之第一集，我們就先從「把最容易搞混的名詞全部分開」開始。</p>
+<p>#都叫Memory但其實在回答不同問題</p>
+<p><img src="/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image.webp" alt="alt text"></p>
+<p>就像附圖文氏圖畫的一樣，現在 Memory 這些錯綜複雜的名詞，其實可以大致切成四個相關但不同的問題域：LLM Memory、RAG、Context Engineering，以及 Agent Memory。</p>
+<p>與其去硬背它們的定義，我自己目前會選擇用四個「反問」來理解它們真正的差別：</p>
+<p>【 1. LLM Memory：模型本身「記得」什麼？ 】</p>
+<p>如果今天研究的中心是 LLM 本身，例如：
+• 資訊如何編碼進模型參數
+• 模型怎麼維持長 context
+• inference 過程中的 internal state
+• 過去資訊怎麼持續影響模型計算</p>
+<p>這比較接近 LLM Memory 的問題。它關心的對象首先是 model。
+簡單來說，可以先想成：模型本身如何保存與利用過去資訊？
+這可能一路深入到 parameters、KV state 等比較 model-level 的機制。這和我們平常說「Agent 記得我喜歡喝拿鐵」，其實不是完全同一層次的事。</p>
+<p>不過這裡的邊界不是由「存在哪種介質」決定的。Agent Memory 本身也可能用 token-level、parametric 或 latent 的形式來實作。真正不同的是研究中心究竟是 model 本身，還是 agent 如何跨互動累積與利用記憶，這部分下篇再深入探討。</p>
+<p>【 2. RAG：這一題回答之前，我應該先找什麼資料？ 】</p>
+<p>RAG 又是另一件事。它的核心問題是：
+現在要回答這個 Query，我應該從外部 knowledge source 找哪些資訊？</p>
+<p>最典型的 RAG，就是把大量資料切 chunk、丟進 Vector DB，然後讓 LLM 檢索回答。
+但這裡很容易出現一個誤會：用了 Vector DB，不代表你就做了 Agent Memory。</p>
+<p>假設我把公司 10,000 份 SOP 丟進 Vector DB 讓 Agent 搜尋。這當然是一個不錯的 Knowledge Retrieval System。
+但 Agent 昨天犯了一個錯、被工程師修正了，今天它會不會因此改變？其實並不一定。</p>
+<p>簡單來說，典型的 RAG 比較像「這題回答前，我要去哪裡查資料」；Agent Memory 則更進一步問：「過去發生過的事，有哪些應該留下來，並在未來再次影響我？」</p>
+<p>對 experiential memory 來說，它甚至是在解：「我不要再犯跟昨天一樣的錯。」但 Agent Memory 不只有 experiential memory，像「User 喜歡喝拿鐵」「這個 repo 用 PostgreSQL」這些 factual memory，或是 Agent 當前任務的 working memory，也都屬於 Agent Memory 的範疇。</p>
+<p>而且要注意，RAG 和 Agent Memory 並不是互斥的系統架構。很多 Agent Memory 的 read path 本身就是 retrieval-augmented 的，真正不同的在於，這份資訊在整個 Agent lifecycle 中扮演什麼角色。這也是為什麼那篇 survey 會刻意把 RAG 和 Agent Memory 分開處理。</p>
+<p>【 3. Context Engineering：這一次到底要讓模型看到什麼？ 】</p>
+<p>Context Engineering 最近也很常跟 Memory 綁在一起討論。
+但我自己的感覺是，用一句話就能把這兩件事切開：
+Memory 是你擁有什麼；Context Engineering 是這一刻你要讓模型看到什麼。</p>
+<p>例如一個 Coding Agent 接到任務，呼叫模型前的 context 裡可能同時包含：
+• System Instructions
+• Project Rules
+• Current Task
+• Conversation History
+• Tool Results
+• Retrieved Memory
+• Relevant Code</p>
+<p>Retrieved memory 可以是其中一種 input，而 memory system 本身也常常參與 context construction。Context Engineering 真正關心的是這次呼叫只有有限的 context budget，到底該塞哪些東西進去？</p>
+<p>因此你完全可能擁有超大容量的 Memory，但這次一條都沒拿出來；又或是沒有實作長期 Memory，但透過極好的 context construction，就讓 Agent 跑得很順。這是一個工程上方便理解的切法，實務上兩者高度交疊，但把它們分開想，有助於釐清各自要解的問題。</p>
+<p>【 4. Agent Memory：過去的經驗，怎麼持續改變未來的行動？ 】</p>
+<p>到了真正的 Agent Memory，我覺得問題變得有點不太一樣了。
+Agent 已經不只是 Input → LLM → Output，而是會跟環境反覆互動、執行 Action、得到 Outcome，再進行下一次 Action。</p>
+<p>這時候 Memory 真正重要的地方在於過去發生過的事，能不能持續影響下一次的判斷與行動？</p>
+<p>舉個實際踩坑的例子：Agent 上次 Deploy 時出包了，工程師火大修理並告訴它，Production migration 前一定要先確認 backward compatibility。</p>
+<p>這段教訓被留了下來，三週後，另外一個 task 又碰到 migration，Agent 主動拿出這條經驗，改變了自己的 plan。這就比單純「從 memory 搜到 migration 說明檔案」更接近我們現在談的 Agent Memory 核心。</p>
+<p>真正做成長期運作的 Agent Memory，很快就會碰到一個重要問題：Memory 不是只寫一次就結束，它需要有 dynamics。
+• Agent 做了一件事 → 形成新 Memory。
+• 發現舊經驗不對 → 修改 Memory。
+• 兩段經驗互相衝突 → merge、保留 disagreement，或者讓其中一條失效。
+• 需要完成新任務 → 再把適合的 Memory 撈回來。</p>
+<p>—</p>
+<p>【 同一個技術，也可能是在做完全不同的事情 】</p>
+<p>把這幾個概念拆開之後，你可以明顯感受到「技術實作」，並不能直接告訴你這是不是 Agent Memory。</p>
+<p>例如都是 Vector DB：
+情境 A：公司文件 → Vector DB → 回答員工問題。
+這就是 RAG。</p>
+<p>情境 B：Agent execution → 萃取失敗經驗 → Vector DB → 下次任務重新使用。
+這就開始接近 Agent Memory。</p>
+<p>老實說，這兩種系統底層甚至可能都是兜同一個 PostgreSQL + pgvector。現在也有些系統只是把歷史 chat history 一路存進 database，就直接稱作 Memory。但如果這些資料之後既不被整理、不被選擇性取回，也不再影響 Agent 的判斷，那它其實比較接近 archive，而不是一套完整的 memory mechanism 😅。</p>
+<p>同樣地，像 Agent 會建立的 MEMORY.md 也只是一個儲存形式，應該問的是：
+• 誰會把內容寫進去？
+• 寫的是客觀事實還是主觀經驗？
+• 什麼時候會更新？
+• 舊的東西怎麼失效？
+• Agent 什麼時候會讀？
+• 最關鍵的讀完之後有沒有真的改變它的行動？</p>
+<p>問到這裡，Memory 才能從一個死板的「檔案」，變成一套活的「機制」。</p>
+<p>—</p>
+<p>所以這篇就當作整個系列的前哨站，這個坑滿大的，我打算把它拆成兩季來寫，也希望我能撐完 🫠：</p>
+<p>#第一季：搞懂 Agent Memory 的地基
+如果你正在實作 Agent，前四篇主要是幫我們建立一套實用的共同語言，看懂現在各家工具到底在做哪一塊：</p>
+<ol>
+<li>大家講的 Memory 是一樣的嗎？（也就是這篇）</li>
+<li>Agent 的記憶到底「長什麼樣」？(從 Token-level、Parametric 到 Latent Memory)</li>
+<li>Agent 到底需要記住什麼？(Working 到 Experiential Memory)</li>
+<li>Memory 怎麼形成、更新與消失？(Formation 到 Forgetting)</li>
+</ol>
+<p>#第二季：Agent Memory 的深水區
+第一季打好地基後，我覺得後面的發展其實更迷人。因為現在不管學界還是業界，都開始不得不面對一個殘酷的現實：就算 Agent「記得」，也不代表它記對了；就算它記對了，也不代表你能相信它。</p>
+<p>所以第二季，我們會往更底層的落地挑戰走：</p>
+<ol start="5">
+<li>記住了，就代表記對了嗎？(過期、幻覺與衝突)</li>
+<li>當 Memory 也開始被攻擊 (安全性與 Poisoning)</li>
+<li>Agent 能不能自己學會管理記憶？(Learned memory policy)</li>
+<li>當 Memory 從「我的」變成「我們的」(共享記憶的治理)</li>
+</ol>
+<p>這就是接下來這個系列的完整藍圖。老實說，寫到第二季這些深水區時，我們面對的問題早就超越「要把對話存在哪個 Vector DB」的層次了。</p>
+<p>—</p>
+<p>我認為 Memory 最後要解的，終究不是「保存」，而是如何讓過去的資訊與經驗，可以持續影響未來行動。</p>
+<p>所以，Memory 的終點不該只是成功把 100 萬條對話 log 存下來。而是 Agent 因為記得，所以這一次，它做得不一樣了。</p>
+<p>如果用這個視角去看，後續的實作細節會變得非常好玩。第一季下一篇我們就先從最基本的開始：記憶到底存在哪裡？</p>
+<p>來看看為什麼 MEMORY.md、Vector DB、Knowledge Graph 這些五花八門的東西，居然都會出現在同一張 Agent Memory 工具箱裡。</p>
+<p>大家在兜 Agent 的時候，有沒有遇到哪些以為它記住了，結果下一次又失憶的踩坑經驗？或對系列文有任何建議也請不吝指教 🙏</p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/memory2/" data-astro-cid-egg7nqdx>← Agent 的記憶到底「長什麼樣」？</a> <span data-astro-cid-egg7nqdx></span> </nav> </article>  </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>

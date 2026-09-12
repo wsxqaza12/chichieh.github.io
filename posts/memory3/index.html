@@ -1,0 +1,119 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Agent 到底該記住什麼？ | ChiChieh Huang</title><meta name="description" content="上一篇我們聊了 Agent 的記憶到底長什麼樣，同一段記憶可以寫成文字存在 Vector DB、學進模型 parameters 裡，也可以藏在 KV Cache 當中。知道 Mem…"><link rel="canonical" href="https://chichieh-huang.com/posts/memory3/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="Agent 到底該記住什麼？ | ChiChieh Huang"><meta property="og:description" content="上一篇我們聊了 Agent 的記憶到底長什麼樣，同一段記憶可以寫成文字存在 Vector DB、學進模型 parameters 裡，也可以藏在 KV Cache 當中。知道 Mem…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/memory3/"><meta property="og:image" content="https://chichieh-huang.com/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-3.webp"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>Agent 到底該記住什麼？</h1> <p class="byline" data-astro-cid-egg7nqdx> 2026/08/24 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 14 分鐘
+ </p> <details class="toc" data-astro-cid-egg7nqdx> <summary data-astro-cid-egg7nqdx>目錄</summary> <ul data-astro-cid-egg7nqdx> <li class="d2" data-astro-cid-egg7nqdx><a href="#" data-astro-cid-egg7nqdx></a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#1-factual-memory這個世界現在是什麼樣子" data-astro-cid-egg7nqdx>1. Factual Memory：這個世界現在是什麼樣子？</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#2-experiential-memory上次跌過這個坑下次不要再跌了" data-astro-cid-egg7nqdx>2. Experiential Memory：上次跌過這個坑，下次不要再跌了</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#2-1-case-based-memory先把上次怎麼做留下來" data-astro-cid-egg7nqdx>2-1. Case-based Memory：先把上次怎麼做留下來</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#2-2-strategy-based-memory不要只記案例整理出攻略" data-astro-cid-egg7nqdx>2-2. Strategy-based Memory：不要只記案例，整理出攻略</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#2-3-skill-based-memory攻略用太多次乾脆做成工具" data-astro-cid-egg7nqdx>2-3. Skill-based Memory：攻略用太多次，乾脆做成工具</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#3-working-memory我現在到底做到哪裡了" data-astro-cid-egg7nqdx>3. Working Memory：我現在到底做到哪裡了？</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#把-2-和-3-疊起來看form--function" data-astro-cid-egg7nqdx>把 #2 和 #3 疊起來看：Form × Function</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#最後真正的問題不是記得越多越好" data-astro-cid-egg7nqdx>最後真正的問題：不是「記得越多越好」</a></li> </ul> </details> <p>上一篇我們聊了 Agent 的記憶到底長什麼樣，同一段記憶可以寫成文字存在 Vector DB、學進模型 parameters 裡，也可以藏在 KV Cache 當中。知道 Memory 的形式後，接下來的問題其實更實際，那就是到底什麼東西值得記？</p>
+<p>因為如果一個 Agent 跟你工作一年，它可能看過幾萬封訊息、做過幾千次 tool call，甚至跟你一起踩過幾百個坑，難道這些全部都要留下來嗎？</p>
+<p>你今天隨口說一句「中午好像有點想吃拉麵」，這要記嗎？但如果你說「我不吃牛肉」，這聽起來就比較值得記。如果是 Agent 執行任務時打了一次錯誤的 API，要記嗎？老實說，如果這個錯誤害 Production 掛掉，那好像又應該記下來。</p>
+<p>所以真正困難的問題其實不是 Memory 能不能存，而是 Agent 到底要把什麼東西變成自己的 Memory。</p>
+<p>這篇我們換個角度，一樣從《Memory in the Age of AI Agents》這篇論文裡提到的 Functions 來看。如果上一篇是在問記憶由什麼形式承載 (What carries memory)，那這一篇就是在問，這段記憶到底拿來幹嘛 (Why does the agent need this memory)。</p>
+<p>Survey 把記憶大致分成三種：Factual Memory (我知道什麼)、Experiential Memory (我從以前學會了什麼) 以及 Working Memory (我現在正在處理什麼)。簡單來說，就是事實、經驗跟工作桌，我們一個一個來看。</p>
+<h2 id=""><img src="/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-3.webp" alt="alt text"></h2>
+<h2 id="1-factual-memory這個世界現在是什麼樣子">1. Factual Memory：這個世界現在是什麼樣子？</h2>
+<p>先從最直覺的開始。假設你跟 Agent 說「我不吃牛肉」，或者 Agent 在專案裡知道「這個專案的資料庫用 PostgreSQL」、「線上系統目前跑的是 v2 版本的 API」、「客戶 A 希望回覆簡短一點」，這些都比較接近 Factual Memory。</p>
+<p>它主要是在幫 Agent 回答，關於這個人、這個環境與這個世界，有哪些事情是我應該知道的。這篇論文把 Factual Memory 又大致切成兩邊，一個是跟使用者有關的 User Factual Memory，像是你不吃牛肉、下個月要去日本、上次已經決定不要採用方案 A，這能讓 Agent 不要每次醒來都像第一次見到你。</p>
+<p>另一個則是跟外部環境有關的 Environment Factual Memory，例如這個專案用的資料庫、某個第三方服務已經停止支援 (deprecated)、目前專案進度做到 Phase 2。這些雖然不是使用者偏好，但如果 Agent 不記得，它就很容易每次都要重新通靈一次。</p>
+<p>但 Factual Memory 有一個很麻煩的問題，就是什麼才算「值得記的 Fact」？</p>
+<p>假設我們今天聊了 1,000 句話，理論上每一句都是發生過的事，但如果每一句都存，Memory 很快就炸掉了。所以今年的一些新研究開始直接處理這件事，與其預設怕漏掉就全部記，不如讓 Memory System 判斷，對這個 Agent、這個 User 以及未來的任務而言，什麼才真的值得留下來。</p>
+<p>這點其實滿合理的，對一個旅遊 Agent 來說，你不吃牛肉非常重要，但你今天下午喝了一杯拿鐵可能根本沒必要永久保存。可是如果今天換成飲食追蹤 Agent，同一句話突然又變重要了。所以什麼值得記不只取決於資訊本身，也取決於 Agent 未來要拿它來做什麼。</p>
+<p>而且事情還更麻煩，有些資訊在寫進去的當下看起來完全不重要，過幾週才突然有用，也就是今天看起來像廢話的東西，三週後可能突然變成關鍵證據。這代表 Agent Memory 不一定能在資訊出現的那一刻就完美預測它未來有沒有用。</p>
+<p>另外還有一件更反直覺的事，就是 Agent 記得一件事，不代表它真的會用。例如 Agent 明明可以回答出你對花粉過敏，代表它「知道」，但當你問春天週末適合安排什麼活動時，它卻推薦你去花田野餐。</p>
+<p>今年也開始有研究特別把這件事情拆成 Know 跟 Act，Agent 能 retrieve 到偏好，不代表它真的會在 Planning 或 Action 時使用。這其實又回到了我們第一篇一直在講的，Memory 的終點不是我有存到，也不只是我查得到，真正重要的是這份記憶有沒有改變 Agent 接下來的判斷。</p>
+<hr>
+<h2 id="2-experiential-memory上次跌過這個坑下次不要再跌了">2. Experiential Memory：上次跌過這個坑，下次不要再跌了</h2>
+<p>接下來就是我自己最有興趣的一種，也就是 Experiential Memory。如果說 Factual Memory 比較像「我知道 migration 上次失敗了」，那 Experiential Memory 則開始問「那我從這件事情到底學到了什麼」。</p>
+<p>又回到我們一路使用的系統更新事故。假設上個月 Agent 幫忙發布新版本時，直接更新了資料庫結構 (schema migration) 結果線上系統大當機。後來發現是因為舊版手機 App 還有人在用，最後工程師緊急把它救回來，並且學到更新前一定要先確認向下相容性 (backward compatibility)。</p>
+<p>Factual Memory 可能只會記下 8/3 發生過一次系統升級當機事件 (migration incident)，但 Experiential Memory 則會想留下下次碰到升級任務時我應該怎麼做。一個比較接近 What happened，另一個比較接近 What should I learn from what happened。</p>
+<p>研究團隊按照經驗被抽象到什麼程度，把 Experiential Memory 分成三種：</p>
+<ul>
+<li>Case-based Memory</li>
+<li>Strategy-based Memory</li>
+<li>Skill-based Memory</li>
+</ul>
+<p>這三個分類我個人覺得非常有意思，因為它其實很像一段經驗慢慢被煉成能力的過程。</p>
+<h3 id="2-1-case-based-memory先把上次怎麼做留下來">2-1. Case-based Memory：先把上次怎麼做留下來</h3>
+<p>最簡單的作法就是先不要悟出什麼大道理，把上一次完整的案例留下來。例如 Task 是升級資料庫，結果失敗並報錯「舊版 API 不相容 (legacy API incompatible)」，最後是靠緊急退版 (rollback) 並補上相容機制才解決。</p>
+<p>下次 Agent 又遇到類似任務時，它會去想以前是不是做過，然後把這個 Case 找回來當參考。這有點像我們在 Stack Overflow 搜尋有沒有人遇過一模一樣的錯。優點是細節很多且 evidence 很完整，但缺點也很明顯，如果每次執行都存完整 trajectory，一年後你可能有幾十萬個案例，而且兩個 Task 根本不會永遠長得一模一樣。所以再往下一步，就必須開始抽象。</p>
+<h3 id="2-2-strategy-based-memory不要只記案例整理出攻略">2-2. Strategy-based Memory：不要只記案例，整理出攻略</h3>
+<p>假設 Agent 已經搞砸過五次資料庫升級，它開始發現每次出問題好像都跟相依套件 (dependency)、資料結構相容性還有退版機制 (rollback) 有關。於是它不再只是保存五份長長的執行紀錄，而是整理出一套更新攻略 (Migration Strategy)，包含：先檢查下游服務影響、驗證向下相容性、準備好退版計畫，最後才真正執行升級。</p>
+<p>這時候 Memory 已經不再只是上次發生什麼，而變成「遇到這類事情，我通常應該怎麼做」。所以 Case 比較像案例，Strategy 比較像攻略，這也是最近 Agent Memory 很明顯的一個方向：不要一直囤 trajectory，而是把 experience 壓縮成更 reusable 的知識。</p>
+<p>原始經驗保留很多細節，往上一層可以整理成更 generalizable 的 strategy，再往上甚至可能變成 rule 或 skill。這其實非常像人類的學習過程，你第一次創業失敗時可能記得那天晚上發版結果根本沒人來，第二次你可能學到產品做完之前要先跟市場驗證，再過幾年最後可能只剩一句「先賣，再做」。細節越來越少，但可以 reuse 的範圍反而越來越大。</p>
+<h3 id="2-3-skill-based-memory攻略用太多次乾脆做成工具">2-3. Skill-based Memory：攻略用太多次，乾脆做成工具</h3>
+<p>再往下一層就更有趣了。假設「每次系統更新前，都要做相容性檢查」這條 Strategy 用了一百次，那 Agent 有沒有必要每次都想起 Strategy、理解 Strategy 然後自己重新做一次？</p>
+<p>搞不好可以直接把它寫成 <code>check_backward_compatibility()</code>，或者變成一段 script、一個 tool，甚至一個 MCP。這就是論文裡所謂的 Skill-based Memory，過去的 experience 最後被整理成一個可以直接重複使用的能力。</p>
+<p>這個演進過程很像：</p>
+<ul>
+<li>Case：我以前怎麼做過？</li>
+<li>Strategy：這類事情應該怎麼做？</li>
+<li>Skill：好啦不要講了，我直接幫你做。</li>
+</ul>
+<p>這個分類會讓 Memory 跟 Skill 的邊界開始變得模糊。當然不是所有研究都一定會把 Skill 稱為 Memory，但在這套 functional taxonomy 裡，它之所以被放進 Experiential Memory，是因為這個 Skill 的來源本身就是 Agent 過去做過的事情，被整理成未來可以重複使用的能力。</p>
+<p>這裡還有一件我自己的觀察，那就是失敗其實可能比成功更值得記。如果 Agent 做成功一次那很好，但如果它踩了一個坑，去追問為什麼失敗、哪一步不該這樣做、下次怎麼避免，反而可能產生更有價值的 reusable knowledge。所以好的 Experiential Memory 應該不只是成功案例收藏庫，它比較像一套會從成功與失敗裡慢慢長大的 playbook。</p>
+<hr>
+<h2 id="3-working-memory我現在到底做到哪裡了">3. Working Memory：我現在到底做到哪裡了？</h2>
+<p>最後一種跟前兩種很不一樣。Factual Memory 和 Experiential Memory 通常是在跨 session、跨 task 留下東西，但 Working Memory 處理的是 Agent 現在這個 Task 還沒做完，它此刻腦袋裡到底要抓住什麼。</p>
+<p>例如 Agent 現在正在幫你 debug 一個「使用者無法登入」的 bug，目前已知：</p>
+<ul>
+<li>問題只發生在 Safari 瀏覽器</li>
+<li>登入憑證 (JWT token) 檢查正常</li>
+<li>是 Cookie 的跨站設定 (SameSite) 出了問題</li>
+<li>已經排除是資料庫連線異常</li>
+<li>下一步要檢查跨網域資源共享 (CORS) 的設定</li>
+</ul>
+<p>再加上剛才 tool call 回來的結果是 <code>SameSite=Lax</code>。這些東西不一定值得永久記住，但現在絕對不能忘，因為下一步的 reasoning 全部要靠它。</p>
+<p>我覺得最好理解 Working Memory 的方式，就是把它想成你的工作桌。Factual Memory 和 Experiential Memory 比較像後面的書櫃或公司 Wiki，而 Working Memory 則是你現在桌上攤著的那些東西。你正在寫報告時，桌上可能有：</p>
+<ul>
+<li>今天的任務</li>
+<li>剛找到的三篇 paper</li>
+<li>一張草稿</li>
+<li>一個做到一半的 outline</li>
+<li>剛才計算出來的數字</li>
+</ul>
+<p>這些東西現在非常重要，但你不會因為它現在在桌上，就代表要永遠收藏。</p>
+<p>這裡有一個很容易搞混的地方，那就是 Context Window 不等於 Working Memory。Context Window 比較像你的桌子有多大，而 Working Memory 是你怎麼管理這張桌子。桌子再大，如果你把這些東西全部堆在桌上：</p>
+<ul>
+<li>三天前失敗的 tool output</li>
+<li>200 頁無關文件</li>
+<li>已經做完的 subtask</li>
+<li>重複 20 次的 conversation</li>
+</ul>
+<p>那你肯定還是找不到現在要用的東西。</p>
+<p>真正的 Working Memory 不只是 passive buffer，它還需要主動處理哪些東西現在應該留著、哪些可以壓成 summary、哪些已經沒用了可以丟掉。最近一些 Long-horizon Agent 的研究也開始把 Working Memory 當成一個可以主動管理的工作空間，Agent 不再只能一直把新東西往 Context 後面塞，而是可以決定某段刪掉、某個 evidence 留原文，甚至剛剛走錯路了直接 rollback。</p>
+<p>另一種常見做法是，Working Memory 只留下目前完成的進度跟「捷徑」，像是「參考資料 A」或是「步驟三的執行結果」。完整的歷史紀錄先收到抽屜裡，真的需要時再順著捷徑把原始文件找出來。這有點像你的電腦桌面不用放滿所有巨大的檔案，只要放幾個資料夾捷徑，知道那份東西在 Drive 哪裡，需要時再點開就好。</p>
+<p>我個人覺得這會是 Long-running Agent 很重要的一個能力。因為當 Agent 越來越能連續工作幾小時甚至幾天後，真正的限制可能不再只是 Context Window 有幾百 K，而是 Agent 到底會不會整理自己的工作桌。</p>
+<hr>
+<h2 id="把-2-和-3-疊起來看form--function">把 #2 和 #3 疊起來看：Form × Function</h2>
+<p>講到這裡，可以把上一篇(第一季#2)跟這一篇真正接起來了。上一篇談的是 Form (記憶怎麼存在)，它可以是：</p>
+<ul>
+<li>Token-level Memory</li>
+<li>Parametric Memory</li>
+<li>Latent Memory</li>
+</ul>
+<p>這一篇談的則是 Function (這段記憶拿來做什麼)，它可以扮演：</p>
+<ul>
+<li>Working Memory</li>
+<li>Factual Memory</li>
+<li>Experiential Memory</li>
+</ul>
+<p>這其實是兩個不同的維度，我們可以把它想成一張九宮格，如圖所示：
+<img src="/content-images/raw/images/ChatGPT%20Image%202026%E5%B9%B48%E6%9C%8824%E6%97%A5%20%E4%B8%8B%E5%8D%8806_57_56.webp" alt="alt text"></p>
+<p>橫向是在問這段記憶用什麼形式存在，縱向則是在問 Agent 現在拿這段記憶來做什麼。這點非常重要，因為很多看起來很像不同種 Memory 的東西，其實根本不是互斥分類。</p>
+<p>例如「你不吃牛肉」如果被寫在 Memory Store 裡，它就是 Token-level 加上 Factual Memory。再舉個例子，「系統更新前要先檢查 backward compatibility」如果被整理成一條文字經驗，它可能是 Token-level 加上 Experiential Memory；但如果這個 pattern 後來透過 training 被內化進模型參數，它又變成了 Parametric 加上 Experiential Memory。內容很接近，但承載它的 Form 不一樣。</p>
+<p>甚至同一段資訊的 Function 也可能改變。例如「8 月 3 日資料庫升級因為舊版 API 沒處理好而失敗」這件事，平常存在長期記憶中用來描述歷史，它扮演的是 Factual Memory；但如果下一次升級時，Agent 把它找回來問上次踩過什麼坑，它就開始扮演 Experiential Memory。接著新的升級任務開始，這條資訊被 retrieve 到當前 context 裡，此刻它又進入了 Working Memory。</p>
+<p>所以真正決定一段資訊屬於哪一種 Memory 的，不一定只是它裡面寫了什麼，還要看 Agent 現在拿它來做什麼。</p>
+<p>這張九宮格比較像是一張理解 Agent Memory 的地圖，而不是九個完全獨立的抽屜。這三種 Function 其實也一直在互相流動，Agent 今天接到系統升級的任務，先從 Factual Memory 找到線上還有舊版 API 在跑，再從 Experiential Memory 找到上次系統爆炸的原因，這兩條記憶就被拉進 Working Memory 的工作桌上。接著它真的去執行，結果發現原來還有一個從沒看過的舊版手機 App 還在連線，這個新發現之後又可能變成新的 Factual Memory，甚至經歷幾次後，形成「升級前除了檢查網頁端，還要檢查手機 App 相容性」的 Experiential Memory。這是一個從 Fact 與 Experience 拿進 Working Memory，經過 reasoning 與 action 產生新資訊，最後再寫回長期 Memory 的循環。這時候 Memory 才真的開始活起來。</p>
+<p>如果把這個九宮格再往外展開，這張圖把近年 Agent Memory 的代表性研究，一個個放回這個 Form × Function 的空間裡：
+<img src="/content-images/raw/images/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202026-08-24%20174822.webp" alt="alt text"></p>
+<p>你會發現九個方向其實幾乎都已經有人探索，只是研究密度非常不平均。像有人在做 Context Condensation、Previous Trajectory、Vector Database、Knowledge Graph，也有人把經驗直接 internalize 進模型參數；再往 Latent Memory 走，則開始出現 KV generation / compression、latent repository 等比較 model-native 的做法。</p>
+<p>最明顯的一件事是，目前大量 Agent Memory 工作仍集中在 Token-level 這一側。 這其實不太意外，因為把 Memory 明確寫成文字、trajectory、graph 或 external records，最容易被檢查、修改、刪除與 retrieve，也最容易直接接進現有 Agent workflow。相較之下，Parametric 與 Latent Memory 雖然已經都有研究，而且這半年還在快速增加，但通常會牽涉 training、model editing、hidden state 或 KV state 的管理，工程門檻與可控性問題都更高。因此我會把這張圖理解成：九宮格不是九條成熟度相同的路，而是一張正在快速被填滿的研究地圖。</p>
+<hr>
+<h2 id="最後真正的問題不是記得越多越好">最後真正的問題：不是「記得越多越好」</h2>
+<p>寫到這裡，我反而覺得 Agent Memory 有一個很違反直覺的地方。我們常常會覺得 Memory 越大越好、記得越多越聰明，但真正下去做系統後，很可能剛好相反。</p>
+<p>記得太多 Fact 會導致 Memory bloat；留太多 Experience，每次都會找到一堆互相重複甚至矛盾的案例；而 Working Memory 塞太滿，Agent 只會被自己的歷史紀錄淹死。所以成熟的 Memory System 真正需要解決的問題反而是什麼值得變成 Fact、什麼 Experience 值得留下，以及現在這個 Task 哪些東西應該進 Working Memory、哪些可以果斷丟掉。</p>
+<p>這就剛好把我們帶到下一篇，因為到目前為止，我們都偷偷假設了一件事，那就是 Agent 記下來的東西都是對的。但現實當然沒這麼美好，如果 User 去年住台北今年搬到東京，舊的 Memory 怎麼辦？兩次經驗互相矛盾怎麼辦？一件原本很重要的事情，半年後已經完全過期了又怎麼辦？</p>
+<p>所以下一篇我們會接著聊 Memory 到底怎麼形成、更新與消失 (Formation → Evolution → Forgetting)。因為一個真的會長期存在的 Agent 不能只有「記住」這個按鈕，它還必須知道什麼時候該寫下來、什麼時候該改口，以及什麼時候該忘記。</p>
+<p>大家現在在開發 Agent 的時候，比較常存的是 User/Environment 的 Fact，還是 Agent 自己執行任務後留下的 Experience 呢？我自己反而越看越覺得，後者可能才是 Agent Memory 真正開始變有趣的地方，有碰過類似慘況的朋友歡迎在下面留言取暖！</p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/mcp改版/" data-astro-cid-egg7nqdx>← MCP 進入 Stateless 時代：開始為大規模使用做準備</a> <a class="next" href="/posts/memory4/" data-astro-cid-egg7nqdx>4 Agent Memory 怎麼形成、更新與消失？ →</a> </nav> </article> <aside class="toc-rail" aria-label="章節目錄" data-astro-cid-egg7nqdx> <nav data-astro-cid-egg7nqdx> <p class="rail-label" data-astro-cid-egg7nqdx>本頁章節</p> <ul data-astro-cid-egg7nqdx> <li class="d2" data-astro-cid-egg7nqdx> <a href="#" data-toc-link data-astro-cid-egg7nqdx></a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#1-factual-memory這個世界現在是什麼樣子" data-toc-link="1-factual-memory這個世界現在是什麼樣子" data-astro-cid-egg7nqdx>1. Factual Memory：這個世界現在是什麼樣子？</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#2-experiential-memory上次跌過這個坑下次不要再跌了" data-toc-link="2-experiential-memory上次跌過這個坑下次不要再跌了" data-astro-cid-egg7nqdx>2. Experiential Memory：上次跌過這個坑，下次不要再跌了</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#2-1-case-based-memory先把上次怎麼做留下來" data-toc-link="2-1-case-based-memory先把上次怎麼做留下來" data-astro-cid-egg7nqdx>2-1. Case-based Memory：先把上次怎麼做留下來</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#2-2-strategy-based-memory不要只記案例整理出攻略" data-toc-link="2-2-strategy-based-memory不要只記案例整理出攻略" data-astro-cid-egg7nqdx>2-2. Strategy-based Memory：不要只記案例，整理出攻略</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#2-3-skill-based-memory攻略用太多次乾脆做成工具" data-toc-link="2-3-skill-based-memory攻略用太多次乾脆做成工具" data-astro-cid-egg7nqdx>2-3. Skill-based Memory：攻略用太多次，乾脆做成工具</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#3-working-memory我現在到底做到哪裡了" data-toc-link="3-working-memory我現在到底做到哪裡了" data-astro-cid-egg7nqdx>3. Working Memory：我現在到底做到哪裡了？</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#把-2-和-3-疊起來看form--function" data-toc-link="把-2-和-3-疊起來看form--function" data-astro-cid-egg7nqdx>把 #2 和 #3 疊起來看：Form × Function</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#最後真正的問題不是記得越多越好" data-toc-link="最後真正的問題不是記得越多越好" data-astro-cid-egg7nqdx>最後真正的問題：不是「記得越多越好」</a> </li> </ul> </nav> </aside> </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>

@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>極簡 AI Coding 心法：從第一性原理出發，不靠框架也能寫好程式 | ChiChieh Huang</title><meta name="description" content="最近聽了一場很精彩的演講，講者是 YC，聯發科的 AI 專案工程師。他分享了自己在實務中使用 AI Coding 的經驗跟心法，聽完之後我覺得很有共鳴，因為他講的很多踩坑經歷我自己…"><link rel="canonical" href="https://chichieh-huang.com/posts/yc%E7%9A%84%E6%A5%B5%E7%B0%A1-ai-coding-%E5%BF%83%E6%B3%95/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="極簡 AI Coding 心法：從第一性原理出發，不靠框架也能寫好程式 | ChiChieh Huang"><meta property="og:description" content="最近聽了一場很精彩的演講，講者是 YC，聯發科的 AI 專案工程師。他分享了自己在實務中使用 AI Coding 的經驗跟心法，聽完之後我覺得很有共鳴，因為他講的很多踩坑經歷我自己…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/yc%E7%9A%84%E6%A5%B5%E7%B0%A1-ai-coding-%E5%BF%83%E6%B3%95/"><meta property="og:image" content="https://chichieh-huang.com/assets/img/avatar.png"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>極簡 AI Coding 心法：從第一性原理出發，不靠框架也能寫好程式</h1> <p class="byline" data-astro-cid-egg7nqdx> 2026/01/19 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 8 分鐘
+ </p> <details class="toc" data-astro-cid-egg7nqdx> <summary data-astro-cid-egg7nqdx>目錄</summary> <ul data-astro-cid-egg7nqdx> <li class="d2" data-astro-cid-egg7nqdx><a href="#ai-coding-是個人能力的放大器" data-astro-cid-egg7nqdx>AI Coding 是個人能力的放大器</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#現有框架的三個問題" data-astro-cid-egg7nqdx>現有框架的三個問題</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#你在用的不是-chatbot是-ai-agent" data-astro-cid-egg7nqdx>你在用的不是 Chatbot，是 AI Agent</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#從第一性原理導出-ai-coding-心法" data-astro-cid-egg7nqdx>從第一性原理導出 AI Coding 心法</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#七條極簡-ai-coding-best-practice" data-astro-cid-egg7nqdx>七條極簡 AI Coding Best Practice</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#1-不要讓自己-out-of-understanding" data-astro-cid-egg7nqdx>1. 不要讓自己 Out of Understanding</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#2-給方向但不要做微觀管理" data-astro-cid-egg7nqdx>2. 給方向，但不要做微觀管理</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#3-減少對-ai-agent-的干擾" data-astro-cid-egg7nqdx>3. 減少對 AI Agent 的干擾</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#4-盡量避免-ai-agent-理解整個程式碼" data-astro-cid-egg7nqdx>4. 盡量避免 AI Agent 理解整個程式碼</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#5-增加-coding-agent-的自主性" data-astro-cid-egg7nqdx>5. 增加 Coding Agent 的自主性</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#6-增加-human-in-the-loop-頻率" data-astro-cid-egg7nqdx>6. 增加 Human-in-the-Loop 頻率</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#7-使用-template-來規範寫作方式" data-astro-cid-egg7nqdx>7. 使用 Template 來規範寫作方式</a></li><li class="d2" data-astro-cid-egg7nqdx><a href="#心法的精髓" data-astro-cid-egg7nqdx>心法的精髓</a></li> </ul> </details> <p>最近聽了一場很精彩的演講，講者是 YC，聯發科的 AI 專案工程師。他分享了自己在實務中使用 AI Coding 的經驗跟心法，聽完之後我覺得很有共鳴，因為他講的很多踩坑經歷我自己也經歷過。</p>
+<p>這篇文章是根據他的演講內容整理改寫的，希望能把他的觀點更完整地傳達出來。</p>
+<hr>
+<h2 id="ai-coding-是個人能力的放大器">AI Coding 是個人能力的放大器</h2>
+<p>YC 開場就點出一個重要觀點：AI Coding 是「個人能力的放大器」。</p>
+<p>你有多少能力，AI 就能幫你放大多少。雖然現在很多非開發者也能靠 AI 工具做出以前做不到的東西，但他觀察下來，這些成果大多還是停留在腳本跟個人自動化的層級。回到整個軟體產業來看，我們還是需要具備開發者能力的人來跟 AI 共同協作。</p>
+<p>他用了一個公式來說明：</p>
+<blockquote>
+<p><strong>開發能力 ＝ 理解決策與規劃能力 × AI 協作能力 × AI 本身的能力</strong></p>
+</blockquote>
+<p>前兩個是你可以主動提升的，理解、決策、規劃這些是資深工程師的核心能力；而 AI 協作能力，就是他這場演講主要想帶給大家的。</p>
+<p>有趣的是，他也提到這對新手來說其實是個逆襲的機會，因為有些資深開發者不習慣甚至排斥 AI Coding，這時候如果你能把 AI 協作能力點滿，反而有機會彎道超車。</p>
+<hr>
+<h2 id="現有框架的三個問題">現有框架的三個問題</h2>
+<p>YC 提到了幾個目前主流的 AI Coding Framework，像是 GitHub 的 Spec-Kit 和 BMAD-Method。Spec-Kit 主張 spec-driven 開發流程，先把規格文件化再進入實作；BMAD-Method 則是用多個 AI Agent（AI PM、AI 架構師）來互相討論規劃。</p>
+<p>他自己用了一段時間之後，歸納出三個批評：</p>
+<p><strong>第一，文件量太多。</strong> 這些框架產生的文件常常多到你根本讀不完，你跟專案之間就產生了認知上的 gap。更慘的是，程式碼在推進、文件卻沒同步更新，最後你的文件海裡一堆過時的東西，根本不知道哪些該留哪些該刪。</p>
+<p><strong>第二，過度 top-down。</strong> 這些框架都很鼓勵你做完整的規劃再一次執行，但軟體工程有很多任務其實需要 bottom-up 的探索。</p>
+<p>他舉了自己開發 voicebot（語音聊天機器人）的例子。那個架構很複雜，牽涉多個 server 之間的連線跟即時 streaming。他一開始套用 Spec-Kit 的方法，團隊花了很多時間寫 spec，寫完之後一口氣產出程式碼——結果跑不動。修了兩三天之後還是動不了，於是把程式碼全部刪掉，把 spec 寫到極度細緻，再重新產出——還是不 work。</p>
+<p>折騰了一個月，他做了一個決定：放棄框架，改用 bottom-up 的方式，一個一個元件建起來再組合。結果一兩天就跑通了。</p>
+<p><strong>第三，文件的規範不如程式碼扎實。</strong> 文件的主觀性很高，同一件事可以這樣寫也可以那樣寫，中間的模糊空間很大。但程式碼是客觀嚴格的，它可以被執行、被驗證、即時給你錯誤回饋。文件做不到這些。</p>
+<p>他強調，這不是說文件不重要。跟 AI 協作你不靠文件是沒辦法做良好溝通的。但文件是輔助，程式碼才是主體。</p>
+<hr>
+<h2 id="你在用的不是-chatbot是-ai-agent">你在用的不是 Chatbot，是 AI Agent</h2>
+<p>YC 點出一個很多人搞混的概念：為什麼用 ChatGPT 聊天寫程式效果差，但用 Cursor、Copilot 這類 AI Coding 工具卻好很多？</p>
+<p>答案是 AI Coding 的本質是跟一個 Coding Agent 協作開發，而不是跟 Chatbot 聊天。</p>
+<p>Chatbot 只針對你當下的問題做回答，但 AI Agent 有幾個關鍵特性：</p>
+<ul>
+<li><strong>高自主性</strong>：它可以針對你的問題去做各種任務，不只是回答問題</li>
+<li><strong>工具使用</strong>：它能呼叫外部工具，上網搜尋、搜尋檔案、下 terminal 命令</li>
+<li><strong>任務分解</strong>：把複雜任務拆成小任務去解決</li>
+<li><strong>ReAct 循環</strong>：Reasoning → Acting → Observing，不斷循環嘗試直到解決問題</li>
+</ul>
+<p>這也是為什麼用 Chatbot 必須小心翼翼設計 prompt，但用 AI Agent 你可以很隨意地像聊天一樣就把任務完成。</p>
+<p>他也比較了 Agent 跟 RAG 的差異，RAG 做的是相似度搜尋跟匹配，但 Agent 做的是像人類一樣思考、使用工具、完成任務。現在業界主流也在從匹配機制往 Agent 系統靠攏。</p>
+<hr>
+<h2 id="從第一性原理導出-ai-coding-心法">從第一性原理導出 AI Coding 心法</h2>
+<p>接下來是整場演講最核心的部分。YC 引用了 Andrej Karpathy 提出的 Context Engineering 概念：語言模型有固定的短期記憶（context window），我們要做的就是在這個有限的空間裡放入高品質的資訊。就這樣而已。</p>
+<p>他從物理系的背景出發，主張用第一性原理，也就是那些長期不會改變的事實，並依此來建構整個 AI Coding 的方法論：</p>
+<p><strong>原理一：AI Coding 就是以 AI Agent 來合作寫程式，關鍵是做好 Context Engineering。</strong></p>
+<p><strong>原理二：能產生服務的只有程式碼跟部署，文件不能直接產生價值。</strong></p>
+<p><strong>原理三：專案中含有越多可以被驗證的東西，專案就越健康。驗證最好自動化，不行的話至少要讓人類可以驗證。</strong></p>
+<p>從這三個原理，他導出了七條 Best Practice。</p>
+<hr>
+<h2 id="七條極簡-ai-coding-best-practice">七條極簡 AI Coding Best Practice</h2>
+<h3 id="1-不要讓自己-out-of-understanding">1. 不要讓自己 Out of Understanding</h3>
+<p>你是整個專案的負責人，你必須了解 AI Agent 在做什麼。不要只關注結果而忽略過程。大量的文件、不相干的程式碼都會造成認知上的剝離。</p>
+<p>好的做法是：讓 AI 幫你做 summary、跟它做 Q&#x26;A，確保你理解專案的狀態。然後用簡潔的方式把理解寫成少量高品質的文件。</p>
+<h3 id="2-給方向但不要做微觀管理">2. 給方向，但不要做微觀管理</h3>
+<p>兩個極端都不好。太抽象（「幫我做一個賣酒的購物網站」）AI 不知道你要什麼；太具體（「在第幾行加上一個判斷式」）那你自己寫就好了。</p>
+<p>好的做法是：執行前先用 BDD 或架構圖勾勒簡單的規格，讓 AI 知道你想做什麼。然後在過程中跟 AI 進行多輪討論。YC 自己很喜歡的技巧是在指令後面加上「你有什麼不懂請詢問我」，讓 AI 不斷提問直到雙方同步，再開始實作。</p>
+<p>用他的話來說：「先同步再領導。跟 AI 協作其實就是一種領導力的展現。」</p>
+<h3 id="3-減少對-ai-agent-的干擾">3. 減少對 AI Agent 的干擾</h3>
+<p>過多的文檔、沒有結構化的程式碼、重複的程式碼、失效的文檔——這些都會讓 AI Agent 很 confused，不知道該聽誰的。</p>
+<p>好的做法是讓文檔跟程式碼保持一致。過時的文檔丟到 deprecated 資料夾裡，不要讓 AI Agent 太容易看到。只留下當下有用的東西。</p>
+<h3 id="4-盡量避免-ai-agent-理解整個程式碼">4. 盡量避免 AI Agent 理解整個程式碼</h3>
+<p>如果你問一個問題，AI Agent 需要讀完整個專案的所有檔案才能回答，那代表你的架構有問題。好的架構讓 AI Agent 只需要理解局部就能開始動作。</p>
+<p>具體做法有三個面向：</p>
+<ul>
+<li><strong>文檔化</strong>：寫 docstring，在程式碼開頭寫註解，讓 AI 看到開頭就知道後面在幹嘛</li>
+<li><strong>架構化</strong>：模組化設計、單一職責原理、Clean Architecture</li>
+<li><strong>命名</strong>：做有意義的檔案與變數命名（有 AI 幫忙，命名已經不是什麼痛苦的事了）</li>
+</ul>
+<h3 id="5-增加-coding-agent-的自主性">5. 增加 Coding Agent 的自主性</h3>
+<p>讓 AI Agent 在可執行的工作環境裡直接跑程式。如果程式沒辦法即時返回資訊，就把 log 倒出來給 AI 做後續處理。</p>
+<p>最重要的是用 TDD（測試驅動開發）讓測試成為 AI Agent 的自動反饋。</p>
+<p>TDD 的循環是</p>
+<ul>
+<li>紅燈（先寫單元測試，此時主程式還沒寫所以一定會 fail）</li>
+<li>綠燈（實作主程式，讓測試通過）</li>
+<li>Refactor（重構程式碼但保持測試通過）</li>
+</ul>
+<p>YC 的做法是，跟 AI 達成共識之後直接說「請用 TDD 來實作」，AI 就會自己走這個循環，產出的程式碼會非常穩固。</p>
+<h3 id="6-增加-human-in-the-loop-頻率">6. 增加 Human-in-the-Loop 頻率</h3>
+<p>一次不要做太多事情。每次做小小的原子化操作，完成一個小功能之後先 review，沒問題再繼續。善用 Git 把每個 checkpoint 存起來，就像玩遊戲解完一個任務就存檔，做壞了可以直接倒車回去。</p>
+<h3 id="7-使用-template-來規範寫作方式">7. 使用 Template 來規範寫作方式</h3>
+<p>他舉了自己做簡報的例子。他把想講的內容文檔化，用 storyboard template 讓 AI 依照模板填寫每一頁 slide 的內容，然後再自動轉換成正式簡報。</p>
+<p>甚至他覺得投影筆太貴了，靈機一動用 AI Coding 花一個晚上做了一個手機投影筆的 app，能換頁、能跳頁、能看到簡報畫面、還有計時器，以前可能要花一個禮拜的工作，一個晚上就搞定了。</p>
+<hr>
+<h2 id="心法的精髓">心法的精髓</h2>
+<p>YC 最後的總結是：AI Coding 就是跟 AI Agent 協作寫程式，關鍵在 Context Engineering，也就是讓好的結構跟資料出現在 AI 看得到的地方。</p>
+<p>現有的框架有些已經脫離了第一性原理，產生過多的文件，嚴重污染 context。與其記住一堆框架的流程，不如理解背後的「為什麼」，然後靈活運用。</p>
+<p>用他的話來收尾：「此時無招勝有招，最好的方法就是你的應變方法，然後跟著 AI 技術一起成長。」</p>
+<hr>
+<p><em>本文根據 YC（聯發科 AI 專案工程師）的演講內容整理改寫。感謝 YC 提供逐字稿授權。</em></p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/aiagent正在慢慢對齊的一週/" data-astro-cid-egg7nqdx>← AIAgent正在慢慢對齊的一週</a> <a class="next" href="/posts/dont-fall-into-the-anti-ai-hype/" data-astro-cid-egg7nqdx>Don’t fall into the anti-AI hype →</a> </nav> </article> <aside class="toc-rail" aria-label="章節目錄" data-astro-cid-egg7nqdx> <nav data-astro-cid-egg7nqdx> <p class="rail-label" data-astro-cid-egg7nqdx>本頁章節</p> <ul data-astro-cid-egg7nqdx> <li class="d2" data-astro-cid-egg7nqdx> <a href="#ai-coding-是個人能力的放大器" data-toc-link="ai-coding-是個人能力的放大器" data-astro-cid-egg7nqdx>AI Coding 是個人能力的放大器</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#現有框架的三個問題" data-toc-link="現有框架的三個問題" data-astro-cid-egg7nqdx>現有框架的三個問題</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#你在用的不是-chatbot是-ai-agent" data-toc-link="你在用的不是-chatbot是-ai-agent" data-astro-cid-egg7nqdx>你在用的不是 Chatbot，是 AI Agent</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#從第一性原理導出-ai-coding-心法" data-toc-link="從第一性原理導出-ai-coding-心法" data-astro-cid-egg7nqdx>從第一性原理導出 AI Coding 心法</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#七條極簡-ai-coding-best-practice" data-toc-link="七條極簡-ai-coding-best-practice" data-astro-cid-egg7nqdx>七條極簡 AI Coding Best Practice</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#1-不要讓自己-out-of-understanding" data-toc-link="1-不要讓自己-out-of-understanding" data-astro-cid-egg7nqdx>1. 不要讓自己 Out of Understanding</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#2-給方向但不要做微觀管理" data-toc-link="2-給方向但不要做微觀管理" data-astro-cid-egg7nqdx>2. 給方向，但不要做微觀管理</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#3-減少對-ai-agent-的干擾" data-toc-link="3-減少對-ai-agent-的干擾" data-astro-cid-egg7nqdx>3. 減少對 AI Agent 的干擾</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#4-盡量避免-ai-agent-理解整個程式碼" data-toc-link="4-盡量避免-ai-agent-理解整個程式碼" data-astro-cid-egg7nqdx>4. 盡量避免 AI Agent 理解整個程式碼</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#5-增加-coding-agent-的自主性" data-toc-link="5-增加-coding-agent-的自主性" data-astro-cid-egg7nqdx>5. 增加 Coding Agent 的自主性</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#6-增加-human-in-the-loop-頻率" data-toc-link="6-增加-human-in-the-loop-頻率" data-astro-cid-egg7nqdx>6. 增加 Human-in-the-Loop 頻率</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#7-使用-template-來規範寫作方式" data-toc-link="7-使用-template-來規範寫作方式" data-astro-cid-egg7nqdx>7. 使用 Template 來規範寫作方式</a> </li><li class="d2" data-astro-cid-egg7nqdx> <a href="#心法的精髓" data-toc-link="心法的精髓" data-astro-cid-egg7nqdx>心法的精髓</a> </li> </ul> </nav> </aside> </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>

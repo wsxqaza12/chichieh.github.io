@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>RAG (Retrieval Augmented Generation): 為自然語言處理揭開新篇章 | ChiChieh Huang</title><meta name="description" content="近期 RAG 的研究發展"><link rel="canonical" href="https://chichieh-huang.com/posts/fced76fdb8b9/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="RAG (Retrieval Augmented Generation): 為自然語言處理揭開新篇章 | ChiChieh Huang"><meta property="og:description" content="近期 RAG 的研究發展"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/fced76fdb8b9/"><meta property="og:image" content="https://chichieh-huang.com/assets/fced76fdb8b9/0*tSPdWAgLKlOIgTPB.png"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>RAG (Retrieval Augmented Generation): 為自然語言處理揭開新篇章</h1> <p class="byline" data-astro-cid-egg7nqdx> 2024/01/16 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 13 分鐘
+ </p> <details class="toc" data-astro-cid-egg7nqdx> <summary data-astro-cid-egg7nqdx>目錄</summary> <ul data-astro-cid-egg7nqdx> <li class="d3" data-astro-cid-egg7nqdx><a href="#rag-retrieval-augmented-generation-為自然語言處理揭開新篇章" data-astro-cid-egg7nqdx>RAG (Retrieval Augmented Generation): 為自然語言處理揭開新篇章</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#一-為甚麼要用-rag" data-astro-cid-egg7nqdx>一. 為甚麼要用 RAG ?</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#二-什麼是-rag" data-astro-cid-egg7nqdx>二. 什麼是 RAG ?</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#擷取retrieval" data-astro-cid-egg7nqdx>擷取(Retrieval)</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#a--如何獲得準確的語意空間" data-astro-cid-egg7nqdx>a. ) 如何獲得準確的語意空間</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#b--如何協調查詢和文件的語意空間" data-astro-cid-egg7nqdx>b. ) 如何協調查詢和文件的語意空間?</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#c--根據-llm-的需求調整擷取結果" data-astro-cid-egg7nqdx>c. ) 根據 LLM 的需求調整擷取結果</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#生成generation" data-astro-cid-egg7nqdx>生成(Generation)</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#a--如何優化擷取到的訊息" data-astro-cid-egg7nqdx>a) . 如何優化擷取到的訊息?</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#b--如何根據擷取到的訊息優化生成器" data-astro-cid-egg7nqdx>b) . 如何根據擷取到的訊息優化生成器?</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#三-rag-生態系" data-astro-cid-egg7nqdx>三. RAG 生態系 ?</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#參考資料" data-astro-cid-egg7nqdx>參考資料</a></li><li class="d3" data-astro-cid-egg7nqdx><a href="#支持鼓勵" data-astro-cid-egg7nqdx>支持鼓勵</a></li> </ul> </details> <h3 id="rag-retrieval-augmented-generation-為自然語言處理揭開新篇章">RAG (Retrieval Augmented Generation): 為自然語言處理揭開新篇章</h3>
+<h3 id="一-為甚麼要用-rag">一. 為甚麼要用 RAG ?</h3>
+<p>如果使用 pretrain 好的 LLM 模型，應用在你個人的情境中，勢必會有些詞不達意的地方，例如問 LLM 你個人的訊息，那麼它會無法回答；這種情況在企業內部也是一樣，例如使用 LLM 來回答企業內部的規章條款等。</p>
+<p>這種時候主要有三種方式來讓 LLM 變得更符合你的需求：</p>
+<ol>
+<li><strong>Promt Enginerring</strong> ：
+輸入提示來指導 LLM 產生所需回應。例如常見的 In-context Learning，透過在提示中提供上下文或範例，來形塑模型的回答方式。例如，提供特定回答風格的範例或包含相關的情境資訊，可以引導模型產生更合適的答案。</li>
+<li><strong>Fine tuning：</strong>
+這個過程包括在特定數據集上訓練 LLM，使其回應更符合特定需求。例如，一家公司可能會使用其內部文件 Fine tuning ChatGPT ，使其能夠更準確地回答關於企業內部規章條款等問題。然而，Fine tuning 需要代表性的數據集且量也有一定要求，且 Fine tuning 並不適合於在模型中增加全新的知識，或應對那些需要快速迭代新場景的情況。</li>
+<li><strong>RAG (Retrieval Augmented Generation)</strong> ：
+結合了神經語言模型和擷取系統。擷取系統從資料庫或一組文件中提取相關信息，然後由語言模型使用這些信息來生成回應。可以把 RAG 想像成給模型提供一本教科書，讓它根據特定的問題去找資訊。此方法適用於模型需要整合即時、最新或非常特定的信息非常有用。但RAG 並不適合教會模型理解廣泛的領域或學習新的語言、格式或風格。</li>
+</ol>
+<p><img src="/assets/fced76fdb8b9/0*tSPdWAgLKlOIgTPB.png" alt="RAG 與方法的比較
+Gao, Yunfan et al. “Retrieval-Augmented Generation for Large Language Models: A Survey.” (2023) ."></p>
+<p>RAG 與方法的比較
+Gao, Yunfan et al. “Retrieval-Augmented Generation for Large Language Models: A Survey.” (2023) .</p>
+<p>目前的研究已經表明，RAG 在優化 LLM 方面，相較於其他方法具有顯著的優勢 (Shuster et al. , 2021 ; Yasunaga et al. , 2022; Wang et al. , 2023c; Borgeaud et al. , 2022)，主要的優勢可以體現在以下幾點：</p>
+<ol>
+<li>RAG 透過外部知識來提高答案的 <strong>準確性</strong> ，有效地減少了虛假訊息，使得產生的回答更加準確可信。</li>
+<li>使用擷取技術能夠識別到最新的信息(使用者提供)，這使得 LLM 的回答能保持 <strong>及時性</strong> 。</li>
+<li>RAG 引用資訊來源是使用者可以核實答案，因此其 <strong>透明透</strong> 非常高，這增強了人們對模型輸出結果的信任。</li>
+<li>透過擷取與特定領域資料，RAG 能夠為不同領域提供專業的知識支援， <strong>客製化</strong> 能力非常高。</li>
+<li>在 <strong>安全性和隱私</strong> 管理方面，RAG 透過資料庫來儲存知識，對資料使用有較好控制性。相較之下，經過 Fine tuning 的模型在管理資料存取權限方面不夠明確，容易外洩，這對於企業是一大問題。</li>
+<li>由於 RAG 不需更新模型參數，因此在處理大規模資料集時， <strong>經濟效率</strong> 方面更具優勢。</li>
+</ol>
+<p>不過雖然 RAG 有許多優勢在，但這 3 種方法並不是互斥的，反而是相輔相成的。結合 RAG 和 Fine tuning ，甚至 Promt Enginerring 可以讓模型能力的層次性得增強。這種協同作用特別在特定情境下顯得重要，能夠將模型的效能推至最佳。整體過程可能需要經過多次迭代和調整，才能達到最佳的成效。這種迭代過程涵蓋了對模型的持續評估和改進，以滿足特定的應用需求。</p>
+<p><img src="/assets/fced76fdb8b9/1*BRcERCALfqSoRC06ce5b2A.png" alt="RAG 實際應用的過程
+Gao, Yunfan et al. “Retrieval-Augmented Generation for Large Language Models: A Survey.” (2023) ."></p>
+<p>RAG 實際應用的過程
+Gao, Yunfan et al. “Retrieval-Augmented Generation for Large Language Models: A Survey.” (2023) .</p>
+<h3 id="二-什麼是-rag"><strong>二. 什麼是 RAG ?</strong></h3>
+<p>這篇章旨在介紹 RAG 的過程與其使用的相關技術。總結來說 RAG 有兩個關鍵技術：擷取與生成</p>
+<ol>
+<li>擷取(Retrieval)：從大量知識庫中擷取出最相關的前幾個文件</li>
+<li>生成(Generation)：將擷取到的資訊轉成為自然流暢的文字。</li>
+</ol>
+<h3 id="擷取retrieval">擷取(Retrieval)</h3>
+<p>為了使 RAG 技術中的擷取更準確，關鍵在於如何獲得準確的語意空間、匹配查詢和文件的語意空間，以及如何使擷取器的輸出與大型語言模型的偏好相協調，我們在以下分別探討：</p>
+<h3 id="a--如何獲得準確的語意空間">a. ) 如何獲得準確的語意空間</h3>
+<p>通常我們會把查詢和文件映射的多維空間，稱之為 <strong>語意空間(semantic space)</strong> ，而進行擷取時，我們是在語意空間中進行，因此若映射的不夠好，那麼對於整個 RAG 系統是個大災難。這邊介紹 2 步建立準確語意空間的方法。</p>
+<ol>
+<li><strong>區塊優化 (Chunk optimization)</strong></li>
+</ol>
+<p>在處理外部文檔時，首先需要將其拆分成更小的碎塊以提取細粒度特徵，然後將這些特徵嵌入(embedded)以表達其語義。然而，嵌入過大或過小的文本碎塊可能會導致較差的結果，因此需要考慮幾個重要的因素，例如擷取內容的性質、嵌入模型及其最佳塊大小、用戶查詢的預期長度和複雜性，以及具體應用對擷取結果的利用方式。因此目前有許多研究提出多種 <strong>區塊優化</strong> 方法：</p>
+<ol>
+<li><strong>Sliding window technology</strong> ：通過合併跨多個擷取過程的全球相關信息，實現分層擷取。</li>
+<li><strong>small2big</strong> ：它在初始搜索階段使用小文本塊，然後提供較大的相關文本塊供語言模型處理。</li>
+<li><strong>Abstract embedding：</strong> 優先考慮基於文檔摘要（或摘要）的前K次擷取，提供對整個文檔內容的全面理解。</li>
+<li><strong>Metadata Filtering</strong> ：技術透過文件的元資料進行過濾。</li>
+<li><strong>Graph Indexing</strong> ：將實體和關係轉化為節點和連接，顯著提高了相關性，特別是在多跳問題的情境下。</li>
+</ol>
+<p><strong>2. 微調嵌入模型</strong> ( <strong>Fine-tuning Embedding Models)</strong></p>
+<p>確定了Chunk 的適當大小之後，我們需要透過一個嵌入模型（Embedding model）將 Chunk 和查詢嵌入到語意空間中。因此，嵌入模型是否能有效代表整個語料庫變得極為重要。傳統常用的嵌入模型有以下兩種：</p>
+<ul>
+<li><strong>Sentence-Transformers：</strong>
+是一種 python 的 BERT NLP 套件，提供各種訓練好的BERT 模型套件，適合單個句的處理。</li>
+<li><strong>text-embedding-ada-002：</strong>
+OpenAI 提出的新嵌入模型，適合處理包含256 或 512 Token 的文字區塊。</li>
+</ul>
+<p>而如今，一些出色的嵌入模型已經問世，例如 AngIE(Li and Li, 2023)、Voyage(VoyageAI, 2023)、BGE(BAAI, 2023) 等，這些模型已經在大型模語料庫上 pre-training。然而，當應用於特定領域時，它們準確捕捉領域特定信息的能力可能會受到限制。</p>
+<p>此外我們還得對嵌入模型進行 Fine tuning，以確保模型能理解用戶查詢，這步對下游應用是必不可少的。嵌入模型 Fine tuning 的方法主要有 2 種：</p>
+<ol>
+<li><strong>領域知識 Fine tuning：</strong>
+嵌入模型的 Fine tuning 與 LLM 的 Fine tuning 不一樣，主要差別在嵌入模型的資料集包括查詢（Queries）、語料庫（Corpus）和相關文件（Relevant Docs）。資料集收集的過程非常繁雜，因此 LlamaIndex 專門為此引入了一系列關鍵的類別和函數，旨在簡化工作流程。</li>
+<li><strong>針對下游任務 Fine tuning：</strong>
+目前有研究使用 LLM 來 Fine tuning 嵌入模型。例如，PROMPTAGATOR (Dai <em>et al.</em> , 2022)，如此可以解決一些由於數據不足而難以 Fine tuning 的問題。</li>
+</ol>
+<h3 id="b--如何協調查詢和文件的語意空間">b. ) 如何協調查詢和文件的語意空間?</h3>
+<p>在 RAG 應用中，有些擷取器用同一個嵌入模型來處理查詢和文檔，而有些則使用兩個不同的模型。此外，使用者的原始查詢可能表達不清晰或缺少必要的語義資訊。RAG 使用 2 種關鍵技術，來實現這個目標：</p>
+<ol>
+<li><strong>Query Rewriting</strong></li>
+</ol>
+<p>方法如 Query2Doc 和 ITER-RETGEN 利用 LLMs，通過將原始查詢與額外的指導信息相結合，創建一個虛擬文檔(Wang <em>et al. ,</em> 2023；Shao <em>et al. ,</em> 2023)。其他還有如 HyDE (Gao <em>et al. ,</em> 2022)、RRR (Ma <em>et al. ,</em> 2023)、STEP-BACKPROMPTING (Zheng <em>et al. ,</em> 2022)等。</p>
+<p>2. <strong>Embedding Transformation</strong></p>
+<p>相較於 Query Rewriting，這是一個更微觀的技術。LlamaIndex 在查詢編碼器後加入一個特殊的適配器，並對其進行微調，從而優化查詢的嵌入表示，使之更適合特定的任務。</p>
+<h3 id="c--根據-llm-的需求調整擷取結果">c. ) 根據 LLM 的需求調整擷取結果</h3>
+<p>上述的方法旨在幫助我們提升擷取的效果，但是那些做法可能不能提升 LLM 模型的準確度，原因在於擷取的結果可能不是很符合 LLM 的偏好，因此如何讓擷取結果往 LLM 的偏好靠齊，是一個重要的領域。</p>
+<ol>
+<li><strong>Fine-tuning Retrievers</strong></li>
+</ol>
+<p>核心概念是透過從 LLM 獲得的回饋訊號來調整嵌入模型，也就是使用 LLM 提供的分數來指導擷取器的訓練，這相當於用大語言模型來對資料集進行標註。近期的方法如 AAR (Yu <em>et al.</em> , 2023)</p>
+<p>2. <strong>Adapters</strong></p>
+<p>上述的 Fine tuning 方法在實現上會有難度，如 API 的實現與算力的考量。因此，一些研究選擇外接 Adapters 來進行模型對齊。PRCA (Yang <em>et al.</em> , 2023) 在上下文提取階段和獎勵驅動階段訓練適配器，並透過基於 Token 的autoregressiv 策略來優化擷取器的輸出。</p>
+<h3 id="生成generation"><strong>生成(Generation)</strong></h3>
+<p>生成器是 RAG 的關鍵之一，它負責將擷取到的信息轉換為連貫和流暢的文本。在 RAG 中，生成器的輸入不僅包括典型的上下文信息，還包括通過檢索器獲得的相關文本片段。這種全面的輸入使生成器能夠深入理解問題的上下文，從而產生更具信息性和上下文相關性的回答。生成器會根據擷取到的文字來指導內容的生成，確保產生的內容與擷取資訊一致。</p>
+<p>但擷取的內容五花八門，因此目前有一系列研究在探討生成器的適應性，讓其能應付來自查詢和文件的輸入資料。</p>
+<h3 id="a--如何優化擷取到的訊息">a) . 如何優化擷取到的訊息?</h3>
+<p>目前大宗做法是依賴無法調整但訓練完好的 LLM 模型(如 ChatGPT-4)來生成，不過這些 LLM 仍然存在一些問題，例如上下文長度限制和對冗餘資訊的敏感度。為了解決這個問題，目前一些研究開始專注在 <strong>擷取後處理(post-retrieval processing)</strong> ，這個作法是將經由擷取器得到的資訊去做進一步的處理、過濾或最佳化，提高擷取結果的品質，主要有 2 種主流作法：</p>
+<ol>
+<li><strong>資訊壓縮 (Information Compression)</strong></li>
+</ol>
+<p>即使擷取器能很棒的從龐大的知識庫中擷取到相關信息，但管理大量的擷取信息仍是一個挑戰。目前做法是擴大 LLM 的上下文長度來解決此問題，但這並不能很有效解決問題，上下文長度限制仍是一大問題。因此，壓縮資訊變得必要。資訊壓縮對減少雜訊、解決上下文長度限制和增強生成效果具有重要意義。</p>
+<p>PRCA 透過訓練一個資訊擷取器來解決這個問題(Yang <em>et al.</em> , 2023)。在上下文擷取階段，提供輸入文字 Sinput 時，它能夠產生一個輸出序列 Cextracted，代表從輸入文件中壓縮得到的上下文。 訓練過程旨在最小化 Cextracted 和實際上下文 Ctruth 之間的差異。</p>
+<p>其他如 RECOMP (Xu <em>et al.</em> , 2023) 或 Filter-Ranker (Ma <em>et al.</em> , 2023)。Filter-Ranker 結合了大語言模型 (LLM) 和小語言模型 (SLM) 的優點。SLM 充當過濾器，LLM 則作為排序器。 研究表明，指導 LLM 重排 SLM 識別出的挑戰性樣本，能夠在各種資訊提取 (IE) 任務中帶來顯著的改進。</p>
+<p>2. <strong>重排序 (Reranking)</strong></p>
+<p>主要功能是優化擷取的信息集合。LLM 常常在引入額外上下文時面臨性能下降，而 Reranking 有效地解決了這一問題。其核心概念涉及重新排列文檔記錄，以使最相關的項目優先排在最前，從而限制文檔的總數量。這不僅解決了檢索過程中上下文窗口擴展的挑戰，而且還提升了檢索效率和響應速度。</p>
+<h3 id="b--如何根據擷取到的訊息優化生成器">b) . 如何根據擷取到的訊息優化生成器?</h3>
+<p>在使用一般 LLM 時，輸入通常只會有一段文字查詢。但在 RAG 中，輸入不僅結合了查詢，還包括了擷取器擷取到的各種文檔，其中包含結構化與非結構化的資訊。這個額外的資訊會顯著影響 LLM 的理解，特別是對於較小的LLM。</p>
+<p>在這種情況下，Fine tuning 模型以適應 「查詢+擷取文檔」的輸入變得至關重要。RAG 中生成器的 Fine tuning 方法與 LLM 的一般微調方法基本一樣。接下來，我們將簡要描述一些涉及數據（格式化/非格式化）和優化功能的代表性工作。</p>
+<ol>
+<li><strong>通用優化流程 (General Optimization Process)</strong></li>
+</ol>
+<p>Self-mem (Cheng <em>et al.</em> , 2023) 採用了傳統訓練方法。其中給定輸入 x，擷取訊息 z，然後結合(x, z)，模型生成輸出 y。論文探討了兩種主流 Fine tuning方法，分別為 Joint-Encoder (Arora <em>et al.</em> , 2023, Wang <em>et al.</em> , 2022b, Lewis <em>et al.</em> , 2020) 和 Dual-Encoder (Xia <em>et al.</em> , 2019, Cai <em>et al.</em> , 2021, Cheng <em>et al.</em> , 2022)。</p>
+<p>在 Joint-Encoder 中，使用基於 encoder-decoder 的標準模型。其中，encoder 首先對輸入進行編碼，decoder 透過注意力機制結合編碼結果，並以自回歸方式生成 Token。另一方面，在 Dual-Encoder中，系統設置了兩個獨立的 encoder，每個 encoder 分別對輸入 (查詢、上下文) 和文檔進行編碼，之後將輸出依序經由 decoder，進行雙向交叉注意力處理。這兩種架構都利用 Transformer 作為基礎。</p>
+<p>2. <strong>利用對比學習 (Utilizing Contrastive Learning)</strong></p>
+<p>在為 LLM 準備訓練數據的階段中，通常會建立輸入和輸出的配對。這種傳統方法可能導致 「暴露偏差」，即模型僅在個別正確的輸出示例上進行訓練，接觸到單一的正確回饋，無法了解其他可能的生成 Token。這種限制可能會阻礙模型在真實世界中的表現，因為它可能過度適應訓練集中的特定示例，從而降低了其在不同上下文中泛化的能力。</p>
+<p>為了緩解暴露偏差，SURGE (Kang <em>et al.</em> , 2023) 提出使用圖文對比學習。這種方法包括一個對比學習目標，促使模型產生一系列可行且連貫的回應，擴展到訓練數據中遇到的實例之外。這種方法在減少過度適應和加強模型的泛化能力方面至關重要。</p>
+<h3 id="三-rag-生態系">三. RAG 生態系 ?</h3>
+<p><img src="/assets/fced76fdb8b9/1*fbbUfWHObS2MWzbq6mIo7A.png" alt=""></p>
+<p>RAG 的生態系蓬勃發展，在水平領域，從最初的文本問答領域以外，RAG 的應用逐漸拓展到更多模態資料，包括圖像、程式碼、結構化知識、影音等。在這些領域，已經湧現許多相關研究成果。</p>
+<p>而相關的 Technical Stack 發展也滿迅速，如有名的 LangChain 和 LLamaIndex 這樣的關鍵工具，隨著 ChatGPT 的出現迅速獲得了人氣，它們提供了廣泛的與 RAG 相關的 API，並成為LLM 領域的佼佼者。</p>
+<p>同時新興的 Technical Stack 也逐漸在發展，例如，Flowise AI10 優先考慮低代碼方法，使用者能夠透過簡單的拖曳界面部署包括 RAG 在內的 AI 應用。其他技術如 HayStack、Meltano11 和 Cohere Coral12 也因其在該領域的獨特貢獻而受到關注。</p>
+<p>除了專注於 AI 的提供者之外，傳統軟件和雲服務提供者也在擴大其服務範圍，包括以 RAG 為中心的服務。如向量資料庫公司 Weaviate 推出的 Verba7 專注於個人助理應用，而亞馬遜 的 Kendra 提供智能企業搜索服務，允許用戶使用內置連接器在各種內容存儲庫中導航。</p>
+<h3 id="參考資料">參考資料</h3>
+<p>Gao, Yunfan et al. “Retrieval-Augmented Generation for Large Language Models: A Survey.” (2023) .</p>
+<h3 id="支持鼓勵">支持鼓勵</h3>
+<p>如果文章對你有幫助，或願意鼓勵我持續創作，可以幫文章拍手，或點擊下方連結請我喝一杯咖啡，感謝支持!</p>
+<p><img src="/assets/fced76fdb8b9/1*QCQqlZr6doDP-cszzpaSpw.png" alt=""></p>
+<p><em><a href="https://medium.com/@cch.chichieh/rag-retrieval-augmented-generation-%E7%82%BA%E8%87%AA%E7%84%B6%E8%AA%9E%E8%A8%80%E8%99%95%E7%90%86%E6%8F%AD%E9%96%8B%E6%96%B0%E7%AF%87%E7%AB%A0-fced76fdb8b9">Post</a> converted from Medium by <a href="https://github.com/ZhgChgLi/ZMediumToMarkdown">ZMediumToMarkdown</a>.</em></p> <p class="tags" data-astro-cid-egg7nqdx><span data-astro-cid-egg7nqdx># rag</span><span data-astro-cid-egg7nqdx># llm</span><span data-astro-cid-egg7nqdx># research</span><span data-astro-cid-egg7nqdx># 中文</span><span data-astro-cid-egg7nqdx># fine-tuning</span><span data-astro-cid-egg7nqdx># RAG (檢索增強生成)</span><span data-astro-cid-egg7nqdx># Research</span></p> <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/2451807f8ba5/" data-astro-cid-egg7nqdx>← 用手機就能跑 LLaMA 2! llama.cpp 教學</a> <a class="next" href="/posts/d6838febf8c4/" data-astro-cid-egg7nqdx>RAG實作教學，LangChain + Llama2 |創造你的個人LLM →</a> </nav> </article> <aside class="toc-rail" aria-label="章節目錄" data-astro-cid-egg7nqdx> <nav data-astro-cid-egg7nqdx> <p class="rail-label" data-astro-cid-egg7nqdx>本頁章節</p> <ul data-astro-cid-egg7nqdx> <li class="d3" data-astro-cid-egg7nqdx> <a href="#rag-retrieval-augmented-generation-為自然語言處理揭開新篇章" data-toc-link="rag-retrieval-augmented-generation-為自然語言處理揭開新篇章" data-astro-cid-egg7nqdx>RAG (Retrieval Augmented Generation): 為自然語言處理揭開新篇章</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#一-為甚麼要用-rag" data-toc-link="一-為甚麼要用-rag" data-astro-cid-egg7nqdx>一. 為甚麼要用 RAG ?</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#二-什麼是-rag" data-toc-link="二-什麼是-rag" data-astro-cid-egg7nqdx>二. 什麼是 RAG ?</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#擷取retrieval" data-toc-link="擷取retrieval" data-astro-cid-egg7nqdx>擷取(Retrieval)</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#a--如何獲得準確的語意空間" data-toc-link="a--如何獲得準確的語意空間" data-astro-cid-egg7nqdx>a. ) 如何獲得準確的語意空間</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#b--如何協調查詢和文件的語意空間" data-toc-link="b--如何協調查詢和文件的語意空間" data-astro-cid-egg7nqdx>b. ) 如何協調查詢和文件的語意空間?</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#c--根據-llm-的需求調整擷取結果" data-toc-link="c--根據-llm-的需求調整擷取結果" data-astro-cid-egg7nqdx>c. ) 根據 LLM 的需求調整擷取結果</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#生成generation" data-toc-link="生成generation" data-astro-cid-egg7nqdx>生成(Generation)</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#a--如何優化擷取到的訊息" data-toc-link="a--如何優化擷取到的訊息" data-astro-cid-egg7nqdx>a) . 如何優化擷取到的訊息?</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#b--如何根據擷取到的訊息優化生成器" data-toc-link="b--如何根據擷取到的訊息優化生成器" data-astro-cid-egg7nqdx>b) . 如何根據擷取到的訊息優化生成器?</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#三-rag-生態系" data-toc-link="三-rag-生態系" data-astro-cid-egg7nqdx>三. RAG 生態系 ?</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#參考資料" data-toc-link="參考資料" data-astro-cid-egg7nqdx>參考資料</a> </li><li class="d3" data-astro-cid-egg7nqdx> <a href="#支持鼓勵" data-toc-link="支持鼓勵" data-astro-cid-egg7nqdx>支持鼓勵</a> </li> </ul> </nav> </aside> </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>
