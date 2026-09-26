@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Multi-TW資料集 | ChiChieh Huang</title><meta name="description" content="Multi-TW資料集 這是第一個專門針對繁體中文的多模態Benchmark，能同時考驗 AI 看圖辨識、聽力理解和文字問答的能力，特別的是個 Benchmark 不只看模型答對多…"><link rel="canonical" href="https://chichieh-huang.com/posts/multi-tw%E8%B3%87%E6%96%99%E9%9B%86/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="Multi-TW資料集 | ChiChieh Huang"><meta property="og:description" content="Multi-TW資料集 這是第一個專門針對繁體中文的多模態Benchmark，能同時考驗 AI 看圖辨識、聽力理解和文字問答的能力，特別的是個 Benchmark 不只看模型答對多…"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/multi-tw%E8%B3%87%E6%96%99%E9%9B%86/"><meta property="og:image" content="https://chichieh-huang.com/assets/img/avatar.png"><meta name="twitter:card" content="summary"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"><script>
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+    </script><link rel="stylesheet" href="/_astro/about.B696kpbe.css">
+<style>.layout[data-astro-cid-egg7nqdx]{display:grid;grid-template-columns:minmax(0,720px);justify-content:center}@media(min-width:1100px){.wrap{max-width:1080px}.layout[data-astro-cid-egg7nqdx]{grid-template-columns:minmax(0,720px) 220px;gap:3.5rem}.toc[data-astro-cid-egg7nqdx]{display:none}}@media(max-width:1099.9px){.toc-rail[data-astro-cid-egg7nqdx]{display:none}}.byline[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;margin:0 0 2rem}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}.byline[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc[data-astro-cid-egg7nqdx]{border:1px solid var(--line);border-radius:10px;padding:.6rem 1.1rem;font-size:.9rem;margin:0 0 2rem}.toc[data-astro-cid-egg7nqdx] summary[data-astro-cid-egg7nqdx]{cursor:pointer;color:var(--ink-2)}.toc[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;padding:.3rem 0 .2rem;margin:0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx]{margin:.25rem 0}.toc[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3{padding-left:1.25rem}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink)}.toc[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.toc-rail[data-astro-cid-egg7nqdx] nav[data-astro-cid-egg7nqdx]{position:sticky;top:2.5rem;max-height:calc(100vh - 5rem);overflow-y:auto;font-size:.82rem;line-height:1.65}.rail-label[data-astro-cid-egg7nqdx]{font-size:.72rem;letter-spacing:.15em;color:var(--ink-2);margin:0 0 .6rem}.toc-rail[data-astro-cid-egg7nqdx] ul[data-astro-cid-egg7nqdx]{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}.toc-rail[data-astro-cid-egg7nqdx] li[data-astro-cid-egg7nqdx].d3 a[data-astro-cid-egg7nqdx]{padding-left:1.9rem}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{display:block;color:var(--ink-2);padding:.22rem 0 .22rem .9rem;border-left:2px solid transparent;margin-left:-1.5px}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--ink);text-decoration:none}.toc-rail[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx].active{color:var(--accent);border-left-color:var(--accent)}.tags[data-astro-cid-egg7nqdx]{color:var(--ink-2);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2.5rem}.pager[data-astro-cid-egg7nqdx]{display:flex;justify-content:space-between;gap:1.5rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);font-size:.9rem}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]{color:var(--ink-2);max-width:46%}.pager[data-astro-cid-egg7nqdx] a[data-astro-cid-egg7nqdx]:hover{color:var(--accent)}.pager[data-astro-cid-egg7nqdx] .next[data-astro-cid-egg7nqdx]{text-align:right}
+</style></head> <body> <header data-astro-cid-3ef6ksr2> <div class="wrap bar" data-astro-cid-3ef6ksr2> <a class="logo" href="/" data-astro-cid-3ef6ksr2>ChiChieh Huang</a> <nav aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/posts/" class="active" data-astro-cid-3ef6ksr2>文章</a><a href="/projects/" data-astro-cid-3ef6ksr2>專案</a><a href="/experience/" data-astro-cid-3ef6ksr2>經歷</a><a href="/about/" data-astro-cid-3ef6ksr2>關於</a> <button id="theme-toggle" aria-label="切換深淺色" title="切換深淺色" data-astro-cid-3ef6ksr2> <svg class="sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" data-astro-cid-3ef6ksr2><circle cx="12" cy="12" r="4" data-astro-cid-3ef6ksr2></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" data-astro-cid-3ef6ksr2></path></svg> <svg class="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-3ef6ksr2><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" data-astro-cid-3ef6ksr2></path></svg> </button> </nav> </div> </header>  <script type="module">const n=document.getElementById("theme-toggle");n?.addEventListener("click",()=>{const e=document.documentElement,c=window.matchMedia("(prefers-color-scheme: dark)").matches,t=(e.dataset.theme??(c?"dark":"light"))==="dark"?"light":"dark";e.dataset.theme=t,localStorage.setItem("theme",t)});</script> <main class="wrap">  <div class="layout" data-astro-cid-egg7nqdx> <article class="prose" data-astro-cid-egg7nqdx> <h1 data-astro-cid-egg7nqdx>Multi-TW資料集</h1> <p class="byline" data-astro-cid-egg7nqdx> 2025/12/01 ·
+<a href="/posts/category/技術/" data-astro-cid-egg7nqdx>技術</a> ·
+        閱讀約 4 分鐘
+ </p>  <p>Multi-TW資料集
+這是第一個專門針對繁體中文的多模態Benchmark，能同時考驗 AI 看圖辨識、聽力理解和文字問答的能力，特別的是個 Benchmark 不只看模型答對多少，還會同時評量 Latency，對現實應用很有參考價值。</p>
+<p>看到覺得超棒，寫了一下導讀分享給各位，另外我也同步作了一個 LLM Benchmark 的收藏牆，目前收錄 Multi-TW、MME、TMMLU+、VisTai 等，想請問大家覺得還有甚麼是應該收錄的 🙏</p>
+<h2 id="易讀版連結貼留言">(易讀版連結貼留言)</h2>
+<ol>
+<li>
+<p>Multi-TW 是什麼?
+用白話來說，Multi-TW 是一個測試 AI 的題庫，而且內容很在地，資料集裡收集了 900 題繁體中文的選擇題，每題都不只是文字，有的附上一張圖片，有的配一段音檔，像是日常對話或廣播內容等，然後問 AI 一個理解相關的問題。
+這些題目並非人工隨意編寫，而是源自台灣官方的華語文能力測驗 (即 Test of Proficiency-Huayu, 簡稱 SC-TOP) 的真實考題，這些題目本來是考人對中文聽讀能力的，現在拿來考驗 AI，非常具有真實性和挑戰性。</p>
+</li>
+<li>
+<p>測試了哪些模型?
+為了瞭解現有 AI 模型在 Multi-TW 基準上的表現，研究團隊選擇了大致兩類模型：</p>
+</li>
+</ol>
+<p>A. 任意模態輸入的端到端模型 (Any-to-Any MLLM)：</p>
+<ul>
+<li>這類模型本身就能直接吃下圖像、聲音、文字等多種輸入，然後產生答案。</li>
+<li>模型選用 Gemini、Qwen 2.5-Omni 與 Baichuan-Omni-1.5 等</li>
+</ul>
+<p>B. 視覺語言模型＋語音辨識 (VLM + ASR)：</p>
+<ul>
+<li>第二類是傳統做法，模型本身只擅長圖像＋文字雙模態 (沒有內建聽音能力)，所以遇到音檔時先用 Whisper 語音辨識把聲音轉成文字，再交給模型理解。</li>
+<li>測試的 VLM 包括 Qwen-VL、Llama 3.2-Vision、UI-TARS、Idefics2、LLaVA、PaliGemma2 等。</li>
+</ul>
+<p>整套實驗設計就是為了確保，各種主流路線的模型都能在相同的繁體中文多模態題目上進行比較，也透過這兩種路線的對比，我們可以看出模型架構差異的影響。</p>
+<ol start="3">
+<li>
+<p>怎麼測?
+研究人員採用了零樣本設定，也就是不給模型任何額外的訓練或提示範例，直接餵每一題讓模型作答，因為是選擇題，他們在提示中告訴模型「只需輸出答案選項的字母（A/B/C/D）」，避免模型產生長篇大論，如果模型沒給出明確的A/B/C/D，就隨機猜一個答案，保證每題都有答案。
+每個模型都用相同的硬體環境(NVIDIA A100 80GB) 單卡跑完全套900題，並測量處理每題的耗時；不過閉源模型是透過 API 調用，時間包含網路延遲，和地端模型不太具有可比性，所以速度分析主要還是著重在開源模型上。</p>
+</li>
+<li>
+<p>關鍵發現與意涵
+綜合這項研究，有幾點重要發現值得關注：
+A. Gemini 穩居第一：
+Google 的 Gemini 果然不負盛名，整體正確率約 89%，其中圖像題答對 88%、聽力題 90%，不過可惜 Gemini 是商用閉源模型，普通開發者無法直接使用 或 fine-tune。</p>
+</li>
+</ol>
+<p>B.開源 Qwen 在聽力題表現很好：
+Qwen-2.5-Omni-7B 展現了意外強大的聽力理解能力，在聽力題上它答對率高達 89.11%，幾乎追上了閉園的 Gemini，這或許暗示某些開源模型其實在語音理解方面已經相當成熟。</p>
+<p>C. 繁體中文的圖像理解目前很難：
+開源模型在繁體中文圖像訊息的理解方面明顯較弱，尤其在涉及讀取或理解繁體文字的圖片題上正確率遠低於閉源模型，這顯示目前的開源多模態模型在繁體中文環境下仍存在明顯短板，需要透過加入繁體中文資料進行微調訓練，以及強化模型的視覺模組來改善。</p>
+<p>D. 端到端模型推論更快：
+在處理語音相關任務時，直接接受語音輸入的模型相較透過語音轉文字再進行理解的模型，有著明顯的速度優勢，在本次測試中，端到端多模態模型完成整套題目的耗時約為後者的一半，因此在講求時效性的應用中，這種架構上的優勢意味著更快的響應和更好的使用者體驗。</p>
+<ol start="5">
+<li>結論
+Multi-TW 為台灣帶來第一份完整的繁體中文多模態 AI 測試基準，對產學界來說，都是一套能幫助了解模型強弱、加速開發應用的好工具 。
+接下來作者們還計劃：
+A. 研究簡中模型能否有效轉用在繁中上；
+B. 測更多模型延遲表現與串流推論場景；
+C. 擴充資料集任務類型，如開放問答與生成式任務 。</li>
+</ol>
+<p>滿期待他們未來的發展!</p>  <nav class="pager" aria-label="前後文章" data-astro-cid-egg7nqdx> <a href="/posts/prompt-repetition-improves-non-reasoning-llms/" data-astro-cid-egg7nqdx>← Prompt Repetition Improves Non-Reasoning LLMs</a> <a class="next" href="/posts/google-怎麼回來的/" data-astro-cid-egg7nqdx>Google 怎麼回來的 →</a> </nav> </article>  </div>  </main> <footer data-astro-cid-sz7xmlte> <div class="wrap bar" data-astro-cid-sz7xmlte> <span data-astro-cid-sz7xmlte>© 2026 ChiChieh Huang · 由文字與一隻龍蝦驅動 🦞</span> <span class="links" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> </span> </div> </footer>  </body></html>  <script type="module">const l=document.querySelectorAll("[data-toc-link]");if(l.length>0){const i=[...l].map(t=>document.getElementById(t.dataset.tocLink)).filter(t=>t!==null);let n=!1;const o=()=>{n=!1;let t=null;for(const e of i)if(e.getBoundingClientRect().top<=130)t=e.id;else break;for(const e of l)e.classList.toggle("active",e.dataset.tocLink===(t??i[0]?.id))};document.addEventListener("scroll",()=>{n||(n=!0,requestAnimationFrame(o))},{passive:!0}),o()}</script>
