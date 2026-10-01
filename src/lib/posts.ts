@@ -49,9 +49,10 @@ export function charCount(body: string): number {
   return (text.match(CJK) ?? []).length + (text.replace(CJK, ' ').match(/[A-Za-z0-9]+/g) ?? []).length;
 }
 
-/** 網站上顯示的標題：連載文章拿掉開頭的編號 */
+/** 網站上顯示的標題：連載文章拿掉開頭的編號；英文撇號換成直的（中文字型的 ’ 是全形，Don’t 會被撐開） */
 export function displayTitle(post: Post): string {
-  return seriesOf(post.id) ? post.data.title.replace(/^\d+\s+/, '') : post.data.title;
+  const t = post.data.title.replace(/(?<=[A-Za-z])’(?=[A-Za-z])/g, "'");
+  return seriesOf(post.id) ? t.replace(/^\d+\s+/, '') : t;
 }
 
 export function regionOfPost(post: Post): string {
