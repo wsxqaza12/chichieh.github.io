@@ -5,7 +5,7 @@ import PostLog from '../components/PostLog.astro';
 import TalkProfile from '../components/TalkProfile.astro';
 import Summit from '../components/Summit.astro';
 import { getAllPosts, postUrl, dotDate, displayTitle, charCount, type Post } from '../lib/posts';
-import { series } from '../data/series';
+import { series, seriesOf, resolveSeries } from '../data/series';
 import { projects } from '../data/projects';
 import { talks, media } from '../data/experience';
 
@@ -15,7 +15,8 @@ const find = (id?: string) => (id ? byId.get(id) : undefined);
 
 // 最新路段：最近更新的連載
 const latest = series[0];
-const legs = latest.seasons.flatMap((s) => s.posts.map((id, i) => ({ s, ep: i + 1, post: byId.get(id) }))).filter((l): l is { s: typeof l.s; ep: number; post: Post } => !!l.post);
+const seasons = resolveSeries(latest, posts.map((p) => p.id));
+const legs = seasons.flatMap((s) => s.posts.map((id) => ({ s, ep: seriesOf(id)!.ep, post: byId.get(id) }))).filter((l): l is { s: typeof l.s; ep: number; post: Post } => !!l.post);
 let cum = 0;
 const prof = legs.map((l) => ({ ...l, n: charCount(l.post.body ?? ''), c: (cum += charCount(l.post.body ?? '')) }));
 const W = 360, H = 200, pl = 8, pr = 14, pt = 18, pb = 34;
@@ -53,20 +54,20 @@ const [lead, ...rest] = projects;
       </div>
       <div class="route">
         <div class="legs">
-          {latest.seasons.map((s) => (
+          {seasons.map((s) => (
             <>
               <div class="season lab">第{['一','二','三','四','五','六'][s.n - 1]}季 · {s.name}</div>
-              {s.posts.map((id, i) => {
+              {s.posts.map((id) => {
                 const p = byId.get(id);
                 return p && (
                   <a class="leg" href={postUrl(p)}>
-                    <span class="k">S{s.n}·{i + 1}</span>
+                    <span class="k">S{s.n}·{seriesOf(id)!.ep}</span>
                     <span class="b"><h3 class="keep">{displayTitle(p)}</h3>{p.data.description && <p>{p.data.description}</p>}</span>
                     <span class="d"><b>{charCount(p.body ?? '').toLocaleString('en-US')} 字</b>{dotDate(p.data.date)}</span>
                   </a>
                 );
               })}
-              {s.next && <div class="leg next"><span class="k">S{s.n}·{s.posts.length + 1}</span><span class="b"><h3>{s.next}</h3><p>籌備中</p></span><span class="d" /></div>}
+              {s.upcoming && s.next && <div class="leg next"><span class="k">S{s.n}·{s.next.n - s.from + 1}</span><span class="b"><h3>{s.upcoming}</h3><p>籌備中</p></span><span class="d" /></div>}
             </>
           ))}
         </div>

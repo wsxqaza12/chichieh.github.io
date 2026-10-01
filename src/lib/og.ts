@@ -9,7 +9,7 @@ import { makeModel, type Model, type Pt } from './terrain/model';
 import { sampleField, shadeField, contourLevels, cairnStones, type View } from './terrain/field';
 import { REGIONS } from './regions';
 import { getSummaries, type PostSummary } from './posts';
-import { seriesOf } from '../data/series';
+import { seriesOf, resolveSeries } from '../data/series';
 import { fitTitle } from './og-text.ts';
 
 const W = 1200, H = 630;
@@ -133,7 +133,7 @@ export async function postCard(id: string, meta: { title: string; date: string; 
   const m = await model();
   const target = m.pts.find((q) => q.p.id === id) ?? null;
   const place = seriesOf(id);
-  const series = place ? place.series.seasons.flatMap((s) => s.posts).map((sid) => m.pts.find((q) => q.p.id === sid)).filter((q): q is Pt => !!q) : [];
+  const series = place ? resolveSeries(place.series, m.pts.map((q) => q.p.id)).flatMap((s) => s.posts).map((sid) => m.pts.find((q) => q.p.id === sid)).filter((q): q is Pt => !!q) : [];
   // 把這篇放在畫面右側偏中，放大到看得出附近的石堆
   const vw = 520, vh = (vw * H) / W;
   const cx = target ? target.x : m.VW / 2, cy = target ? target.y : m.VH / 2;

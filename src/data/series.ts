@@ -1,19 +1,26 @@
 // 連載。文章頁會依這裡畫出「路線」（第幾季、第幾段），首頁也用它排最新路段。
-// posts 放文章網址的 slug（/posts/<id>/），依閱讀順序。
-// 連載文章標題開頭的編號（「5 記住了…」）在網站上會自動拿掉，順序以這裡為準。
+//
+// 文章怎麼加進連載：不用改這個檔案。文章網址（= 檔名）符合 match 的規則就會自動算進來，
+// 檔名裡的數字就是第幾篇，例如 Memory6.md → 第 6 篇 → 第二季第 2 段。
+// 要改這個檔案的時候只有：開新的一季（把上一季補上 to、加一筆新的季）、更新下一篇的預告、開新的連載。
+// 連載文章標題開頭的編號（「6 當 Memory 也會被攻擊」）在網站上會自動拿掉。
 
 export interface Season {
   n: number;
   name: string;
-  posts: string[];
-  /** 這一季下一篇的預告，還沒寫就顯示「籌備中」 */
-  next?: string;
+  /** 這一季從第幾篇開始、到第幾篇（不填 to = 還在連載中，之後的都算這一季） */
+  from: number;
+  to?: number;
+  /** 下一篇的預告：第 n 篇上站後自動消失 */
+  next?: { n: number; text: string };
 }
 
 export interface Series {
   name: string;
   /** 首頁「最新路段」的介紹 */
   intro: string;
+  /** 文章網址符合這個規則就算進連載，第一個括號是篇數 */
+  match: RegExp;
   seasons: Season[];
 }
 
@@ -21,13 +28,14 @@ export const series: Series[] = [
   {
     name: 'Agent Memory',
     intro: '第一季四篇，從「大家講的 Memory 是同一件事嗎」一路談到記憶怎麼形成與遺忘。第二季開始追問，記住了就代表記對了嗎？',
+    match: /^memory(\d+)$/,
     seasons: [
-      { n: 1, name: '把過去留下來', posts: ['memory1', 'memory2', 'memory3', 'memory4'] },
+      { n: 1, name: '把過去留下來', from: 1, to: 4 },
       {
         n: 2,
         name: '當過去不再適用',
-        posts: ['memory5'],
-        next: '如果有人知道 Agent 會相信自己的記憶，並且刻意讓錯誤的東西被留下來呢？',
+        from: 5,
+        next: { n: 6, text: '如果有人知道 Agent 會相信自己的記憶，並且刻意讓錯誤的東西被留下來呢？' },
       },
     ],
   },
@@ -36,14 +44,42 @@ export const series: Series[] = [
 export interface SeriesPlace {
   series: Series;
   season: Season;
+  /** 這一季的第幾段 */
   ep: number;
+  /** 整個連載的第幾篇 */
+  num: number;
 }
 
+const seasonOf = (s: Series, num: number) => s.seasons.find((x) => num >= x.from && (x.to === undefined || num <= x.to));
+
 export function seriesOf(id: string): SeriesPlace | null {
-  for (const s of series)
-    for (const season of s.seasons) {
-      const i = season.posts.indexOf(id);
-      if (i >= 0) return { series: s, season, ep: i + 1 };
-    }
+  for (const s of series) {
+    const m = id.match(s.match);
+    if (!m) continue;
+    const num = +m[1];
+    const season = seasonOf(s, num);
+    if (season) return { series: s, season, ep: num - season.from + 1, num };
+  }
   return null;
+}
+
+export interface ResolvedSeason extends Season {
+  /** 已上站的文章 id，依篇數排序 */
+  posts: string[];
+  /** 還沒上站的下一篇預告（上站後是 undefined） */
+  upcoming?: string;
+}
+
+/** 依目前上站的文章，算出每一季有哪幾篇 */
+export function resolveSeries(s: Series, ids: string[]): ResolvedSeason[] {
+  const eps = ids.flatMap((id) => {
+    const m = id.match(s.match);
+    return m ? [{ id, num: +m[1] }] : [];
+  });
+  const latest = Math.max(0, ...eps.map((e) => e.num));
+  return s.seasons.map((se) => ({
+    ...se,
+    posts: eps.filter((e) => seasonOf(s, e.num) === se).sort((a, b) => a.num - b.num).map((e) => e.id),
+    upcoming: se.next && latest < se.next.n ? se.next.text : undefined,
+  }));
 }

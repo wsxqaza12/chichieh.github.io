@@ -5,7 +5,7 @@ import {
   getAllPosts, getSummaries, postUrl, dotDate, readingTime, charCount, displayTitle, regionOfPost, type Post,
 } from '../../lib/posts';
 import { REGIONS } from '../../lib/regions';
-import { seriesOf } from '../../data/series';
+import { seriesOf, resolveSeries } from '../../data/series';
 import { makeModel, nearest } from '../../lib/terrain/model';
 
 export async function getStaticPaths() {
@@ -35,14 +35,17 @@ const all = await getAllPosts();
 const byId = new Map(all.map((p) => [p.id, p]));
 const summaries = await getSummaries();
 const model = makeModel(summaries, 'h');
-const exclude = new Set(place ? place.series.seasons.flatMap((s) => s.posts) : []);
+// 連載：依目前上站的文章算出每一季有哪幾篇
+const seasons = place ? resolveSeries(place.series, all.map((p) => p.id)) : [];
+const epLabel = (id: string) => { const s = seriesOf(id); return s ? `S${s.season.n}·${s.ep}` : ''; };
+const exclude = new Set(seasons.flatMap((s) => s.posts));
 const near = nearest(model, post.id, 3, exclude);
 const regionOf = (key: string) => REGIONS.find((r) => r.key === key)!;
 
 // 段落：以 h2 為主；舊的 Medium 文章用 h3 分段，h2 不足兩個時改用 h3
 const h2s = headings.filter((h) => h.depth === 2);
 const sections = h2s.length >= 2 ? h2s : headings.filter((h) => h.depth === 3);
-const seriesIds = place ? place.series.seasons.flatMap((s) => s.posts.map((id, i) => ({ id, label: `S${s.n}·${i + 1}` }))) : [];
+const seriesIds = seasons.flatMap((s) => s.posts.map((id) => ({ id, label: epLabel(id) })));
 const pageUrl = new URL(postUrl(post), Astro.site).toString();
 ---
 
@@ -122,22 +125,22 @@ const pageUrl = new URL(postUrl(post), Astro.site).toString();
 
           {place ? (
             <div class="legs">
-              {place.series.seasons.map((s) => (
+              {seasons.map((s) => (
                 <div class="season">
                   <span class="lab">{place.series.name} · 第{['一','二','三','四','五','六'][s.n - 1]}季</span>
                   <h2>{s.name}</h2>
-                  <div class:list={['line', { open: !!s.next }]}>
-                    {s.posts.map((id, i) => {
+                  <div class:list={['line', { open: !!s.upcoming }]}>
+                    {s.posts.map((id) => {
                       const p = byId.get(id);
                       if (!p) return null;
-                      const k = `S${s.n}·${i + 1}`;
+                      const k = epLabel(id);
                       return id === post.id ? (
                         <div class="leg cur"><span class="k">{k} · {dotDate(p.data.date)} · 你在這裡</span><b class="keep">{displayTitle(p)}</b></div>
                       ) : (
                         <a class="leg" href={postUrl(p)}><span class="k">{k} · {dotDate(p.data.date)} · {charCount(p.body ?? '').toLocaleString('en-US')} 字</span><b class="keep">{displayTitle(p)}</b></a>
                       );
                     })}
-                    {s.next && <div class="leg next"><span class="k">S{s.n}·{s.posts.length + 1} · 籌備中</span><b>{s.next}</b></div>}
+                    {s.upcoming && s.next && <div class="leg next"><span class="k">S{s.n}·{s.next.n - s.from + 1} · 籌備中</span><b>{s.upcoming}</b></div>}
                   </div>
                 </div>
               ))}
