@@ -1,0 +1,288 @@
+---
+// 首頁的寫作地形圖：桌機橫向（時間由西向東），手機直向（最新在上）。
+import { getSummaries } from '../lib/posts';
+import { REGIONS, regionName } from '../lib/regions';
+
+const posts = await getSummaries();
+const total = posts.reduce((n, p) => n + p.n, 0);
+const first = posts[posts.length - 1];
+const latest = posts[0];
+const years = Math.max(1, Math.round((Date.now() - Date.parse(first.d)) / (365.25 * 864e5)));
+const zh = ['零', '一', '兩', '三', '四', '五', '六', '七', '八', '九', '十'][years] ?? String(years);
+const ym = (d: string) => d.slice(0, 7).replace('-', '.');
+---
+
+<div class="map" id="map">
+  <div class="title">
+    <span class="lab">寫作地形圖 · {ym(first.d)} — {ym(latest.d)}</span>
+    <h1>{zh}年的寫作，<br />走成一座<b>山</b>。</h1>
+    <p>
+      {posts.length} 篇文章、<span class="mono">{total.toLocaleString('en-US')}</span> 字。每一篇是一座石堆，路線從
+      {first.d.slice(0, 4)} 年的{regionName(first.topic)}，一路爬到現在的{regionName(latest.topic)}。滑過石堆看是哪一篇。
+    </p>
+  </div>
+  <div class="mapbox" id="mapbox">
+    <canvas id="cv" role="img" aria-label={`寫作地形圖：${posts.length} 篇文章依時間與主題畫成石堆，路線從${regionName(first.topic)}到${regionName(latest.topic)}。完整清單在下方的文章列表。`}></canvas>
+    <div id="overlay"></div>
+    <a class="tip" id="tip" href="/posts/" tabindex="-1">
+      <span class="lab"><span id="tipR"></span><span id="tipD"></span></span>
+      <span class="tt" id="tipT"></span><span class="tx" id="tipX"></span><span class="go">閱讀全文 →</span>
+    </a>
+  </div>
+  <div class="legend" aria-label="圖例">
+    <div class="row"><svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><g fill="var(--trail)"><ellipse cx="11" cy="15" rx="8" ry="2.6" /><ellipse cx="11" cy="10.5" rx="6" ry="2.3" /><ellipse cx="11" cy="6.5" rx="4" ry="2" /></g></svg>石堆＝一篇文章，石頭越多字越多</div>
+    <div class="row"><svg width="22" height="10" aria-hidden="true"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--trail)" stroke-width="2" stroke-dasharray="4 3" /></svg>每月的寫作路線</div>
+    <div class="row"><svg width="22" height="12" aria-hidden="true"><path d="M1 9 Q6 2 11 6 T21 4" fill="none" stroke="var(--contour-major)" stroke-width="1.2" /></svg>等高線＝主題的累積</div>
+    <div class="scale" id="scale"><i style="width:60px"></i><span>3 個月</span></div>
+  </div>
+  <noscript><style>.mapbox{display:none}</style></noscript>
+</div>
+
+<style>
+  .map { position: relative; height: clamp(640px, 58vw, 900px); overflow: hidden; border-bottom: 1px solid var(--line); }
+  .mapbox { position: absolute; inset: 0; }
+  .mapbox canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .title { position: absolute; z-index: 4; left: var(--gut); top: clamp(100px, 10vw, 140px); max-width: min(620px, 48vw); pointer-events: none; }
+  .title .lab { display: block; margin-bottom: 18px; text-shadow: 0 0 8px var(--halo); }
+  h1 { margin: 0; font-weight: 200; font-size: clamp(46px, 6.2vw, 96px); line-height: 1.08; letter-spacing: .02em; text-shadow: 0 0 18px var(--halo), 0 0 3px var(--halo); }
+  h1 b { font-weight: 500; color: var(--trail); }
+  .title p { margin: 22px 0 0; font-size: clamp(15px, 1.25vw, 18px); font-weight: 300; max-width: 30em; text-shadow: 0 0 10px var(--halo), 0 0 2px var(--halo); }
+  .title p .mono { font-size: .86em; color: var(--trail); }
+  .map :global(.region) { position: absolute; z-index: 3; transform: translate(-50%, -50%); font-weight: 500; font-size: 13px; letter-spacing: .16em; color: var(--ink-2); white-space: nowrap; cursor: default; text-shadow: 0 0 6px var(--halo), 0 0 2px var(--halo), 0 0 1px var(--halo); transition: color .2s; }
+  .map :global(.region small) { display: block; text-align: center; font-family: var(--mono); font-stretch: 80%; font-weight: 400; font-size: 9.5px; letter-spacing: .2em; color: var(--ink-3); margin-top: 1px; }
+  .map :global(.region:hover), .map :global(.region.on) { color: var(--trail); }
+  .map :global(.region.vert) { writing-mode: vertical-rl; letter-spacing: .2em; }
+  .map :global(.region.vert small) { writing-mode: vertical-rl; margin: 0 0 0 2px; }
+  .map :global(.here) { position: absolute; z-index: 4; width: 0; height: 0; pointer-events: none; }
+  .map :global(.here i) { position: absolute; left: -14px; top: -14px; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--trail); }
+  .map :global(.here i:nth-child(2)) { animation: ping 2.4s cubic-bezier(.2, .6, .3, 1) infinite; }
+  @keyframes ping { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.6); opacity: 0; } }
+  .map :global(.herelab) { position: absolute; z-index: 4; transform: translate(-50%, -50%); white-space: nowrap; font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .14em; color: var(--trail); padding: 5px 9px; border: 1px solid var(--trail); background: var(--ground); pointer-events: none; }
+  .map :global(.herelab b) { font-family: var(--sans); font-weight: 500; letter-spacing: .16em; font-size: 12.5px; margin-right: 8px; color: var(--ink); }
+  .map :global(.leader) { position: absolute; z-index: 3; height: 0; border-top: 1px solid var(--trail); transform-origin: 0 0; pointer-events: none; }
+  .legend { position: absolute; z-index: 4; right: var(--gut); bottom: 28px; display: flex; flex-direction: column; gap: 9px; padding: 14px 16px; background: color-mix(in srgb, var(--ground) 82%, transparent); border: 1px solid var(--line); backdrop-filter: blur(4px); }
+  .legend .row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+  .legend svg { flex: none; }
+  .scale { display: flex; align-items: flex-end; gap: 8px; font-family: var(--mono); font-stretch: 80%; font-size: 10px; color: var(--ink-2); letter-spacing: .08em; }
+  .scale i { display: block; height: 6px; border: 1px solid var(--ink-2); border-top: 0; background: linear-gradient(90deg, var(--ink-2) 50%, transparent 50%); }
+  .tip { position: absolute; z-index: 6; width: 300px; max-width: calc(100vw - 32px); padding: 14px 16px 15px; background: var(--ground); border: 1px solid var(--trail); box-shadow: 0 18px 40px -20px rgba(0, 0, 0, .6); opacity: 0; transform: translateY(6px); transition: opacity .15s, transform .15s; pointer-events: none; }
+  .tip:global(.show) { opacity: 1; transform: none; pointer-events: auto; }
+  .tip .lab { color: var(--trail); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 10px; }
+  .tip .lab span { white-space: nowrap; }
+  .tt { display: block; margin: 6px 0 8px; font-weight: 500; font-size: 16.5px; line-height: 1.5; }
+  .tx { display: -webkit-box; font-size: 13px; color: var(--ink-2); line-height: 1.7; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .go { display: inline-block; margin-top: 10px; font-family: var(--mono); font-stretch: 80%; font-size: 11px; letter-spacing: .14em; color: var(--trail); }
+  @media (prefers-reduced-motion: reduce) { .map :global(.here i:nth-child(2)) { animation: none; opacity: 0; } }
+  @media (max-width: 900px) {
+    .map { height: auto; }
+    .title { position: relative; left: auto; top: auto; max-width: none; padding: 96px var(--gut) 8px; }
+    .mapbox { position: relative; inset: auto; aspect-ratio: 1 / 3; }
+    .legend { position: relative; right: auto; bottom: auto; margin: 0 var(--gut) 24px; }
+  }
+</style>
+
+<script>
+  import { makeModel, type Model } from '../lib/terrain/model';
+  import { drawTerrain, drawCairn, readColors, setupCanvas, prefersReducedMotion, type View } from '../lib/terrain/render';
+  import { REGIONS } from '../lib/regions';
+  import type { PostSummary } from '../lib/posts';
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const mapEl = $('map'), box = $('mapbox'), cv = $<HTMLCanvasElement>('cv'), ov = $('overlay'), tip = $<HTMLAnchorElement>('tip');
+  let data: PostSummary[] = [];
+  const models: Partial<Record<'h' | 'v', Model>> = {};
+  let M: Model, view: View, W = 0, H = 0, k = 1, vertical = false;
+  let terrain: HTMLCanvasElement | null = null;
+  let prog = prefersReducedMotion() ? 1 : 0, hover = -1, active: number | null = null, filter: number | null = null;
+  let S: { x: number; y: number }[] = [], trail: [number, number][] = [];
+
+  const sx = (x: number) => (x - view.x) * k, sy = (y: number) => (y - view.y) * k;
+
+  function build() {
+    vertical = innerWidth <= 900;
+    M = models[vertical ? 'v' : 'h'] ??= makeModel(data, vertical ? 'v' : 'h');
+    const r = box.getBoundingClientRect();
+    W = Math.round(r.width); H = Math.round(r.height);
+    if (!W || !H) return;
+    k = W / M.VW;
+    view = { x: 0, y: (M.VH - H / k) / 2, w: M.VW, h: H / k };
+    const col = readColors();
+    terrain = document.createElement('canvas');
+    const t = setupCanvas(terrain, W, H);
+    drawTerrain(t, M, view, W, H, col, { grid: 4 });
+    // 經緯線：年份
+    t.strokeStyle = col.line; t.lineWidth = 1; t.setLineDash([2, 6]);
+    t.font = '500 10px "Martian Mono", monospace'; t.fillStyle = col.ink3;
+    const years = new Set(M.pts.map((q) => +q.p.d.slice(0, 4)));
+    [...years].sort().forEach((y) => {
+      const u = (Date.parse(`${y}-01-01`) - M.T0) / (M.T1 - M.T0);
+      if (u <= 0 || u >= 1) return;
+      const [px, py] = M.at(u, 0);
+      t.beginPath();
+      if (vertical) { const yy = sy(py); t.moveTo(0, yy); t.lineTo(W, yy); t.stroke(); t.fillText(String(y), 8, yy - 7); }
+      else { const xx = sx(px); t.moveTo(xx, H * 0.09); t.lineTo(xx, H); t.stroke(); t.fillText(String(y), xx + 7, H - 12); }
+    });
+    t.setLineDash([]); t.strokeStyle = col.ink3;
+    for (let m = 0; m < 48; m++) {
+      const u = (new Date(2023, 11 + m, 1).getTime() - M.T0) / (M.T1 - M.T0);
+      if (u < 0 || u > 1) continue;
+      const [px, py] = M.at(u, 0);
+      t.beginPath();
+      if (vertical) { t.moveTo(0, sy(py)); t.lineTo(5, sy(py)); } else { t.moveTo(sx(px), H); t.lineTo(sx(px), H - 5); }
+      t.stroke();
+    }
+    S = M.pts.map((q) => ({ x: sx(q.x), y: sy(q.y) }));
+    trail = M.trail.map((p) => [sx(p[0]), sy(p[1])]);
+    placeOverlay();
+    draw();
+    const px3 = vertical ? 0 : (M.span * (90 * 864e5)) / (M.T1 - M.T0) * k;
+    if (px3) ($('scale').querySelector('i') as HTMLElement).style.width = Math.round(px3) + 'px';
+  }
+
+  function draw() {
+    if (!terrain) return;
+    const ctx = setupCanvas(cv, W, H);
+    const col = readColors();
+    ctx.drawImage(terrain, 0, 0, W, H);
+    const nP = Math.max(2, Math.floor(trail.length * prog));
+    ctx.save(); ctx.beginPath();
+    trail.slice(0, nP).forEach((p, i) => (i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])));
+    ctx.strokeStyle = col.ground; ctx.lineWidth = 5; ctx.globalAlpha = 0.6; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.setLineDash([5, 4]); ctx.strokeStyle = col.trail; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke(); ctx.restore();
+    const head = trail[nP - 1];
+    for (let i = M.pts.length - 1; i >= 0; i--) {
+      const q = M.pts[i], s = S[i];
+      if (vertical ? s.y < head[1] - 2 : s.x > head[0] + 2) continue;
+      ctx.globalAlpha = active !== null && q.k !== active ? 0.22 : 1;
+      drawCairn(ctx, s.x, s.y, q.p.n, i === hover ? col.ink : col.trail, col.ground);
+    }
+    ctx.globalAlpha = 1;
+    if (hover >= 0) { ctx.beginPath(); ctx.arc(S[hover].x, S[hover].y - 6, 15, 0, Math.PI * 2); ctx.strokeStyle = col.trail; ctx.lineWidth = 1.5; ctx.stroke(); }
+  }
+
+  type Box = { x0: number; y0: number; x1: number; y1: number };
+  function placeOverlay() {
+    ov.innerHTML = '';
+    const placed: Box[] = [], blockers: Box[] = [];
+    const mr = mapEl.getBoundingClientRect(), br = box.getBoundingClientRect();
+    const rel = (r: DOMRect): Box => ({ x0: r.left - br.left - 10, y0: r.top - br.top - 10, x1: r.right - br.left + 10, y1: r.bottom - br.top + 10 });
+    if (!vertical) {
+      blockers.push(rel(mapEl.querySelector('.title')!.getBoundingClientRect()));
+      blockers.push({ ...rel(mapEl.querySelector('.legend')!.getBoundingClientRect()), x1: W, y1: H });
+      blockers.push({ x0: 0, y0: 0, x1: W, y1: 76 + (mr.top - br.top) });
+    }
+    const overlap = (a: Box, b: Box) => !(a.x1 < b.x0 || a.x0 > b.x1 || a.y1 < b.y0 || a.y0 > b.y1);
+    const hit = (r: Box) => {
+      let c = 0;
+      for (const s of S) if (s.x > r.x0 - 8 && s.x < r.x1 + 8 && s.y > r.y0 - 4 && s.y < r.y1 + 14) c++;
+      for (const p of placed) if (overlap(r, p)) c += 50;
+      for (const p of blockers) if (overlap(r, p)) c += 50;
+      if (r.x0 < 8 || r.y0 < 8 || r.x1 > W - 8 || r.y1 > H - 24) c += 50;
+      for (let i = 0; i < trail.length; i += 2) { const p = trail[i]; if (p[0] > r.x0 && p[0] < r.x1 && p[1] > r.y0 && p[1] < r.y1) { c += 3; break; } }
+      return c;
+    };
+    const labelAt = (el: HTMLElement, cands: [number, number, number][]) => {
+      ov.appendChild(el);
+      const w = el.offsetWidth, h = el.offsetHeight;
+      let best: [number, number, Box] | null = null, bs = 1e9;
+      for (const [x, y, pen] of cands) { const r = { x0: x - w / 2, y0: y - h / 2, x1: x + w / 2, y1: y + h / 2 }; const sc = hit(r) + pen; if (sc < bs) { bs = sc; best = [x, y, r]; } }
+      el.style.left = best![0] + 'px'; el.style.top = best![1] + 'px'; placed.push(best![2]);
+      return best!;
+    };
+    // 你在這裡
+    const last = S[0];
+    const here = document.createElement('div');
+    here.className = 'here'; here.style.left = last.x + 'px'; here.style.top = last.y - 6 + 'px';
+    here.innerHTML = '<i></i><i></i>';
+    ov.appendChild(here);
+    placed.push({ x0: last.x - 16, y0: last.y - 22, x1: last.x + 16, y1: last.y + 10 });
+    const hl = document.createElement('div');
+    hl.className = 'herelab'; hl.innerHTML = `<b>你在這裡</b>${M.pts[0].p.d.slice(0, 7).replace('-', '.')}`;
+    const hc: [number, number, number][] = [];
+    for (const dx of [-1, 1]) for (const dy of [-1, 0, 1]) for (const dd of [60, 90, 120]) hc.push([last.x + dx * dd, last.y + dy * dd * 0.6, dd / 10]);
+    const hb = labelAt(hl, hc);
+    const ld = document.createElement('div');
+    ld.className = 'leader';
+    const L = Math.hypot(hb[0] - last.x, hb[1] - last.y + 6) - Math.min(hl.offsetWidth / 2, 40);
+    ld.style.cssText = `left:${last.x}px;top:${last.y - 6}px;width:${Math.max(0, L)}px;transform:rotate(${Math.atan2(hb[1] - last.y + 6, hb[0] - last.x)}rad)`;
+    ov.appendChild(ld);
+    // 地名
+    REGIONS.map((r, ki) => ({ r, ki })).reverse().forEach(({ r, ki }) => {
+      const idx = M.pts.map((q, i) => (q.k === ki ? i : -1)).filter((i) => i >= 0);
+      if (!idx.length) return;
+      const el = document.createElement('div');
+      el.className = 'region' + (vertical ? ' vert' : '');
+      el.dataset.k = String(ki);
+      el.innerHTML = `${r.key}${r.suffix}<small>${r.en} · ${idx.length}</small>`;
+      const us = idx.map((i) => M.pts[i].u).sort((a, b) => a - b), umin = us[0], umax = us[us.length - 1];
+      const v = (ki + 0.5) / REGIONS.length;
+      const cands: [number, number, number][] = [];
+      for (let a = 0; a <= 10; a++) {
+        const u = umin - 0.06 + ((umax - umin + 0.12) * a) / 10;
+        for (const dv of [0, 0.5, -0.5, 0.9, -0.9]) {
+          const [x, y] = M.at(u, v + dv / REGIONS.length);
+          cands.push([sx(x), sy(y), Math.abs(dv) * 3 + Math.abs(u - (umin + umax) / 2) * 4]);
+        }
+      }
+      labelAt(el, cands);
+      el.addEventListener('mouseenter', () => { active = ki; draw(); });
+      el.addEventListener('mouseleave', () => { active = filter; draw(); });
+    });
+    syncRegionLabels();
+  }
+  const syncRegionLabels = () => ov.querySelectorAll<HTMLElement>('.region').forEach((el) => el.classList.toggle('on', filter !== null && +el.dataset.k! === filter));
+
+  // 滑過石堆
+  const pick = (mx: number, my: number) => { let best = -1, bd = 22 * 22; S.forEach((s, i) => { const dx = s.x - mx, dy = s.y - 6 - my, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = i; } }); return best; };
+  function showTip(i: number) {
+    if (i < 0) { tip.classList.remove('show'); tip.tabIndex = -1; return; }
+    const q = M.pts[i], r = REGIONS[q.k];
+    $('tipR').textContent = r.key + r.suffix;
+    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')} · ${q.p.n.toLocaleString('en-US')} 字`;
+    $('tipT').textContent = q.p.t;
+    $('tipX').textContent = q.p.x;
+    tip.href = `/posts/${q.p.id}/`;
+    tip.tabIndex = 0;
+    const tw = Math.min(300, W - 32);
+    let x = S[i].x + 18, y = S[i].y - 20;
+    if (x + tw > W - 12) x = S[i].x - tw - 18;
+    if (x < 12) x = 12;
+    tip.style.left = x + 'px'; tip.style.top = '0px'; tip.classList.add('show');
+    const th = tip.offsetHeight;
+    if (y + th > H - 12) y = H - th - 12;
+    if (y < 12) y = 12;
+    tip.style.top = y + 'px';
+  }
+  let hideT: number;
+  box.addEventListener('pointermove', (e) => {
+    if ((e.target as HTMLElement).closest('.tip')) return;
+    const r = box.getBoundingClientRect(), i = pick(e.clientX - r.left, e.clientY - r.top);
+    if (i !== hover) {
+      hover = i; draw();
+      if (i >= 0) { clearTimeout(hideT); showTip(i); } else hideT = window.setTimeout(() => { if (hover < 0) showTip(-1); }, 260);
+    }
+    box.style.cursor = i >= 0 ? 'pointer' : 'default';
+  });
+  box.addEventListener('pointerleave', () => { hover = -1; draw(); hideT = window.setTimeout(() => showTip(-1), 300); });
+  box.addEventListener('click', (e) => { if (hover >= 0 && !(e.target as HTMLElement).closest('.tip') && matchMedia('(hover: hover)').matches) location.href = `/posts/${M.pts[hover].p.id}/`; });
+  tip.addEventListener('pointerenter', () => clearTimeout(hideT));
+
+  // 文章列表的區域篩選會通知地圖
+  addEventListener('regionfilter', (e) => { const k = (e as CustomEvent<number | null>).detail; filter = k; active = k; syncRegionLabels(); draw(); });
+
+  function run() {
+    const t0 = performance.now(), D = 2600;
+    const f = (now: number) => { const t = Math.min(1, (now - t0) / D); prog = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; draw(); if (t < 1) requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  }
+  let rT: number;
+  addEventListener('resize', () => { clearTimeout(rT); rT = window.setTimeout(() => { if ((innerWidth <= 900) !== vertical || Math.abs(box.getBoundingClientRect().width - W) > 2) build(); }, 150); });
+  addEventListener('themechange', () => build());
+
+  fetch('/map-data.json').then((r) => r.json()).then(async (d: PostSummary[]) => {
+    data = d;
+    await document.fonts?.ready;
+    build();
+    if (prog < 1) run();
+  }).catch(() => {});
+</script>

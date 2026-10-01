@@ -1,36 +1,37 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PostRow from '../../components/PostRow.astro';
-import { getAllPosts } from '../../lib/posts';
+import PostLog from '../../components/PostLog.astro';
+import { getAllPosts, charCount } from '../../lib/posts';
 
 const posts = await getAllPosts();
 const categories = [...new Set(posts.map((p) => p.data.category))];
-const byYear = new Map<number, typeof posts>();
-for (const post of posts) {
-  const y = post.data.date.getFullYear();
-  if (!byYear.has(y)) byYear.set(y, []);
-  byYear.get(y)!.push(post);
-}
+const total = posts.reduce((n, p) => n + charCount(p.body ?? ''), 0);
 ---
 
-<Base narrow title="文章" description="ChiChieh Huang 的技術文章與 AI 趨勢觀察。">
-  <h1>文章</h1>
-  <p class="filters">
-    <span class="on">全部 {posts.length}</span>
-    {categories.map((cat) => (
-      <a href={`/posts/category/${cat}/`}>{cat} {posts.filter((p) => p.data.category === cat).length}</a>
-    ))}
-  </p>
-  {[...byYear.entries()].map(([year, list]) => (
-    <section>
-      <div class="sec-label">{year}</div>
-      {list.map((post) => <PostRow post={post} />)}
+<Base title="文章" description="黃琪婕的技術文章與 AI 趨勢觀察：LLM、RAG、AI Agent、Agent Memory。">
+  <main class="wrap">
+    <section class="s first">
+      <div class="sh">
+        <div class="lab">野外紀錄 · 全部文章</div>
+        <h1>{posts.length} 篇文章，<b>{total.toLocaleString('en-US')}</b> 字</h1>
+        <p>依時間排列，可以用地圖上的區域篩選。也可以<a href="/">回到地圖</a>，看每一篇落在哪裡。</p>
+      </div>
+      <p class="cats lab">分類
+        {categories.map((c) => (
+          <a href={`/posts/category/${c}/`}>{c} {posts.filter((p) => p.data.category === c).length}</a>
+        ))}
+        <a href="/rss.xml">RSS</a>
+      </p>
+      <PostLog posts={posts} readQuery />
     </section>
-  ))}
+  </main>
 </Base>
 
 <style>
-  h1 { font-size: 1.6rem; margin: 1rem 0 0.5rem; }
-  .filters { display: flex; gap: 1.1rem; font-size: 0.9rem; margin: 0 0 1rem; }
-  .filters .on { color: var(--ink); font-weight: 500; }
+  .first { padding-top: clamp(40px, 6vw, 80px); }
+  .sh p a { color: var(--ink); border-bottom: 1px solid var(--trail); }
+  .sh p a:hover { color: var(--trail); }
+  .cats { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 18px; }
+  .cats a { color: var(--ink); }
+  .cats a:hover { color: var(--trail); }
 </style>

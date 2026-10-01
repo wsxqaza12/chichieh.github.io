@@ -1,0 +1,95 @@
+---
+// 演講的爬升剖面：今年累積場次的階梯圖。建置時畫成 SVG（桌機、手機各一張，字才不會縮到看不清）。
+import type { Talk } from '../data/experience';
+
+interface Props { talks: Talk[]; year: number; today: string }
+const { talks, year, today } = Astro.props;
+
+const ts = (d: string) => Date.parse(d.length === 7 ? `${d}-15` : d);
+const list = talks
+  .filter((t) => t.date.startsWith(String(year)))
+  .map((t) => ({ ...t, t: ts(t.date), n: t.count ?? 1 }))
+  .sort((a, b) => a.t - b.t);
+let c = 0;
+const pts = list.map((t) => ({ ...t, c: (c += t.n) }));
+const total = c;
+const A = Date.parse(`${year}-01-01`), B = Date.parse(`${year}-12-31`), now = Date.parse(today);
+const esc = (s: string) => s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]!);
+
+function svg(W: number, H: number, narrow: boolean) {
+  const l = 26, r = narrow ? 14 : 30, top = narrow ? 92 : 64, b = 40;
+  const ymax = Math.max(10, Math.ceil(total / 10) * 10);
+  const x = (t: number) => l + ((t - A) / (B - A)) * (W - l - r);
+  const y = (v: number) => H - b - (v / ymax) * (H - top - b);
+  let s = '<g class="axis">';
+  for (let v = 0; v <= ymax; v += 10) s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}"/><text x="${l}" y="${y(v) - 6}">${v}</text>`;
+  const months = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
+  months.forEach((m, i) => {
+    if (narrow && i % 2) return;
+    const t = Date.parse(`${year}-${String(i + 1).padStart(2, '0')}-01`);
+    s += `<text x="${x(t) + 4}" y="${H - 14}">${m}月</text><line x1="${x(t)}" x2="${x(t)}" y1="${H - b}" y2="${H - b + 5}"/>`;
+  });
+  s += '</g>';
+  const past = pts.filter((p) => p.t <= now), fut = pts.filter((p) => p.t > now);
+  let d = `M${x(A)},${y(0)}`, prev = 0;
+  past.forEach((p) => { d += ` L${x(p.t)},${y(prev)} L${x(p.t)},${y(p.c)}`; prev = p.c; });
+  const nowX = x(Math.min(Math.max(now, A), B));
+  d += ` L${nowX},${y(prev)}`;
+  let df = `M${nowX},${y(prev)}`;
+  fut.forEach((p) => { df += ` L${x(p.t)},${y(prev)} L${x(p.t)},${y(p.c)}`; prev = p.c; });
+  df += ` L${x(B)},${y(prev)}`;
+  s += `<path d="${d} L${nowX},${y(0)} Z" class="area"/><path d="${d}" class="ln"/>`;
+  if (fut.length || now < B) s += `<path d="${df}" class="ln fut"/>`;
+  if (now >= A && now <= B) {
+    const md = today.slice(5).replace('-', '.');
+    s += `<line x1="${nowX}" x2="${nowX}" y1="${top - 22}" y2="${H - b}" class="today"/><text x="${nowX + 6}" y="${top - 12}" class="tl">今天 ${md}</text>`;
+  }
+  const boxes: { x0: number; x1: number; y0: number; y1: number }[] = [];
+  pts.forEach((p) => {
+    const X = x(p.t), Y = y(p.c);
+    if (p.major) {
+      const name = p.event.replace(` ${year}`, '').replace(`${year} `, '').replace(/[（(][^）)]*[）)]/g, '').trim();
+      const fs = narrow ? 19 : 13, step = narrow ? 27 : 20;
+      const w = [...name].reduce((a, ch) => a + (ch.charCodeAt(0) > 255 ? fs : fs * 0.57), 0);
+      const flip = X - w - 6 < l;
+      let lvl = 0, bx = { x0: 0, x1: 0, y0: 0, y1: 0 };
+      for (; lvl < 6; lvl++) {
+        const ly = Y - 22 - lvl * step;
+        bx = flip ? { x0: X - 2, x1: X + w + 8, y0: ly - fs, y1: ly + 4 } : { x0: X - w - 6, x1: X + 2, y0: ly - fs, y1: ly + 4 };
+        if (!boxes.some((o) => !(bx.x1 < o.x0 || bx.x0 > o.x1 || bx.y1 < o.y0 || bx.y0 > o.y1))) break;
+      }
+      boxes.push(bx);
+      const ly = Y - 22 - lvl * step;
+      s += `<line x1="${X}" x2="${X}" y1="${Y - 6}" y2="${ly + 3}" class="lead"/><circle cx="${X}" cy="${Y}" r="6" class="dot"/><text x="${flip ? X + 6 : X - 6}" y="${ly}" text-anchor="${flip ? 'start' : 'end'}" class="name">${esc(name)}</text>`;
+    }
+    s += `<circle cx="${X}" cy="${Y}" r="12" fill="transparent"><title>${esc(p.date)} ${esc(p.event)}${p.topic ? '：' + esc(p.topic) : ''}（累積 ${p.c} 場）</title></circle>`;
+  });
+  return { view: `0 0 ${W} ${H}`, body: s };
+}
+const wide = svg(1200, 320, false), small = svg(600, 360, true);
+---
+
+<div class="tprof">
+  <svg class="w" viewBox={wide.view} role="img" aria-label={`${year} 年演講累積場次，共 ${total} 場`} set:html={wide.body} />
+  <svg class="s" viewBox={small.view} role="img" aria-label={`${year} 年演講累積場次，共 ${total} 場`} set:html={small.body} />
+</div>
+
+<style>
+  .tprof { border: 1px solid var(--line); background: var(--ground-2); padding: clamp(14px, 2.4vw, 28px); }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .s { display: none; }
+  @media (max-width: 700px) { .w { display: none; } .s { display: block; } }
+  .tprof :global(.axis text) { font-family: var(--mono); font-stretch: 80%; font-size: 11px; fill: var(--ink-3); letter-spacing: .06em; }
+  .s :global(.axis text) { font-size: 17px; }
+  .tprof :global(.axis line) { stroke: var(--line); stroke-width: 1; }
+  .tprof :global(.area) { fill: var(--trail-soft); }
+  .tprof :global(.ln) { fill: none; stroke: var(--trail); stroke-width: 2; stroke-linejoin: round; }
+  .tprof :global(.ln.fut) { stroke-dasharray: 5 5; opacity: .7; }
+  .tprof :global(.today) { stroke: var(--ink-2); stroke-dasharray: 2 4; }
+  .tprof :global(.tl) { font-family: var(--mono); font-stretch: 80%; font-size: 11px; fill: var(--ink-2); letter-spacing: .1em; }
+  .s :global(.tl) { font-size: 17px; }
+  .tprof :global(.lead) { stroke: var(--ink-3); stroke-width: 1; }
+  .tprof :global(.dot) { fill: var(--trail); stroke: var(--ground-2); stroke-width: 2; }
+  .tprof :global(.name) { font-family: var(--sans); font-weight: 500; font-size: 13px; fill: var(--ink); }
+  .s :global(.name) { font-size: 19px; }
+</style>

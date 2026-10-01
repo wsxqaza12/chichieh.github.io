@@ -2,17 +2,19 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base narrow title="找不到頁面">
-  <div class="lost">
-    <p class="crab" aria-hidden="true">🦞</p>
-    <h1>這一頁被龍蝦搬走了</h1>
-    <p class="muted">網址可能打錯了，或這篇文章已經搬家。</p>
-    <p><a href="/">回首頁</a> · <a href="/posts/">看所有文章</a></p>
-  </div>
+<Base title="找不到頁面">
+  <main class="wrap lost">
+    <svg width="96" height="96" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="var(--trail)" stroke-width="1.6"><ellipse cx="32" cy="55" rx="24" ry="7" /><ellipse cx="33" cy="42" rx="18" ry="6.2" stroke-dasharray="3 3" /></g></svg>
+    <span class="lab">404 · 地圖上沒有這條路</span>
+    <h1>這裡的石堆被龍蝦搬走了</h1>
+    <p>網址可能打錯了，或這篇文章已經搬家。</p>
+    <p class="acts"><a class="btn" href="/">回到地圖</a><a class="btn" href="/posts/">看所有文章</a></p>
+  </main>
 </Base>
 
 <style>
-  .lost { text-align: center; padding: 4rem 0; }
-  .crab { font-size: 3rem; margin: 0; }
-  h1 { font-size: 1.5rem; margin: 0.75rem 0 0.25rem; }
+  .lost { text-align: center; padding-block: clamp(64px, 10vw, 140px) 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  h1 { margin: 8px 0 0; font-weight: 300; font-size: clamp(30px, 4vw, 48px); }
+  p { margin: 0; color: var(--ink-2); }
+  .acts { display: flex; gap: 8px; margin-top: 12px; }
 </style>

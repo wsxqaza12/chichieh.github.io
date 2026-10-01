@@ -1,123 +1,126 @@
 ---
 import Base from '../../layouts/Base.astro';
+import TalkProfile from '../../components/TalkProfile.astro';
 import { achievements, talks, media } from '../../data/experience';
 import { getAllPosts, postUrl } from '../../lib/posts';
 
 const posts = (await getAllPosts()).filter((p) => !p.data.draft);
 const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefined);
 
-// 每日排程會重建網站，所以「即將登場」會自動隨建置日期輪替到「已完成」
+// 每日排程會重建網站，「即將登場」會隨建置日期自動輪替到「已完成」
 const today = new Date().toISOString().slice(0, 10);
+const year = +today.slice(0, 4);
 const upcoming = talks.filter((t) => t.date > today).sort((a, b) => a.date.localeCompare(b.date));
 const past = talks.filter((t) => t.date <= today).sort((a, b) => b.date.localeCompare(a.date));
-const fmtDate = (d: string) => d.replaceAll('-', '/');
+const total = talks.reduce((n, t) => n + (t.count ?? 1), 0);
+const done = past.reduce((n, t) => n + (t.count ?? 1), 0);
+const dd = (d: string) => d.replaceAll('-', '.');
 ---
 
-<Base title="經歷" description="ChiChieh Huang 的演講、獎項與媒體報導。">
-  <h1>經歷</h1>
-  <p class="muted intro">講過的、得過的、被報導過的。相關心得都有文章可以讀。</p>
+<Base title="演講與經歷" description="黃琪婕的演講、獎項與媒體報導。">
+  <main class="wrap">
+    <section class="s first">
+      <div class="sh">
+        <div class="lab">足跡 · 演講、紀錄與報導</div>
+        <h1>{year} 年，<b>{total}</b> 場演講與工作坊</h1>
+        <p>講過的、得過的、被報導過的。有寫心得的都附上文章。已完成 {done} 場，還有 {total - done} 場即將登場。</p>
+      </div>
+      <TalkProfile talks={talks} year={year} today={today} />
+    </section>
 
-  <div class="sec-label">獎項與里程碑</div>
-  <div class="grid">
-    {achievements.map((a) => {
-      const post = findPost(a.postId);
-      return (
-        <article class="card">
-          <h2>{a.title}</h2>
-          <p class="desc">{a.detail}</p>
-          <p class="card-foot">
-            {a.year && <span class="year">{a.year}</span>}
-            {post && <a href={postUrl(post)}>閱讀心得 →</a>}
-          </p>
-        </article>
-      );
-    })}
-  </div>
-
-  {upcoming.length > 0 && (
-    <>
-      <div class="sec-label">即將登場</div>
-      {upcoming.map((t) => (
-        <article class="row up">
-          <div class="row-main">
-            <div class="row-head">
-              <h2 class:list={{ major: t.major }}>{t.event}</h2>
-              <span class="year">{fmtDate(t.date)}</span>
+    {upcoming.length > 0 && (
+      <section class="s">
+        <div class="sh"><div class="lab">即將登場</div><h2>下一站</h2></div>
+        <div class="next">
+          {upcoming.map((t) => (
+            <div class="nx">
+              <span class="date">{dd(t.date).slice(5)}</span>
+              <div><span class="lab">{dd(t.date)}</span><h3>{t.event}</h3>{t.topic && <p>{t.topic}</p>}</div>
             </div>
-            {t.topic && <p class="topic">「{t.topic}」</p>}
-            {t.detail && <p class="desc">{t.detail}</p>}
-          </div>
-        </article>
-      ))}
-    </>
-  )}
-
-  <div class="sec-label">演講與工作坊（{past.reduce((n, t) => n + (t.count ?? 1), 0)} 場）</div>
-  {past.map((t) => {
-    const post = findPost(t.postId);
-    // 大場沒手動指定照片時，用心得文的封面（文章第一張圖）
-    const photo = t.photo ?? (t.major ? post?.data.hero : undefined);
-    return (
-      <article class="row">
-        <div class="row-main">
-          <div class="row-head">
-            <h2 class:list={{ major: t.major }}>{t.event}</h2>
-            <span class="year">{fmtDate(t.date)}</span>
-          </div>
-          {t.topic && <p class="topic">「{t.topic}」</p>}
-          {t.detail && <p class="desc">{t.detail}</p>}
-          {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
+          ))}
         </div>
-        {photo && <img class="side-photo" src={photo} alt={`${t.event} 現場照片`} loading="lazy" />}
-      </article>
-    );
-  })}
+      </section>
+    )}
 
-  <div class="sec-label">媒體報導</div>
-  {media.map((m) => {
-    const post = findPost(m.postId);
-    // 沒手動指定照片時，用心得文的封面（文章第一張圖）
-    const photo = m.photo ?? post?.data.hero;
-    return (
-      <article class="row">
-        <div class="row-main">
-          <div class="row-head">
-            <h2>{m.outlet}</h2>
-            {m.year && <span class="year">{m.year}</span>}
-          </div>
-          <p class="desc">{m.detail}</p>
-          {post && <p class="link"><a href={postUrl(post)}>閱讀心得 →</a></p>}
-        </div>
-        {photo && <img class="side-photo" src={photo} alt={`${m.outlet} 報導畫面`} loading="lazy" />}
-      </article>
-    );
-  })}
+    <section class="s">
+      <div class="sh"><div class="lab">演講與工作坊 · {done} 場</div><h2>走過的講台</h2></div>
+      <div class="rows">
+        {past.map((t) => {
+          const post = findPost(t.postId);
+          const photo = t.photo ?? (t.major ? post?.data.hero : undefined);
+          return (
+            <article class:list={['row', { major: t.major }]}>
+              <span class="d">{dd(t.date)}{(t.count ?? 1) > 1 && <em>×{t.count}</em>}</span>
+              <div class="main">
+                <h3>{t.event}</h3>
+                {t.topic && <p class="topic">{t.topic}</p>}
+                {t.detail && <p class="det">{t.detail}</p>}
+                {post && <a class="go" href={postUrl(post)}>現場心得 →</a>}
+              </div>
+              {photo ? <img class="ph" src={photo} alt={`${t.event} 現場`} loading="lazy" /> : <span />}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="s">
+      <div class="sh"><div class="lab">紀錄</div><h2>比賽與里程碑</h2></div>
+      <div class="rows">
+        {achievements.map((a) => {
+          const post = findPost(a.postId);
+          return (
+            <article class="row">
+              <span class="d">{a.year ?? '—'}</span>
+              <div class="main"><h3>{a.title}</h3><p class="det">{a.detail}</p>{post && <a class="go" href={postUrl(post)}>閱讀心得 →</a>}</div>
+              <span />
+            </article>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="s">
+      <div class="sh"><div class="lab">報導</div><h2>媒體採訪</h2></div>
+      <div class="rows">
+        {media.map((m) => {
+          const post = findPost(m.postId);
+          const photo = m.photo ?? post?.data.hero;
+          return (
+            <article class="row">
+              <span class="d">{m.year ?? ''}</span>
+              <div class="main"><h3>{m.outlet}</h3><p class="det">{m.detail}</p>{post && <a class="go" href={postUrl(post)}>受訪心得 →</a>}</div>
+              {photo ? <img class="ph" src={photo} alt={`${m.outlet} 報導畫面`} loading="lazy" /> : <span />}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  </main>
 </Base>
 
 <style>
-  h1 { font-size: 1.6rem; margin: 1rem 0 0.25rem; }
-  .intro { font-size: 0.92rem; margin: 0 0 1.5rem; }
-
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.75rem; }
-  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-  .card { border: 1px solid var(--line); border-radius: 10px; padding: 1.15rem 1.3rem; }
-  .card h2 { font-size: 1rem; margin: 0 0 0.4rem; line-height: 1.6; }
-  .card-foot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0.5rem 0 0; font-size: 0.85rem; }
-
-  .row { padding: 1.2rem 0; border-top: 1px solid var(--line); display: flex; gap: 1.5rem; align-items: center; justify-content: space-between; }
-  .row-main { flex: 1; min-width: 0; }
-  .row-main .row-head { justify-content: flex-start; gap: 1rem; }
-  .side-photo {
-    width: 168px; height: 106px; object-fit: cover;
-    border-radius: 8px; border: 1px solid var(--line); flex-shrink: 0;
+  .first { padding-top: clamp(40px, 6vw, 80px); }
+  .next { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--ink-2); }
+  .nx { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .nx .date { font-family: var(--mono); font-stretch: 80%; font-weight: 300; font-size: clamp(40px, 5vw, 64px); line-height: 1; color: var(--trail); }
+  .nx h3 { margin: 4px 0 0; font-weight: 500; font-size: 19px; }
+  .nx p { margin: 2px 0 0; color: var(--ink-2); font-size: 14px; }
+  .rows { border-top: 1px solid var(--ink-2); }
+  .row { display: grid; grid-template-columns: 110px minmax(0, 1fr) 176px; gap: 24px; align-items: start; padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .d { font-family: var(--mono); font-stretch: 80%; font-size: 12px; color: var(--ink-2); letter-spacing: .04em; padding-top: 4px; }
+  .d em { font-style: normal; color: var(--trail); margin-left: 8px; }
+  .main h3 { margin: 0; font-weight: 500; font-size: 18px; line-height: 1.5; }
+  .row.major h3 { color: var(--trail); }
+  .topic { margin: 4px 0 0; font-size: 15.5px; color: var(--ink); }
+  .det { margin: 4px 0 0; font-size: 14px; color: var(--ink-2); line-height: 1.75; max-width: 46em; }
+  .go { display: inline-block; margin-top: 8px; font-family: var(--mono); font-stretch: 80%; font-size: 11px; letter-spacing: .14em; color: var(--trail); }
+  .ph { width: 176px; height: 112px; object-fit: cover; border: 1px solid var(--line); filter: grayscale(.6); transition: filter .2s; }
+  .row:hover .ph { filter: none; }
+  @media (max-width: 760px) {
+    .next { grid-template-columns: 1fr; }
+    .row { grid-template-columns: minmax(0, 1fr) 96px; gap: 6px 16px; }
+    .d { grid-column: 1 / -1; padding: 0; }
+    .ph { width: 96px; height: 64px; }
   }
-  @media (max-width: 600px) { .side-photo { width: 112px; height: 76px; } }
-  .row.up { border-left: 3px solid var(--accent); padding-left: 1.1rem; border-top: none; margin-bottom: 0.25rem; }
-  h2.major { color: var(--accent); }
-  .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
-  .row h2 { font-size: 1.05rem; margin: 0; }
-  .topic { font-family: var(--serif); color: var(--ink); margin: 0.3rem 0 0; }
-  .desc { font-size: 0.9rem; color: var(--ink-2); line-height: 1.8; margin: 0.35rem 0 0; }
-  .year { color: var(--ink-2); font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .link { font-size: 0.85rem; margin: 0.5rem 0 0; }
 </style>

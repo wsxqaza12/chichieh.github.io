@@ -1,7 +1,12 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { getAllPosts, formatDate, readingTime, postUrl, type Post } from '../../lib/posts';
+import {
+  getAllPosts, getSummaries, postUrl, dotDate, readingTime, charCount, displayTitle, regionOfPost, type Post,
+} from '../../lib/posts';
+import { REGIONS } from '../../lib/regions';
+import { seriesOf } from '../../data/series';
+import { makeModel, nearest } from '../../lib/terrain/model';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -13,172 +18,549 @@ export async function getStaticPaths() {
 
 const { post, newer, older } = Astro.props as { post: Post; newer: Post | null; older: Post | null };
 const { Content, headings } = await render(post);
-const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
-const minutes = readingTime(post.body ?? '');
+const body = post.body ?? '';
+const title = displayTitle(post);
+const minutes = readingTime(body);
+const chars = charCount(body);
+const region = REGIONS.find((r) => r.key === regionOfPost(post))!;
+const place = seriesOf(post.id);
+
+// 圖表與引用數量（從 markdown 直接數）
+const figs = (body.match(/!\[[^\]]*\]\([^)]+\)/g) ?? []).length;
+const tables = (body.match(/^\s*\|?\s*:?-{3,}:?\s*\|/gm) ?? []).length;
+const refSection = body.split(/^##\s*(?:參考資料|參考文獻|資料來源|References)\s*$/m)[1] ?? '';
+const refs = (refSection.match(/^\s*(?:[-*]|\d+\.)\s.*\][([]/gm) ?? []).length;
+
+const all = await getAllPosts();
+const byId = new Map(all.map((p) => [p.id, p]));
+const summaries = await getSummaries();
+const model = makeModel(summaries, 'h');
+const exclude = new Set(place ? place.series.seasons.flatMap((s) => s.posts) : []);
+const near = nearest(model, post.id, 3, exclude);
+const regionOf = (key: string) => REGIONS.find((r) => r.key === key)!;
+
+// 段落：以 h2 為主；舊的 Medium 文章用 h3 分段，h2 不足兩個時改用 h3
+const h2s = headings.filter((h) => h.depth === 2);
+const sections = h2s.length >= 2 ? h2s : headings.filter((h) => h.depth === 3);
+const seriesIds = place ? place.series.seasons.flatMap((s) => s.posts.map((id, i) => ({ id, label: `S${s.n}·${i + 1}` }))) : [];
+const pageUrl = new URL(postUrl(post), Astro.site).toString();
 ---
 
-<Base
-  title={post.data.title}
-  description={post.data.description ?? post.data.title}
-  ogImage={post.data.hero}
-  ogType="article"
->
-  <div class="layout">
-    <article class="prose">
-      <h1>{post.data.title}</h1>
-      <p class="byline">
-        {formatDate(post.data.date)} ·
-        <a href={`/posts/category/${post.data.category}/`}>{post.data.category}</a> ·
-        閱讀約 {minutes} 分鐘
-        {post.data.draft && <span class="draft-pill">草稿</span>}
-      </p>
+<Base title={title} description={post.data.description ?? title} ogImage={post.data.hero} ogType="article">
+  <div class="prog" id="prog" aria-hidden="true"></div>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="crumbs lab">
+          <a href="/posts/">文章</a><i></i>
+          <a href={`/posts/category/${post.data.category}/`}>{post.data.category}</a><i></i>
+          <a href={`/posts/?r=${encodeURIComponent(region.key)}`}>{region.key}{region.suffix} · {region.en}</a>
+          {place && (<><i></i><span class="here">{place.series.name} · 第{['一','二','三','四','五','六'][place.season.n - 1]}季 · 第 {place.ep} 段</span></>)}
+          {post.data.draft && <span class="draft">草稿</span>}
+        </div>
+        <h1 class="keep">{title}</h1>
+        <div class="meta">
+          <div><span class="lab">日期</span><b>{dotDate(post.data.date)}</b></div>
+          <div><span class="lab">字數</span><b>{chars.toLocaleString('en-US')}</b></div>
+          <div><span class="lab">閱讀</span><b>約 {minutes} 分鐘</b></div>
+          {refs > 0 && <div><span class="lab">引用</span><b>{refs} 份資料</b></div>}
+          {(figs > 0 || tables > 0) && <div><span class="lab">圖表</span><b>{[figs && `${figs} 圖`, tables && `${tables} 表`].filter(Boolean).join(' · ')}</b></div>}
+        </div>
+        <div class="byrow">
+          <img src="/assets/img/avatar-640.webp" alt="" width="40" height="40" />
+          <span class="who"><b>黃琪婕</b><span class="lab">Generative AI 產品開發 · 技術寫作</span></span>
+          <button class="btn" type="button" data-copy={pageUrl} data-done="已複製連結">複製連結</button>
+        </div>
+      </div>
+      <div class="locator" id="loc" data-id={post.id} data-series={JSON.stringify(seriesIds)}>
+        <canvas id="lcv" role="img" aria-label={`位置圖：這篇在寫作地形圖的${region.key}${region.suffix}一帶。`}></canvas>
+        <div class="ttl lab">位置圖<b>{region.key}{region.suffix}一帶</b></div>
+        <div id="lov"></div>
+        <div class="mtip" id="mtip"></div>
+        <div class="lscale"><i id="lsc" style="width:50px"></i><span>2 週</span></div>
+        <div class="inset"><span>全圖</span><canvas id="icv" aria-hidden="true"></canvas></div>
+      </div>
+    </section>
 
-      {toc.length >= 3 && (
-        <details class="toc">
-          <summary>目錄</summary>
-          <ul>
-            {toc.map((h) => (
-              <li class={`d${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
-            ))}
-          </ul>
-        </details>
-      )}
-
-      <Content />
-
-      {post.data.tags.length > 0 && (
-        <p class="tags">{post.data.tags.map((t) => <span># {t}</span>)}</p>
-      )}
-
-      <nav class="pager" aria-label="前後文章">
-        {older ? <a href={postUrl(older)}>← {older.data.title}</a> : <span />}
-        {newer ? <a class="next" href={postUrl(newer)}>{newer.data.title} →</a> : <span />}
-      </nav>
-    </article>
-
-    {toc.length >= 2 && (
-      <aside class="toc-rail" aria-label="章節目錄">
-        <nav>
-          <p class="rail-label">本頁章節</p>
-          <ul>
-            {toc.map((h) => (
-              <li class={`d${h.depth}`}>
-                <a href={`#${h.slug}`} data-toc-link={h.slug}>{h.text}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+    <div class="desk">
+      <aside class="route" aria-label="本篇路線">
+        <div class="head"><span class="lab">本篇路線</span><b id="pct">0%</b><span class="lab" id="left" data-mins={minutes}>約 {minutes} 分鐘</span></div>
+        <div class="path" id="path"><div class="base"></div><div class="fill" id="fill"></div><div class="me" id="me"></div></div>
+        <div class="foot lab">終點{sections.length ? ` · ${sections[sections.length - 1].text.replace(/^\d+[.．、]\s*/, '')}` : ''}</div>
       </aside>
-    )}
-  </div>
+      <div class="mbar" id="mbar">
+        <button type="button" id="mbtn" aria-expanded="false"><span id="mcur">開始閱讀</span><span class="pct" id="mpct">0%</span></button>
+        {sections.length > 0 && (
+          <ol id="mlist" hidden>
+            {sections.map((h) => (
+              <li><a href={`#${h.slug}`}><em>{(h.text.match(/^(\d+)[.．、]/)?.[1] ?? '').padStart(h.text.match(/^\d/) ? 2 : 0, '0')}</em><span>{h.text.replace(/^\d+[.．、]\s*/, '')}</span></a></li>
+            ))}
+          </ol>
+        )}
+        <div class="pbar" id="mpbar"></div>
+      </div>
+
+      <div class="paper">
+        <article class="prose" id="prose">
+          <Content />
+        </article>
+
+        {post.data.tags.length > 0 && (
+          <p class="tags lab">{post.data.tags.map((t) => <span>#{t}</span>)}</p>
+        )}
+
+        <div class="end">
+          <div class="fin">
+            <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><g fill="var(--trail)" stroke="var(--ground)" stroke-width="2"><ellipse cx="32" cy="55" rx="24" ry="7"/><ellipse cx="33" cy="42" rx="18" ry="6.2"/><ellipse cx="31" cy="30.5" rx="13" ry="5.2"/><ellipse cx="32.5" cy="21" rx="8.5" ry="4.2"/></g></svg>
+            <div><span class="lab">本段終點</span><p class="fint">這段路 <b>{chars.toLocaleString('en-US')}</b> 字，走完了。</p></div>
+            <div class="acts">
+              <button class="btn" type="button" data-copy={pageUrl} data-done="已複製連結">複製連結</button>
+              <a class="btn" href="/rss.xml">RSS 訂閱</a>
+              <a class="btn" href="/">回到地圖</a>
+            </div>
+          </div>
+
+          {place ? (
+            <div class="legs">
+              {place.series.seasons.map((s) => (
+                <div class="season">
+                  <span class="lab">{place.series.name} · 第{['一','二','三','四','五','六'][s.n - 1]}季</span>
+                  <h2>{s.name}</h2>
+                  <div class:list={['line', { open: !!s.next }]}>
+                    {s.posts.map((id, i) => {
+                      const p = byId.get(id);
+                      if (!p) return null;
+                      const k = `S${s.n}·${i + 1}`;
+                      return id === post.id ? (
+                        <div class="leg cur"><span class="k">{k} · {dotDate(p.data.date)} · 你在這裡</span><b class="keep">{displayTitle(p)}</b></div>
+                      ) : (
+                        <a class="leg" href={postUrl(p)}><span class="k">{k} · {dotDate(p.data.date)} · {charCount(p.body ?? '').toLocaleString('en-US')} 字</span><b class="keep">{displayTitle(p)}</b></a>
+                      );
+                    })}
+                    {s.next && <div class="leg next"><span class="k">S{s.n}·{s.posts.length + 1} · 籌備中</span><b>{s.next}</b></div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="legs pager">
+              {older ? (
+                <a class="pg" href={postUrl(older)}><span class="lab">← 上一篇 · {dotDate(older.data.date)}</span><b class="keep">{displayTitle(older)}</b></a>
+              ) : <span />}
+              {newer ? (
+                <a class="pg nx" href={postUrl(newer)}><span class="lab">下一篇 · {dotDate(newer.data.date)} →</span><b class="keep">{displayTitle(newer)}</b></a>
+              ) : <span />}
+            </div>
+          )}
+
+          {near.length > 0 && (
+            <div class="nb">
+              <span class="lab">附近的石堆 · 地圖上離這篇最近的文章</span>
+              <div class="cards">
+                {near.map(({ post: q, days }) => {
+                  const r = regionOf(q.topic);
+                  return (
+                    <a class="nbc" href={`/posts/${q.id}/`}>
+                      <span class="lab"><span>{r.key}{r.suffix}</span><span>{days === 0 ? '同一天' : `相距 ${days} 天`}</span></span>
+                      <b class="keep">{q.t}</b>
+                      {q.x && <span class="x">{q.x}</span>}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div class="author">
+            <img src="/assets/img/avatar-640.webp" alt="黃琪婕" width="84" height="84" loading="lazy" />
+            <div><span class="lab">測繪者</span><h2>黃琪婕</h2><p>做 Generative AI 產品，也把它寫成中文。最近在研究 Agent Memory，並放回 Cairn 裡實作對照。</p></div>
+            <div class="acts"><a class="btn" href="/about/">關於我</a><button class="btn" type="button" data-copy="cch.chichieh@gmail.com" data-done="已複製 cch.chichieh@gmail.com">邀請演講 · 複製 Email</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <dialog class="lb" id="lb" aria-label="放大圖片">
+    <div class="in"><img id="lbImg" alt="" /></div>
+    <div class="lbbar"><span id="lbCap"></span><button class="btn" type="button" id="lbClose">關閉 ✕</button></div>
+  </dialog>
 </Base>
 
 <style>
-  .layout {
-    display: grid;
-    grid-template-columns: minmax(0, 720px);
-    justify-content: center;
-  }
-  /* 寬螢幕：文章維持 720px 閱讀欄，右側加懸浮章節目錄。
-     容器放寬到 1080px 才裝得下 720 + 220 + gap，避免文字欄被擠窄。 */
-  @media (min-width: 1100px) {
-    :global(.wrap) { max-width: 1080px; }
-    .layout { grid-template-columns: minmax(0, 720px) 220px; gap: 3.5rem; }
-    .toc { display: none; }
-  }
-  @media (max-width: 1099.9px) {
-    .toc-rail { display: none; }
-  }
+  .prog { position: fixed; left: 0; top: 0; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--trail); z-index: 60; }
 
-  .byline { color: var(--ink-2); font-size: 0.85rem; margin: 0 0 2rem; }
-  .byline a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
-  .byline a:hover { color: var(--accent); }
+  .hero { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 4vw, 72px); align-items: center; padding-block: clamp(36px, 5vw, 72px) clamp(40px, 5vw, 64px); }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+  .crumbs a:hover { color: var(--trail); }
+  .crumbs i { width: 14px; height: 1px; background: var(--ink-3); display: inline-block; }
+  .crumbs .here { color: var(--trail); }
+  .draft { border: 1px dashed var(--ink-3); padding: 1px 6px; margin-left: 6px; }
+  h1 { margin: 22px 0 0; font-weight: 300; font-size: clamp(38px, 5.2vw, 76px); line-height: 1.14; letter-spacing: .01em; }
+  .meta { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .meta div { display: flex; flex-direction: column; gap: 2px; }
+  .meta b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 16px; color: var(--ink); letter-spacing: .02em; }
+  .byrow { display: flex; align-items: center; gap: 14px; margin-top: 26px; flex-wrap: wrap; }
+  .byrow img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; filter: grayscale(.2); }
+  .who { display: flex; flex-direction: column; line-height: 1.4; }
+  .who b { font-weight: 500; font-size: 15px; }
+  .byrow .btn { margin-left: auto; }
 
-  .toc {
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 0.6rem 1.1rem;
-    font-size: 0.9rem;
-    margin: 0 0 2rem;
-  }
-  .toc summary { cursor: pointer; color: var(--ink-2); }
-  .toc ul { list-style: none; padding: 0.3rem 0 0.2rem; margin: 0; }
-  .toc li { margin: 0.25rem 0; }
-  .toc li.d3 { padding-left: 1.25rem; }
-  .toc a { color: var(--ink); }
-  .toc a:hover { color: var(--accent); }
+  .locator { position: relative; aspect-ratio: 1 / 1; max-width: 100%; border: 1px solid var(--line); background: var(--ground-2); }
+  .locator canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .ttl { position: absolute; left: 12px; top: 10px; z-index: 2; text-shadow: 0 0 6px var(--halo), 0 0 2px var(--halo); }
+  .ttl b { display: block; font-family: var(--sans); font-weight: 500; font-size: 13px; letter-spacing: .2em; color: var(--ink); text-transform: none; }
+  .inset { position: absolute; right: 10px; bottom: 10px; width: 34%; aspect-ratio: 1440 / 835; border: 1px solid var(--ink-3); background: var(--ground); z-index: 2; }
+  .inset canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .inset span { position: absolute; left: 4px; top: -17px; font-family: var(--mono); font-stretch: 80%; font-size: 9px; letter-spacing: .14em; color: var(--ink-3); }
+  .lscale { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: flex; align-items: flex-end; gap: 8px; font-family: var(--mono); font-stretch: 80%; font-size: 9.5px; color: var(--ink-2); letter-spacing: .08em; }
+  .lscale i { display: block; height: 6px; border: 1px solid var(--ink-2); border-top: 0; background: linear-gradient(90deg, var(--ink-2) 50%, transparent 50%); }
+  .locator :global(.ring) { position: absolute; z-index: 3; width: 0; height: 0; pointer-events: none; }
+  .locator :global(.ring i) { position: absolute; left: -17px; top: -17px; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--trail); }
+  .locator :global(.ring i:nth-child(2)) { animation: ping 2.4s cubic-bezier(.2, .6, .3, 1) infinite; }
+  @keyframes ping { from { transform: scale(.6); opacity: 1; } to { transform: scale(2.4); opacity: 0; } }
+  .locator :global(.ring span) { position: absolute; left: 24px; top: -12px; white-space: nowrap; font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .12em; color: var(--trail); padding: 3px 7px; border: 1px solid var(--trail); background: var(--ground); }
+  .locator :global(.ring.l span) { left: auto; right: 24px; }
+  .mtip { position: absolute; z-index: 5; max-width: 240px; padding: 9px 11px; background: var(--ground); border: 1px solid var(--trail); font-size: 13px; line-height: 1.55; pointer-events: none; opacity: 0; transition: opacity .12s; }
+  .mtip:global(.show) { opacity: 1; }
+  .mtip :global(.lab) { color: var(--trail); display: block; font-size: 10px; }
 
-  .toc-rail nav {
-    position: sticky;
-    top: 2.5rem;
-    max-height: calc(100vh - 5rem);
-    overflow-y: auto;
-    font-size: 0.82rem;
-    line-height: 1.65;
-  }
-  .rail-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.15em;
-    color: var(--ink-2);
-    margin: 0 0 0.6rem;
-  }
-  .toc-rail ul { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line); }
-  .toc-rail li.d3 a { padding-left: 1.9rem; }
-  .toc-rail a {
-    display: block;
-    color: var(--ink-2);
-    padding: 0.22rem 0 0.22rem 0.9rem;
-    border-left: 2px solid transparent;
-    margin-left: -1.5px;
-  }
-  .toc-rail a:hover { color: var(--ink); text-decoration: none; }
-  .toc-rail a.active { color: var(--accent); border-left-color: var(--accent); }
+  .desk { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 56px; border-top: 1px solid var(--line); padding-top: clamp(40px, 5vw, 72px); }
+  .route { position: sticky; top: 28px; align-self: start; height: calc(100vh - 56px); display: flex; flex-direction: column; gap: 14px; }
+  .route .head { display: flex; flex-direction: column; gap: 4px; }
+  .route .head b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 22px; color: var(--ink); line-height: 1.1; }
+  .path { position: relative; flex: 1; min-height: 200px; margin-left: 6px; }
+  .path .base { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-left: 2px dashed var(--line); }
+  .path .fill { position: absolute; left: -1px; top: 0; width: 2px; height: 0; background: var(--trail); }
+  .path .me { position: absolute; left: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--trail); box-shadow: 0 0 0 4px var(--ground), 0 0 0 5px var(--trail); top: -6px; }
+  .path :global(.wp) { position: absolute; left: -5px; display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 12px; align-items: start; width: 200px; cursor: pointer; background: none; border: 0; padding: 0; text-align: left; color: var(--ink-3); font: inherit; }
+  .path :global(.wp::before) { content: ""; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid currentColor; background: var(--ground); margin-top: 5px; }
+  .path :global(.wp span) { font-size: 12.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .path :global(.wp em) { font-style: normal; font-family: var(--mono); font-stretch: 80%; font-size: 10px; letter-spacing: .1em; display: block; opacity: .85; }
+  .path :global(.wp.done) { color: var(--ink-2); }
+  .path :global(.wp.done::before) { background: var(--trail); border-color: var(--trail); }
+  .path :global(.wp.on) { color: var(--ink); }
+  .path :global(.wp.on::before) { background: var(--trail); border-color: var(--trail); box-shadow: 0 0 0 3px var(--trail-soft); }
+  .path :global(.wp:hover) { color: var(--trail); }
+  .route .foot { color: var(--ink-3); }
 
-  .tags { color: var(--ink-2); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2.5rem; }
-  .pager {
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-top: 3rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--line);
-    font-size: 0.9rem;
+  .paper { position: relative; max-width: calc(660px + 56px + 236px); min-width: 0; }
+  @media (min-width: 1200px) {
+    :global(.js) .prose :global(aside.sn) { position: absolute; left: calc(660px + 56px); width: 236px; margin: 0; }
+    .prose :global(figure.plate) { width: calc(100% + 56px + 236px); }
   }
-  .pager a { color: var(--ink-2); max-width: 46%; }
-  .pager a:hover { color: var(--accent); }
-  .pager .next { text-align: right; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 2em 0 0; max-width: 660px; }
+
+  .end { margin-top: clamp(56px, 7vw, 96px); border-top: 1px solid var(--line); }
+  .fin { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 20px 28px; align-items: center; padding-block: 36px; border-bottom: 1px solid var(--line); }
+  .fin svg { display: block; }
+  .fint { margin: 0; font-weight: 300; font-size: clamp(24px, 2.6vw, 36px); line-height: 1.3; }
+  .fint b { font-weight: 500; color: var(--trail); font-family: var(--mono); font-stretch: 80%; }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .legs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); padding-block: clamp(36px, 5vw, 64px); border-bottom: 1px solid var(--line); }
+  .season h2 { margin: 4px 0 18px; font-weight: 300; font-size: clamp(22px, 2vw, 28px); }
+  .line { position: relative; padding-left: 28px; }
+  .line::before { content: ""; position: absolute; left: 6px; top: 10px; bottom: 10px; border-left: 2px solid var(--trail); opacity: .55; }
+  .line.open::before { bottom: 70px; }
+  .line.open::after { content: ""; position: absolute; left: 6px; bottom: 30px; height: 46px; border-left: 2px dashed var(--trail); opacity: .55; }
+  .leg { position: relative; display: block; padding: 10px 0 12px; }
+  .leg::before { content: ""; position: absolute; left: -27px; top: 17px; width: 12px; height: 12px; border-radius: 50%; background: var(--ground); border: 2px solid var(--trail); }
+  .leg .k { font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .12em; color: var(--ink-3); }
+  .leg b { display: block; font-weight: 500; font-size: 16.5px; line-height: 1.5; transition: color .15s; }
+  a.leg:hover b { color: var(--trail); }
+  .leg.cur::before { background: var(--trail); box-shadow: 0 0 0 4px var(--trail-soft); }
+  .leg.cur .k { color: var(--trail); }
+  .leg.next::before { border-style: dashed; background: transparent; }
+  .leg.next b { font-weight: 300; color: var(--ink-2); }
+  .pager .pg { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid var(--ink-2); }
+  .pager .pg b { font-weight: 500; font-size: 17px; line-height: 1.55; }
+  .pager .pg:hover b { color: var(--trail); }
+  .pager .nx { text-align: right; }
+  .nb { padding-block: clamp(36px, 5vw, 64px); border-bottom: 1px solid var(--line); }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); margin-top: 18px; }
+  .nbc { display: flex; flex-direction: column; gap: 6px; padding-top: 14px; border-top: 1px solid var(--ink-2); }
+  .nbc .lab { display: flex; justify-content: space-between; gap: 10px; color: var(--trail); }
+  .nbc b { font-weight: 500; font-size: 17px; line-height: 1.55; }
+  .nbc .x { font-size: 13.5px; color: var(--ink-2); line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .nbc:hover b { color: var(--trail); }
+  .author { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 24px; align-items: center; padding-block: clamp(36px, 5vw, 64px) 0; }
+  .author img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; filter: grayscale(.2); }
+  .author h2 { margin: 0 0 4px; font-weight: 500; font-size: 20px; }
+  .author p { margin: 0; color: var(--ink-2); font-size: 15px; max-width: 40em; }
+  .author .acts { justify-content: flex-end; }
+
+  .mbar { display: none; }
+  dialog.lb { border: 0; padding: 0; background: transparent; max-width: min(1400px, 96vw); max-height: 94vh; width: 100%; color: var(--ink); }
+  dialog.lb::backdrop { background: color-mix(in srgb, var(--ground) 92%, transparent); backdrop-filter: blur(3px); }
+  .lb .in { background: var(--plate); padding: clamp(12px, 2vw, 28px); max-height: 84vh; overflow: auto; }
+  .lb img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+  .lbbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; }
+  .lbbar span { font-size: 13.5px; color: var(--ink-2); }
+
+  @media (prefers-reduced-motion: reduce) { .prog { display: none; } }
+  @media (max-width: 980px) {
+    .hero { grid-template-columns: 1fr; }
+    .locator { aspect-ratio: 4 / 3; }
+    .desk { grid-template-columns: 1fr; gap: 0; }
+    .route { display: none; }
+    .mbar { display: block; position: sticky; top: 0; z-index: 40; background: var(--ground); border-bottom: 1px solid var(--line); margin-inline: calc(var(--gut) * -1); padding: 0 var(--gut); margin-bottom: 28px; }
+    .mbar button { width: 100%; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 0; background: none; border: 0; color: var(--ink); font: 500 14px/1.4 var(--sans); text-align: left; cursor: pointer; }
+    .mbar button span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mbar .pct { font-family: var(--mono); font-stretch: 80%; font-size: 11px; color: var(--trail); flex: none; }
+    .mbar ol { list-style: none; margin: 0; padding: 0 0 12px; }
+    .mbar ol a { display: flex; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+    .mbar ol em { font-style: normal; font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; color: var(--trail); min-width: 34px; padding-top: 3px; }
+    .mbar .pbar { position: absolute; left: 0; bottom: -1px; height: 2px; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: var(--trail); }
+    .prog { display: none; }
+    .legs, .cards { grid-template-columns: 1fr; }
+    .author { grid-template-columns: auto minmax(0, 1fr); }
+    .author .acts { grid-column: 1 / -1; justify-content: flex-start; }
+  }
+  @media (max-width: 640px) {
+    .meta { gap: 10px 20px; }
+    .byrow .btn { margin-left: 0; }
+    .fin { grid-template-columns: auto minmax(0, 1fr); }
+    .fin .acts { grid-column: 1 / -1; }
+    .prose :global(h2) { word-break: normal; }
+  }
 </style>
 
 <script>
-  // Scroll-spy：捲動時高亮右側目錄的當前章節
-  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
-  if (links.length > 0) {
-    const headings = [...links]
-      .map((a) => document.getElementById(a.dataset.tocLink!))
-      .filter((el): el is HTMLElement => el !== null);
+  import { makeModel, type Model, type Pt } from '../../lib/terrain/model';
+  import { drawTerrain, drawCairn, readColors, setupCanvas, type View } from '../../lib/terrain/render';
+  import { REGIONS } from '../../lib/regions';
+  import type { PostSummary } from '../../lib/posts';
 
-    let ticking = false;
-    const update = () => {
-      ticking = false;
-      let current: string | null = null;
-      for (const h of headings) {
-        if (h.getBoundingClientRect().top <= 130) current = h.id;
-        else break;
-      }
-      for (const a of links) {
-        a.classList.toggle('active', a.dataset.tocLink === (current ?? headings[0]?.id));
-      }
-    };
-    document.addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(update);
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+
+  /* ── 位置圖 ── */
+  const loc = $('loc'), lcv = $<HTMLCanvasElement>('lcv'), icv = $<HTMLCanvasElement>('icv'), lov = $('lov'), mtip = $('mtip');
+  const ID = loc.dataset.id!;
+  const seriesMeta: { id: string; label: string }[] = JSON.parse(loc.dataset.series || '[]');
+  let M: Model | null = null, view: View, LW = 0, LH = 0, hov = -1;
+  let DP: { q: Pt; x: number; y: number }[] = [];
+
+  function drawMap() {
+    if (!M) return;
+    const r = loc.getBoundingClientRect();
+    LW = Math.round(r.width); LH = Math.round(r.height);
+    if (!LW) return;
+    const ctx = setupCanvas(lcv, LW, LH);
+    const col = readColors();
+    const mine = M.pts.find((q) => q.p.id === ID)!;
+    const series = seriesMeta.map((s) => M!.pts.find((q) => q.p.id === s.id)).filter((q): q is Pt => !!q);
+    // 視窗：有連載就框住整條路線，沒有就以這篇為中心
+    const focus = series.length > 1 ? series : [mine];
+    const xs = focus.map((q) => q.x), ys = focus.map((q) => q.y);
+    const bw = Math.max(...xs) - Math.min(...xs), bh = Math.max(...ys) - Math.min(...ys);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2 + 6, cy = (Math.min(...ys) + Math.max(...ys)) / 2 + bh * 0.35;
+    const vw = Math.max(focus.length > 1 ? 170 : 240, bw * 3.4, (bh * 3.4 * LW) / LH), vh = (vw * LH) / LW;
+    view = { x: cx - vw / 2, y: cy - vh / 2, w: vw, h: vh };
+    drawTerrain(ctx, M, view, LW, LH, col, { grid: 3, levels: 78, majorEvery: 15, minorW: 0.6, majorW: 1.15 });
+    const k = LW / view.w, X = (x: number) => (x - view.x) * k, Y = (y: number) => (y - view.y) * k;
+    // 每月路線
+    ctx.save(); ctx.beginPath();
+    M.trail.forEach((p, i) => (i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))));
+    ctx.strokeStyle = col.ground; ctx.lineWidth = 5; ctx.globalAlpha = 0.55; ctx.stroke();
+    ctx.globalAlpha = 0.65; ctx.setLineDash([5, 5]); ctx.strokeStyle = col.trail; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
+    // 顯示位置：把擠在一起的石堆稍微推開（示意圖，不超過幾個像素）
+    DP = M.pts.map((q) => ({ q, x: X(q.x), y: Y(q.y) }));
+    const vis = DP.filter((d) => d.x > -30 && d.y > -30 && d.x < LW + 30 && d.y < LH + 30);
+    for (let it = 0; it < 40; it++)
+      for (let i = 0; i < vis.length; i++)
+        for (let j = i + 1; j < vis.length; j++) {
+          const A = vis[i], B = vis[j], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 0.01;
+          if (d < 30) {
+            const m = (30 - d) / 2, ux = dx / d, uy = dy / d, fa = A.q === mine ? 0 : 1, fb = B.q === mine ? 0 : 1;
+            A.x -= ux * m * fa * (fb ? 1 : 2); A.y -= uy * m * fa * (fb ? 1 : 2);
+            B.x += ux * m * fb * (fa ? 1 : 2); B.y += uy * m * fb * (fa ? 1 : 2);
+          }
         }
-      },
-      { passive: true }
-    );
-    update();
+    const sp = series.map((q) => DP.find((d) => d.q === q)!);
+    if (sp.length > 1) {
+      ctx.beginPath(); sp.forEach((d, i) => (i ? ctx.lineTo(d.x, d.y - 6) : ctx.moveTo(d.x, d.y - 6)));
+      ctx.strokeStyle = col.ground; ctx.lineWidth = 6; ctx.stroke(); ctx.strokeStyle = col.trail; ctx.lineWidth = 2; ctx.stroke();
+    }
+    for (let i = DP.length - 1; i >= 0; i--) {
+      const d = DP[i];
+      if (d.x < -20 || d.y < -20 || d.x > LW + 20 || d.y > LH + 20) continue;
+      const strong = series.includes(d.q) || d.q === mine;
+      ctx.globalAlpha = strong || i === hov ? 1 : 0.55;
+      drawCairn(ctx, d.x, d.y, d.q.p.n, i === hov ? col.ink : col.trail, col.ground, strong ? 1.35 : 1.1);
+    }
+    ctx.globalAlpha = 1;
+    // 連載的段落標籤：每個石堆試 24 個位置，挑重疊最少、最近的
+    const md = DP.find((d) => d.q === mine)!;
+    const ringLeft = md.x > LW - 150;
+    ctx.font = '500 10.5px "Martian Mono", monospace'; ctx.textBaseline = 'middle';
+    type Box = { x0: number; y0: number; x1: number; y1: number };
+    const boxes: Box[] = vis.map((d) => ({ x0: d.x - 13, y0: d.y - 26, x1: d.x + 13, y1: d.y + 4 }));
+    boxes.push(ringLeft ? { x0: md.x - 130, y0: md.y - 22, x1: md.x - 20, y1: md.y + 2 } : { x0: md.x + 20, y0: md.y - 22, x1: md.x + 130, y1: md.y + 2 });
+    const hits = (b: Box) => boxes.reduce((n, o) => n + (!(b.x1 < o.x0 || b.x0 > o.x1 || b.y1 < o.y0 || b.y0 > o.y1) ? 1 : 0), 0) + (b.x0 < 4 || b.y0 < 36 || b.x1 > LW - 4 || b.y1 > LH - 4 ? 5 : 0);
+    sp.forEach((d) => {
+      if (d.q === mine) return;
+      const t = seriesMeta.find((s) => s.id === d.q.p.id)!.label, w = ctx.measureText(t).width;
+      let best: [number, number, number, Box] | null = null, bs = 1e9;
+      for (const rr of [16, 30, 46])
+        for (const a of [0, 180, -90, 90, -45, -135, 45, 135]) {
+          const rad = (a * Math.PI) / 180, c = Math.cos(rad);
+          const ox = c * rr - (c < -0.1 ? w : Math.abs(c) < 0.1 ? w / 2 : 0), oy = Math.sin(rad) * rr - 12 + (a === 90 ? 24 : 0);
+          const bx = { x0: d.x + ox - 3, y0: d.y + oy - 8, x1: d.x + ox + w + 3, y1: d.y + oy + 8 };
+          const sc = hits(bx) * 100 + rr;
+          if (sc < bs) { bs = sc; best = [ox, oy, rr, bx]; }
+        }
+      if (!best) return;
+      boxes.push(best[3]);
+      if (best[2] > 16) { ctx.beginPath(); ctx.moveTo(d.x, d.y - 10); ctx.lineTo(d.x + best[0] + (best[0] < 0 ? w : 0), d.y + best[1]); ctx.strokeStyle = col.ink3; ctx.lineWidth = 1; ctx.stroke(); }
+      ctx.lineWidth = 4; ctx.strokeStyle = col.ground; ctx.strokeText(t, d.x + best[0], d.y + best[1]);
+      ctx.fillStyle = col.ink2; ctx.fillText(t, d.x + best[0], d.y + best[1]);
+    });
+    // 視窗內的地名
+    ctx.font = '500 12px "Noto Sans TC", sans-serif'; ctx.textBaseline = 'alphabetic';
+    REGIONS.forEach((r, ki) => {
+      const xs2 = DP.filter((d) => d.q.k === ki && d.x > 0 && d.x < LW && d.y > 0 && d.y < LH).map((d) => d.x);
+      if (!xs2.length) return;
+      const yy = Y(M!.at(0.5, (ki + 0.5) / REGIONS.length)[1]);
+      if (yy < 40 || yy > LH - 30) return;
+      const xx = Math.max(16, Math.min(LW - 120, Math.min(...xs2) - 80));
+      const t = r.key + r.suffix;
+      ctx.lineWidth = 4; ctx.strokeStyle = col.ground; ctx.strokeText(t, xx, yy + 26); ctx.fillStyle = col.ink3; ctx.fillText(t, xx, yy + 26);
+    });
+    const lab = seriesMeta.find((s) => s.id === ID)?.label;
+    lov.innerHTML = `<div class="ring${ringLeft ? ' l' : ''}" style="left:${md.x}px;top:${md.y - 7}px"><i></i><i></i><span>本篇${lab ? ' · ' + lab : ''}</span></div>`;
+    $('lsc').style.width = Math.round(((M.span * (14 * 864e5)) / (M.T1 - M.T0)) * k) + 'px';
+    // 全圖小地圖
+    const ir = icv.getBoundingClientRect(), IW = Math.round(ir.width), IH = Math.round(ir.height);
+    const ic = setupCanvas(icv, IW, IH);
+    drawTerrain(ic, M, { x: 0, y: 0, w: M.VW, h: M.VH }, IW, IH, col, { grid: 2, levels: 13, majorEvery: 99, minorW: 0.5 });
+    const ik = IW / M.VW;
+    ic.beginPath(); M.trail.forEach((p, i) => (i ? ic.lineTo(p[0] * ik, p[1] * ik) : ic.moveTo(p[0] * ik, p[1] * ik)));
+    ic.strokeStyle = col.trail; ic.lineWidth = 1; ic.stroke();
+    ic.strokeStyle = col.ink; ic.lineWidth = 1.2; ic.strokeRect(view.x * ik, view.y * ik, view.w * ik, view.h * ik);
   }
+
+  loc.addEventListener('pointermove', (e) => {
+    if (!M) return;
+    const r = loc.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+    let best = -1, bd = 400;
+    DP.forEach((p, i) => { const dx = p.x - mx, dy = p.y - 6 - my, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = i; } });
+    if (best !== hov) { hov = best; drawMap(); }
+    if (best >= 0) {
+      const q = DP[best].q, lab = seriesMeta.find((s) => s.id === q.p.id)?.label;
+      mtip.innerHTML = `<span class="lab">${lab ? lab + ' · ' : ''}${q.p.d.replaceAll('-', '.')}</span>${esc(q.p.t)}`;
+      let x = DP[best].x + 14, y = DP[best].y - 50;
+      if (x + 240 > LW) x = DP[best].x - 254;
+      if (y < 8) y = 8;
+      mtip.style.left = x + 'px'; mtip.style.top = y + 'px'; mtip.classList.add('show');
+      loc.style.cursor = q.p.id === ID ? 'default' : 'pointer';
+    } else { mtip.classList.remove('show'); loc.style.cursor = 'default'; }
+  });
+  loc.addEventListener('pointerleave', () => { hov = -1; mtip.classList.remove('show'); drawMap(); });
+  loc.addEventListener('click', () => { if (hov >= 0 && DP[hov].q.p.id !== ID) location.href = `/posts/${DP[hov].q.p.id}/`; });
+
+  /* ── 閱讀路線 ── */
+  const prose = $('prose'), path = $('path'), fill = $('fill'), meDot = $('me');
+  const h2s = [...prose.querySelectorAll<HTMLElement>(':scope > h2')];
+  const heads = h2s.length >= 2 ? h2s : [...prose.querySelectorAll<HTMLElement>(':scope > h3')];
+  const label = (h: HTMLElement) => h.querySelector('.hn')?.textContent ?? '';
+  const textOfH = (h: HTMLElement) => (h.querySelector('.ht') ?? h).textContent ?? '';
+  const wps = heads.map((h) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'wp';
+    b.innerHTML = `<span><em>${esc(label(h))}</em>${esc(textOfH(h))}</span>`;
+    b.onclick = () => h.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    path.appendChild(b);
+    return b;
+  });
+  let ph = 0;
+  function layoutRoute() {
+    ph = path.clientHeight;
+    const total = prose.offsetHeight;
+    let last = -99;
+    heads.forEach((h, i) => {
+      let y = (h.offsetTop / total) * ph;
+      y = Math.max(y, last + 46);
+      y = Math.min(y, ph - 30 - (heads.length - 1 - i) * 46);
+      wps[i].style.top = y - 6 + 'px';
+      last = y;
+    });
+  }
+  // 引用註記移到右側邊欄，避開跨進邊欄的圖版
+  function placeNotes() {
+    const wide = innerWidth >= 1200;
+    const plates = [...prose.querySelectorAll<HTMLElement>('figure.plate')].map((f) => ({ t: f.offsetTop - 12, b: f.offsetTop + f.offsetHeight + 12 }));
+    let floor = 0;
+    prose.querySelectorAll<HTMLElement>('aside.sn').forEach((n) => {
+      if (!wide) { n.style.top = ''; return; }
+      const prev = n.previousElementSibling as HTMLElement | null, h = n.offsetHeight;
+      let y = Math.max(prev ? prev.offsetTop : 0, floor);
+      for (const p of plates) if (y < p.b && y + h > p.t) { const up = p.t - h - 6; y = up >= floor && up >= y - 160 ? up : p.b + 6; }
+      n.style.top = y + 'px';
+      floor = y + h + 18;
+    });
+  }
+  const prog = $('prog'), pct = $('pct'), left = $('left'), mpct = $('mpct'), mpbar = $('mpbar'), mcur = $('mcur');
+  const MINS = +(left.dataset.mins || 1);
+  function onScroll() {
+    const r = prose.getBoundingClientRect(), vh = innerHeight;
+    const p = Math.min(1, Math.max(0, (vh * 0.35 - r.top) / Math.max(1, r.height - vh * 0.35)));
+    prog.style.transform = `scaleX(${p})`; mpbar.style.transform = `scaleX(${p})`;
+    const pc = Math.round(p * 100);
+    pct.textContent = pc + '%'; mpct.textContent = pc + '%';
+    left.textContent = p >= 0.99 ? '走完了' : '剩約 ' + Math.max(1, Math.round(MINS * (1 - p))) + ' 分鐘';
+    fill.style.height = p * ph + 'px'; meDot.style.top = p * ph - 6 + 'px';
+    let cur = -1;
+    heads.forEach((h, i) => { if (h.getBoundingClientRect().top < vh * 0.4) cur = i; });
+    wps.forEach((w, i) => { w.classList.toggle('done', i < cur); w.classList.toggle('on', i === cur); });
+    mcur.textContent = cur < 0 ? (p > 0.02 ? '閱讀中' : '開始閱讀') : `${label(heads[cur])}　${textOfH(heads[cur])}`.trim();
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+
+  const mbtn = $('mbtn'), mlist = document.getElementById('mlist');
+  if (mlist) {
+    mbtn.onclick = () => { const open = mlist.hidden; mlist.hidden = !open; mbtn.setAttribute('aria-expanded', String(open)); };
+    mlist.onclick = (e) => { if ((e.target as HTMLElement).closest('a')) { mlist.hidden = true; mbtn.setAttribute('aria-expanded', 'false'); } };
+  }
+
+  /* 點 [n]：寬螢幕閃一下旁邊的註記 */
+  prose.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest('sup.ref a');
+    if (!a) return;
+    const n = document.querySelector<HTMLElement>(a.getAttribute('href')!);
+    if (n && innerWidth >= 1200) { e.preventDefault(); n.classList.remove('flash'); void n.offsetWidth; n.classList.add('flash'); }
+  });
+
+  /* 圖片放大 */
+  const lb = $<HTMLDialogElement>('lb'), lbImg = $<HTMLImageElement>('lbImg'), lbCap = $('lbCap');
+  prose.querySelectorAll<HTMLButtonElement>('figure.plate .zoom').forEach((b) => {
+    b.onclick = () => {
+      const img = b.querySelector('img')!, fc = b.parentElement!.querySelector('figcaption');
+      lbImg.src = img.currentSrc || img.src; lbImg.alt = img.alt;
+      lbCap.textContent = fc ? `${fc.querySelector('.fn')?.textContent ?? ''}　${fc.querySelector('.ct')?.textContent?.trim() ?? ''}` : img.alt;
+      lb.showModal();
+    };
+  });
+  $('lbClose').onclick = () => lb.close();
+  lb.addEventListener('click', (e) => { if (e.target === lb) lb.close(); });
+
+  /* 複製 */
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    const label0 = b.textContent;
+    b.onclick = async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = b.dataset.done!; }
+      catch { b.textContent = b.dataset.copy!; }
+      setTimeout(() => (b.textContent = label0), 2200);
+    };
+  });
+
+  /* 開機 */
+  function relayout() { drawMap(); layoutRoute(); placeNotes(); onScroll(); }
+  let rt: number;
+  addEventListener('resize', () => { clearTimeout(rt); rt = window.setTimeout(relayout, 120); });
+  addEventListener('themechange', drawMap);
+  prose.querySelectorAll('img').forEach((i) => i.addEventListener('load', () => { layoutRoute(); placeNotes(); }));
+  relayout();
+  document.fonts?.ready.then(relayout);
+  fetch('/map-data.json').then((r) => r.json()).then((data: PostSummary[]) => { M = makeModel(data, 'h'); drawMap(); }).catch(() => {});
 </script>

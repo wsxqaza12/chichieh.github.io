@@ -8,18 +8,19 @@ interface Props {
   description?: string;
   ogImage?: string;
   ogType?: string;
-  narrow?: boolean;
+  /** 首頁：頁首疊在地圖上 */
+  overlay?: boolean;
 }
 
 const {
   title,
-  description = 'ChiChieh Huang — 專注於 Generative AI 產品開發，用中文把 AI 寫得更清楚。LLM、Agent、RAG 技術文章與趨勢觀察。',
+  description = '黃琪婕 ChiChieh Huang：做 Generative AI 產品，也把它寫成中文。LLM、Agent、RAG、Agent Memory 的技術文章與演講。',
   ogImage = '/assets/img/avatar.png',
   ogType = 'website',
-  narrow = false,
+  overlay = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} | ChiChieh Huang` : 'ChiChieh Huang';
+const pageTitle = title ? `${title} | 黃琪婕 ChiChieh Huang` : '黃琪婕 ChiChieh Huang';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -27,36 +28,37 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 <html lang="zh-Hant">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="alternate" type="application/rss+xml" title="ChiChieh Huang" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="黃琪婕 ChiChieh Huang" href="/rss.xml" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
     <meta name="twitter:card" content="summary" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1A18" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0E1613" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#EDEEE6" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap"
     />
     <script is:inline>
-      const saved = localStorage.getItem('theme');
-      if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+      document.documentElement.classList.add('js');
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+      } catch (e) {}
     </script>
   </head>
   <body>
-    <Header />
-    <main class:list={['wrap', { narrow }]}>
-      <slot />
-    </main>
+    <Header overlay={overlay} />
+    <slot />
     <Footer />
   </body>
 </html>
