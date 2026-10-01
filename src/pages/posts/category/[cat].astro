@@ -1,6 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import PostRow from '../../../components/PostRow.astro';
+import PostLog from '../../../components/PostLog.astro';
 import { getAllPosts, type Post } from '../../../lib/posts';
 
 export async function getStaticPaths() {
@@ -8,21 +8,35 @@ export async function getStaticPaths() {
   const categories = [...new Set(posts.map((p) => p.data.category))];
   return categories.map((cat) => ({
     params: { cat },
-    props: { posts: posts.filter((p) => p.data.category === cat) },
+    props: { posts: posts.filter((p) => p.data.category === cat), categories },
   }));
 }
 
 const { cat } = Astro.params;
-const { posts } = Astro.props as { posts: Post[] };
+const { posts, categories } = Astro.props as { posts: Post[]; categories: string[] };
 ---
 
-<Base narrow title={`${cat}文章`} description={`ChiChieh Huang 的${cat}類文章。`}>
-  <h1>{cat}</h1>
-  <p class="filters"><a href="/posts/">← 全部文章</a></p>
-  {posts.map((post) => <PostRow post={post} />)}
+<Base title={`${cat}文章`} description={`黃琪婕的${cat}類文章。`}>
+  <main class="wrap">
+    <section class="s first">
+      <div class="sh">
+        <div class="lab">野外紀錄 · 分類</div>
+        <h1>{cat}<b> · {posts.length}</b> 篇</h1>
+        <p><a href="/posts/">← 全部文章</a></p>
+      </div>
+      <p class="cats lab">其他分類
+        {categories.filter((c) => c !== cat).map((c) => <a href={`/posts/category/${c}/`}>{c}</a>)}
+      </p>
+      <PostLog posts={posts} />
+    </section>
+  </main>
 </Base>
 
 <style>
-  h1 { font-size: 1.6rem; margin: 1rem 0 0.5rem; }
-  .filters { font-size: 0.9rem; margin: 0 0 1rem; }
+  .first { padding-top: clamp(40px, 6vw, 80px); }
+  .sh p a { color: var(--ink); border-bottom: 1px solid var(--trail); }
+  .sh p a:hover { color: var(--trail); }
+  .cats { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0 0 18px; }
+  .cats a { color: var(--ink); }
+  .cats a:hover { color: var(--trail); }
 </style>

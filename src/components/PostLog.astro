@@ -1,0 +1,116 @@
+---
+// 野外紀錄：文章清單，可依地圖區域篩選。首頁、文章列表、分類頁共用。
+import { postUrl, dotDate, displayTitle, charCount, regionOfPost, type Post } from '../lib/posts';
+import { REGIONS } from '../lib/regions';
+
+interface Props {
+  posts: Post[];
+  /** 預設只顯示前幾篇，其餘按「展開」 */
+  limit?: number;
+  /** 讀網址上的 ?r=區域 */
+  readQuery?: boolean;
+}
+const { posts, limit = 0, readQuery = false } = Astro.props;
+const rows = posts.map((p) => {
+  const key = regionOfPost(p);
+  const k = REGIONS.findIndex((r) => r.key === key);
+  return { p, k, region: REGIONS[k] };
+});
+const counts = REGIONS.map((_, k) => rows.filter((r) => r.k === k).length);
+const order = REGIONS.map((_, k) => k).reverse().filter((k) => counts[k] > 0);
+---
+
+<div class="plog" data-limit={limit} data-query={readQuery ? '1' : undefined}>
+  <div class="filters" role="toolbar" aria-label="依區域篩選">
+    <button class="f" type="button" aria-pressed="true" data-k="">全部<i>{rows.length}</i></button>
+    {order.map((k) => (
+      <button class="f" type="button" aria-pressed="false" data-k={k} data-key={REGIONS[k].key}>{REGIONS[k].key}{REGIONS[k].suffix}<i>{counts[k]}</i></button>
+    ))}
+  </div>
+  <div class="log">
+    <div class="lr lhead" aria-hidden="true"><span>日期</span><span>區域</span><span>標題</span><span class="n">字數</span></div>
+    {rows.map(({ p, k, region }, i) => (
+      <a class="lr" href={postUrl(p)} data-k={k} hidden={limit > 0 && i >= limit ? true : undefined}>
+        <span class="d">{dotDate(p.data.date)}</span>
+        <span class="r">{region.key}{region.suffix}</span>
+        <span class="t">{displayTitle(p)}{p.data.draft && <em class="draft">草稿</em>}</span>
+        <span class="n">{charCount(p.body ?? '').toLocaleString('en-US')} 字</span>
+      </a>
+    ))}
+  </div>
+  {limit > 0 && rows.length > limit && (
+    <button class="morebtn" type="button">展開其餘 {rows.length - limit} 篇 ↓</button>
+  )}
+  <p class="empty" hidden>這個區域還沒有文章。</p>
+</div>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .f { font-family: var(--sans); font-size: 13px; letter-spacing: .14em; padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; display: inline-flex; gap: 8px; align-items: baseline; }
+  .f i { font-style: normal; font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .04em; color: var(--ink-3); }
+  .f:hover { color: var(--ink); border-color: var(--ink-2); }
+  .f[aria-pressed='true'] { color: var(--ground); background: var(--trail); border-color: var(--trail); }
+  .f[aria-pressed='true'] i { color: var(--ground); }
+  .log { border-top: 1px solid var(--ink-2); }
+  .lr { display: grid; grid-template-columns: 96px 150px minmax(0, 1fr) 84px; gap: 16px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); transition: background .15s; }
+  .lr[hidden] { display: none; }
+  a.lr:hover { background: linear-gradient(90deg, var(--trail-soft), transparent 70%); }
+  .d, .n { font-family: var(--mono); font-stretch: 80%; font-size: 11.5px; color: var(--ink-2); letter-spacing: .04em; }
+  .n { text-align: right; }
+  .r { font-size: 12.5px; letter-spacing: .2em; color: var(--ink-3); }
+  .t { font-size: 16px; line-height: 1.6; min-width: 0; }
+  a.lr:hover .t { color: var(--trail); }
+  .draft { font-style: normal; font-family: var(--mono); font-stretch: 80%; font-size: 10px; letter-spacing: .1em; color: var(--ink-3); border: 1px dashed var(--ink-3); padding: 0 5px; margin-left: 8px; vertical-align: 2px; }
+  .lhead { font-family: var(--mono); font-stretch: 80%; font-size: 10px; letter-spacing: .16em; color: var(--ink-3); padding: 10px 0; }
+  .lhead .n { font-size: 10px; }
+  .morebtn { margin-top: 22px; font-family: var(--mono); font-stretch: 80%; font-size: 12px; letter-spacing: .14em; background: transparent; border: 1px solid var(--ink-2); color: var(--ink); padding: 12px 18px; cursor: pointer; }
+  .morebtn:hover { border-color: var(--trail); color: var(--trail); }
+  .empty { color: var(--ink-2); }
+  @media (max-width: 900px) {
+    .lr { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
+    .t { grid-column: 1 / -1; grid-row: 1; }
+    .d { grid-row: 2; }
+    .r { display: none; }
+    .n { grid-row: 2; }
+    .lhead { display: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.plog').forEach((root) => {
+    const limit = +(root.dataset.limit || 0);
+    const rows = [...root.querySelectorAll<HTMLElement>('a.lr')];
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('.f')];
+    const more = root.querySelector<HTMLButtonElement>('.morebtn');
+    const empty = root.querySelector<HTMLElement>('.empty')!;
+    let k: number | null = null, expanded = false;
+    const render = () => {
+      let shown = 0, total = 0;
+      rows.forEach((r) => {
+        const match = k === null || +r.dataset.k! === k;
+        if (match) total++;
+        const show = match && (k !== null || expanded || !limit || shown < limit);
+        r.hidden = !show;
+        if (show) shown++;
+      });
+      if (more) { more.hidden = !(k === null && !expanded && total > limit); more.textContent = `展開其餘 ${total - limit} 篇 ↓`; }
+      empty.hidden = total > 0;
+    };
+    const select = (next: number | null, notify = true) => {
+      k = next;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.k === (k === null ? '' : String(k)))));
+      render();
+      if (notify) window.dispatchEvent(new CustomEvent('regionfilter', { detail: k }));
+    };
+    root.querySelector('.filters')!.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.f');
+      if (b) select(b.dataset.k === '' ? null : +b.dataset.k!);
+    });
+    more?.addEventListener('click', () => { expanded = true; render(); });
+    if (root.dataset.query) {
+      const want = new URLSearchParams(location.search).get('r');
+      const chip = chips.find((c) => c.dataset.key === want);
+      if (chip) select(+chip.dataset.k!, false);
+    }
+  });
+</script>

@@ -1,57 +1,76 @@
 ---
 import Base from '../layouts/Base.astro';
+import Summit from '../components/Summit.astro';
 ---
 
-<Base narrow title="關於" description="關於 ChiChieh Huang — Generative AI 產品開發者、技術寫作者與講者。">
-  <div class="head">
-    <img src="/assets/img/avatar.png" alt="ChiChieh Huang 的照片" width="96" height="96" />
-    <div>
-      <h1>關於琪婕</h1>
-      <p class="muted">Generative AI 產品開發者・技術寫作者・講者</p>
-    </div>
-  </div>
-
-  <section class="prose">
-    <p>
-      我是一名熱愛技術的自由接案開發者，也是位創業家。2023 年底注意到生成式 AI
-      的中文技術文章非常少，覺得可惜，於是開始以此為方向寫作——希望用淺顯易懂的語言，把
-      AI 的知識與創新帶給中文社群。
-    </p>
-
-    <h2>在做的事</h2>
-    <ul>
-      <li><strong>語言生成：</strong>LLM 應用、RAG 建置與評估、AI Agent 系統搭建</li>
-      <li><strong>語音技術：</strong>Text-to-Speech、Speech Recognition 與中文聲音克隆</li>
-      <li><strong>視覺與動畫：</strong>2D/3D Avatar 應用、text-to-image 與 text-to-motion</li>
-    </ul>
-
-    <h2>演講與媒體</h2>
-    <p>
-      累計近 20 場技術演講與工作坊，包含 2026 WiDS（Women in Data Science）講者、GDG
-      讀書會、R-Ladies、Twinkle AI 等社群分享；曾接受《商業周刊》、非凡新聞與公視採訪，
-      聊 AI Agent 的實際應用與觀察。
-    </p>
-
-    <h2>服務項目</h2>
-    <ul>
-      <li><strong>AI 解決方案諮詢：</strong>從需求分析到技術實現，為企業打造 GenAI 應用策略</li>
-      <li><strong>技術研討與工作坊：</strong>客製化的 AI 實戰培訓</li>
-      <li><strong>職涯發展諮詢：</strong>在 AI 時代找到適合的發展方向</li>
-    </ul>
-
-    <blockquote>"You can overcome anything, if and only if you love something enough."</blockquote>
-
-    <p class="contact">
-      <a href="mailto:cch.chichieh@gmail.com">Email</a> ·
-      <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a> ·
-      <a href="https://github.com/wsxqaza12">GitHub</a>
-    </p>
-  </section>
+<Base title="關於" description="關於黃琪婕 ChiChieh Huang：Generative AI 產品開發者、技術寫作者與講者。">
+  <main class="wrap">
+    <section class="s first about">
+      <Summit />
+      <div>
+        <div class="lab">關於 · 測繪者</div>
+        <h1>我是黃琪婕，做 Generative AI 產品，也把它寫成中文。</h1>
+        <div class="bio">
+          <p>我是一名熱愛技術的自由接案開發者，也是位創業家。2023 年底注意到生成式 AI 的中文技術文章非常少，覺得可惜，於是開始以此為方向寫作，希望用淺顯易懂的語言，把 AI 的知識帶給中文社群。</p>
+          <p>後來做了 AILogora，入選 AppWorks Accelerator #31；2026 年以 Cairn 入選 Anthropic 全球 Hackathon。現在主要在研究 Agent Memory，也常在社群、校園和企業分享 AI Agent 的實戰經驗。</p>
+        </div>
+        <dl class="kv">
+          <dt>專長</dt>
+          <dd><ul>
+            <li><b>語言生成</b>LLM 應用、RAG 建置與評估、AI Agent 系統、Agent Memory</li>
+            <li><b>語音技術</b>Text-to-Speech、Speech Recognition 與中文聲音克隆</li>
+            <li><b>視覺與動畫</b>2D/3D Avatar、text-to-image 與 text-to-motion</li>
+          </ul></dd>
+          <dt>演講與媒體</dt>
+          <dd>WiDS Taiwan、AWS Summit Taipei、台灣人工智慧年會等二十多場演講與工作坊；接受過《商業周刊》、非凡新聞與公視採訪。<a href="/experience/">完整清單 →</a></dd>
+          <dt>合作</dt>
+          <dd><ul>
+            <li><b>AI 解決方案諮詢</b>從需求分析到技術實現，為企業打造 GenAI 應用策略</li>
+            <li><b>技術研討與工作坊</b>客製化的 AI 實戰培訓</li>
+            <li><b>職涯發展諮詢</b>在 AI 時代找到適合的發展方向</li>
+          </ul></dd>
+          <dt>聯絡</dt>
+          <dd><span>cch.chichieh@gmail.com</span><button class="btn copy" type="button" data-copy="cch.chichieh@gmail.com">複製</button></dd>
+          <dt>別處</dt>
+          <dd class="links"><a href="https://github.com/wsxqaza12">GitHub</a><a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a><a href="/rss.xml">RSS</a></dd>
+        </dl>
+        <blockquote>You can overcome anything, if and only if you love something enough.</blockquote>
+      </div>
+    </section>
+  </main>
 </Base>
 
 <style>
-  .head { display: flex; align-items: center; gap: 1.25rem; margin: 1.5rem 0 1rem; }
-  .head img { border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
-  .head h1 { font-size: 1.6rem; margin: 0; }
-  .head p { margin: 0.2rem 0 0; font-size: 0.9rem; }
+  .first { padding-top: clamp(40px, 6vw, 80px); }
+  .about { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+  .about > :global(.summit) { position: sticky; top: 40px; }
+  h1 { margin: 14px 0 22px; font-weight: 300; font-size: clamp(32px, 3.8vw, 52px); line-height: 1.25; }
+  .bio p { margin: 0 0 14px; font-size: 17px; font-weight: 300; max-width: 36em; line-height: 1.95; }
+  .kv { display: grid; grid-template-columns: 120px minmax(0, 1fr); border-top: 1px solid var(--line); margin-top: 28px; }
+  .kv dt, .kv dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.8; }
+  .kv dt { font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .16em; color: var(--ink-3); padding-top: 18px; }
+  .kv dd { min-width: 0; }
+  .kv ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .kv li b { font-weight: 500; margin-right: 12px; }
+  .kv a { color: var(--ink); border-bottom: 1px solid var(--trail); }
+  .kv a:hover { color: var(--trail); }
+  .links { display: flex; gap: 18px; flex-wrap: wrap; }
+  .copy { margin-left: 10px; padding: 4px 8px; }
+  blockquote { margin: 32px 0 0; padding-left: 18px; border-left: 2px solid var(--trail); font-weight: 300; font-size: 19px; color: var(--ink); }
+  @media (max-width: 900px) {
+    .about { grid-template-columns: 1fr; }
+    .about > :global(.summit) { position: static; max-width: 320px; margin: 0 auto; }
+  }
+  @media (max-width: 520px) { .kv { grid-template-columns: 1fr; } .kv dt { padding-bottom: 0; border-bottom: 0; } }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    const label = b.textContent;
+    b.onclick = async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = '已複製'; }
+      catch { b.textContent = b.dataset.copy!; }
+      setTimeout(() => (b.textContent = label), 2000);
+    };
+  });
+</script>

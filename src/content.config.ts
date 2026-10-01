@@ -10,6 +10,8 @@ const postSchema = z.object({
   draft: z.boolean().default(false),
   hero: z.string().optional(),
   source: z.string().optional(),
+  /** 地形圖上的區域（資料工程、LLM、RAG、語音・Avatar、Vibe Coding、Agent、龍蝦、MCP、記憶），不填就自動判斷 */
+  region: z.string().optional(),
 });
 
 // 已遷移的 Medium 文章（存在 repo 裡，slug = medium hash，維持舊站 /posts/<hash>/ 網址）
