@@ -47,6 +47,10 @@
   color-scheme: light;
 }
 
+/* 英文頁：拉丁字用 Hanken Grotesk（中文字型的 ’ 是全形，I’m 會被撐開），中文字回到 Noto Sans TC */
+html[lang="en"] { --sans: "Hanken Grotesk", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; }
+html[lang="en"] [lang="zh-Hant"] { font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; }
+
 /* ============ 基礎 ============ */
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; }

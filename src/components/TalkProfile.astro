@@ -1,9 +1,13 @@
 ---
 // 演講的爬升剖面：今年累積場次的階梯圖。建置時畫成 SVG（桌機、手機各一張，字才不會縮到看不清）。
 import type { Talk } from '../data/experience';
+import { ui, type Lang } from '../i18n';
 
-interface Props { talks: Talk[]; year: number; today: string }
-const { talks, year, today } = Astro.props;
+interface Props { talks: Talk[]; year: number; today: string; lang?: Lang }
+const { talks, year, today, lang = 'zh' } = Astro.props;
+const t = ui[lang];
+const ev = (x: Talk) => (lang === 'en' && x.en ? x.en.event : x.event);
+const tp = (x: Talk) => (lang === 'en' ? x.en?.topic : x.topic);
 
 const ts = (d: string) => Date.parse(d.length === 7 ? `${d}-15` : d);
 const list = talks
@@ -23,11 +27,10 @@ function svg(W: number, H: number, narrow: boolean) {
   const y = (v: number) => H - b - (v / ymax) * (H - top - b);
   let s = '<g class="axis">';
   for (let v = 0; v <= ymax; v += 10) s += `<line x1="${l}" x2="${W - r}" y1="${y(v)}" y2="${y(v)}"/><text x="${l}" y="${y(v) - 6}">${v}</text>`;
-  const months = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
-  months.forEach((m, i) => {
+  t.months.forEach((m, i) => {
     if (narrow && i % 2) return;
-    const t = Date.parse(`${year}-${String(i + 1).padStart(2, '0')}-01`);
-    s += `<text x="${x(t) + 4}" y="${H - 14}">${m}月</text><line x1="${x(t)}" x2="${x(t)}" y1="${H - b}" y2="${H - b + 5}"/>`;
+    const ts = Date.parse(`${year}-${String(i + 1).padStart(2, '0')}-01`);
+    s += `<text x="${x(ts) + 4}" y="${H - 14}">${m}</text><line x1="${x(ts)}" x2="${x(ts)}" y1="${H - b}" y2="${H - b + 5}"/>`;
   });
   s += '</g>';
   const past = pts.filter((p) => p.t <= now), fut = pts.filter((p) => p.t > now);
@@ -42,13 +45,13 @@ function svg(W: number, H: number, narrow: boolean) {
   if (fut.length || now < B) s += `<path d="${df}" class="ln fut"/>`;
   if (now >= A && now <= B) {
     const md = today.slice(5).replace('-', '.');
-    s += `<line x1="${nowX}" x2="${nowX}" y1="${top - 22}" y2="${H - b}" class="today"/><text x="${nowX + 6}" y="${top - 12}" class="tl">今天 ${md}</text>`;
+    s += `<line x1="${nowX}" x2="${nowX}" y1="${top - 22}" y2="${H - b}" class="today"/><text x="${nowX + 6}" y="${top - 12}" class="tl">${t.today} ${md}</text>`;
   }
   const boxes: { x0: number; x1: number; y0: number; y1: number }[] = [];
   pts.forEach((p) => {
     const X = x(p.t), Y = y(p.c);
     if (p.major) {
-      const name = p.event.replace(` ${year}`, '').replace(`${year} `, '').replace(/[（(][^）)]*[）)]/g, '').trim();
+      const name = ev(p).replace(` ${year}`, '').replace(`${year} `, '').replace(/[（(][^）)]*[）)]/g, '').trim();
       const fs = narrow ? 19 : 13, step = narrow ? 27 : 20;
       const w = [...name].reduce((a, ch) => a + (ch.charCodeAt(0) > 255 ? fs : fs * 0.57), 0);
       const flip = X - w - 6 < l;
@@ -62,7 +65,8 @@ function svg(W: number, H: number, narrow: boolean) {
       const ly = Y - 22 - lvl * step;
       s += `<line x1="${X}" x2="${X}" y1="${Y - 6}" y2="${ly + 3}" class="lead"/><circle cx="${X}" cy="${Y}" r="6" class="dot"/><text x="${flip ? X + 6 : X - 6}" y="${ly}" text-anchor="${flip ? 'start' : 'end'}" class="name">${esc(name)}</text>`;
     }
-    s += `<circle cx="${X}" cy="${Y}" r="12" fill="transparent"><title>${esc(p.date)} ${esc(p.event)}${p.topic ? '：' + esc(p.topic) : ''}（累積 ${p.c} 場）</title></circle>`;
+    const topic = tp(p);
+    s += `<circle cx="${X}" cy="${Y}" r="12" fill="transparent"><title>${esc(p.date)} ${esc(ev(p))}${topic ? (lang === 'en' ? ': ' : '：') + esc(topic) : ''}（${t.cumulative} ${p.c}）</title></circle>`;
   });
   return { view: `0 0 ${W} ${H}`, body: s };
 }
@@ -70,8 +74,8 @@ const wide = svg(1200, 320, false), small = svg(600, 360, true);
 ---
 
 <div class="tprof">
-  <svg class="w" viewBox={wide.view} role="img" aria-label={`${year} 年演講累積場次，共 ${total} 場`} set:html={wide.body} />
-  <svg class="s" viewBox={small.view} role="img" aria-label={`${year} 年演講累積場次，共 ${total} 場`} set:html={small.body} />
+  <svg class="w" viewBox={wide.view} role="img" aria-label={t.talksAria(year, total)} set:html={wide.body} />
+  <svg class="s" viewBox={small.view} role="img" aria-label={t.talksAria(year, total)} set:html={small.body} />
 </div>
 
 <style>

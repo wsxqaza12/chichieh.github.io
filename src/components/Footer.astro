@@ -1,17 +1,23 @@
 ---
 import { getSummaries } from '../lib/posts';
+import { ui, type Lang } from '../i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'zh' } = Astro.props;
+const t = ui[lang];
 const total = (await getSummaries()).reduce((n, p) => n + p.n, 0);
 const year = new Date().getFullYear();
 ---
 
 <footer class="wrap">
-  <span class="lab">© {year} 黃琪婕 · 由文字與一隻龍蝦驅動</span>
+  <span class="lab">© {year} {lang === 'en' ? 'ChiChieh Huang' : '黃琪婕'} · {t.footer}</span>
   <span class="links lab">
     <a href="https://github.com/wsxqaza12">GitHub</a>
     <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>
     <a href="/rss.xml">RSS</a>
+    <a href={lang === 'en' ? '/' : '/en/'} hreflang={lang === 'en' ? 'zh-Hant' : 'en'}>{lang === 'en' ? '中文' : 'English'}</a>
   </span>
-  <span class="lab">N 25°02′ E 121°33′ · 比例尺 1 : {total.toLocaleString('en-US')} 字</span>
+  <span class="lab">N 25°02′ E 121°33′ · {t.scale} {total.toLocaleString('en-US')} {t.chars}</span>
 </footer>
 
 <style>

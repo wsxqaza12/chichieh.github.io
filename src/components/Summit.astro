@@ -1,7 +1,8 @@
 ---
 // 頭像放在山頂：外圍是手繪感的等高線
-interface Props { size?: string }
-const { size = '100%' } = Astro.props;
+import { ui, type Lang } from '../i18n';
+interface Props { size?: string; lang?: Lang }
+const { size = '100%', lang = 'zh' } = Astro.props;
 let rings = '';
 for (let i = 0; i < 9; i++) {
   const R = 96 + i * 12.5;
@@ -18,8 +19,8 @@ for (let i = 0; i < 9; i++) {
 
 <div class="summit" style={`max-width:${size}`}>
   <svg viewBox="0 0 400 400" aria-hidden="true" set:html={rings} />
-  <img src="/assets/img/avatar-640.webp" alt="黃琪婕" width="640" height="640" loading="lazy" />
-  <span class="lab tag">▲ 測繪者</span>
+  <img src="/assets/img/avatar-640.webp" alt={lang === 'en' ? 'ChiChieh Huang' : '黃琪婕'} width="640" height="640" loading="lazy" />
+  <span class="lab tag">{ui[lang].surveyor}</span>
 </div>
 
 <style>

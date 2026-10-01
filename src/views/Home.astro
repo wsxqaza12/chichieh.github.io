@@ -1,0 +1,327 @@
+---
+// 首頁（中、英共用）：地形圖、最新路段、文章、演講、作品、報導、關於
+import Base from '../layouts/Base.astro';
+import HomeMap from '../components/HomeMap.astro';
+import PostLog from '../components/PostLog.astro';
+import TalkProfile from '../components/TalkProfile.astro';
+import Summit from '../components/Summit.astro';
+import { getAllPosts, postUrl, dotDate, displayTitle, titleIn, postLang, charCount, type Post } from '../lib/posts';
+import { series, seriesOf, resolveSeries } from '../data/series';
+import { projects, projectText } from '../data/projects';
+import { talks, media } from '../data/experience';
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const L = (zh: string, e: string) => (en ? e : zh);
+const zhNum = ['一', '二', '三', '四', '五', '六'];
+
+const posts = await getAllPosts();
+const byId = new Map(posts.map((p) => [p.id, p]));
+const find = (id?: string) => (id ? byId.get(id) : undefined);
+const chars = (p: Post) => charCount(p.body ?? '').toLocaleString('en-US');
+
+// 最新路段：最近更新的連載
+const latest = series[0];
+const seasons = resolveSeries(latest, posts.map((p) => p.id));
+const legs = seasons.flatMap((s) => s.posts.map((id) => ({ s, ep: seriesOf(id)!.ep, post: byId.get(id) }))).filter((l): l is { s: typeof l.s; ep: number; post: Post } => !!l.post);
+let cum = 0;
+const prof = legs.map((l) => ({ ...l, c: (cum += charCount(l.post.body ?? '')) }));
+const W = 360, H = 200, pl = 8, pr = 14, pt = 18, pb = 34;
+const ymax = Math.ceil(cum / 5000) * 5000 || 5000;
+const X = (i: number) => pl + (i * (W - pl - pr)) / Math.max(1, prof.length - 1);
+const Y = (v: number) => H - pb - (v / ymax) * (H - pt - pb);
+let svg = '<g class="axis">';
+for (let v = 0; v <= ymax; v += 10000) svg += `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${W - pr}" y="${Y(v) - 5}" text-anchor="end">${v ? v.toLocaleString('en-US') : '0'}</text>`;
+prof.forEach((q, i) => (svg += `<text x="${X(i)}" y="${H - 12}" text-anchor="middle">S${q.s.n}·${q.ep}</text>`));
+svg += '</g>';
+svg += `<path d="M${X(0)},${Y(0)} L${prof.map((q, i) => `${X(i)},${Y(q.c)}`).join(' L')} L${X(prof.length - 1)},${Y(0)} Z" class="area"/>`;
+svg += `<polyline points="${prof.map((q, i) => `${X(i)},${Y(q.c)}`).join(' ')}" class="ln"/>`;
+prof.forEach((q, i) => (svg += `<circle cx="${X(i)}" cy="${Y(q.c)}" r="5" class="dot"><title>S${q.s.n}·${q.ep} ${titleIn(q.post, lang).replace(/[<&]/g, '')} · ${q.c.toLocaleString('en-US')} ${L('字', 'characters')}</title></circle>`));
+
+// 演講
+const today = new Date().toISOString().slice(0, 10);
+const year = +today.slice(0, 4);
+const yearTalks = talks.filter((t) => t.date.startsWith(String(year)));
+const talkTotal = yearTalks.reduce((n, t) => n + (t.count ?? 1), 0);
+const marks = yearTalks.filter((t) => t.major || t.date > today);
+
+const hackathon = find('antropic-hackathon');
+const [lead, ...rest] = projects;
+const leadT = projectText(lead, lang);
+---
+
+<Base overlay lang={lang}>
+  <HomeMap lang={lang} />
+
+  <main class="wrap">
+    <section class="s" id="route">
+      <div class="sh">
+        <div class="lab">{L('目前位置 · 最新路段', 'Where I am now · Latest trail')}</div>
+        <h2>{L('最新路段，', 'The latest trail, ')}<b>{latest.name}</b></h2>
+        <p>{en ? latest.introEn : latest.intro}</p>
+      </div>
+      <div class="route">
+        <div class="legs">
+          {seasons.map((s) => (
+            <>
+              <div class="season lab">{en ? `Season ${s.n} · ${s.nameEn}` : `第${zhNum[s.n - 1]}季 · ${s.name}`}</div>
+              {s.posts.map((id) => {
+                const p = byId.get(id);
+                return p && (
+                  <a class="leg" href={postUrl(p)}>
+                    <span class="k">S{s.n}·{seriesOf(id)!.ep}</span>
+                    <span class="b">
+                      <h3 class="keep">{titleIn(p, lang)}</h3>
+                      {en ? <span class="orig" lang="zh-Hant">{displayTitle(p)}</span> : p.data.description && <p>{p.data.description}</p>}
+                    </span>
+                    <span class="d"><b>{chars(p)} {L('字', 'chars')}</b>{dotDate(p.data.date)}</span>
+                  </a>
+                );
+              })}
+              {s.upcoming && s.next && (
+                <div class="leg next"><span class="k">S{s.n}·{s.next.n - s.from + 1}</span><span class="b"><h3>{en ? s.upcomingEn : s.upcoming}</h3><p>{L('籌備中', 'In the works')}</p></span><span class="d" /></div>
+              )}
+            </>
+          ))}
+        </div>
+        <div class="profile">
+          <div class="cap"><span class="lab">{L('累積字數', 'Characters so far')}</span><b>{cum.toLocaleString('en-US')}</b></div>
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={L(`${latest.name} 各段累積字數`, `${latest.name}: characters written per episode, cumulative`)} set:html={svg} />
+        </div>
+      </div>
+    </section>
+
+    <section class="s" id="log">
+      <div class="sh">
+        <div class="lab">{L('野外紀錄 · 全部文章', 'Field log · All essays')}</div>
+        <h2>{en ? `${posts.length} essays, by region` : `${posts.length} 篇，依區域篩選`}</h2>
+        <p>{L('區域就是地圖上的地名。點一個區域，上面地圖的石堆也會跟著亮起來。', 'Regions are the place names on the map above; pick one and its cairns light up. The essays are written in Chinese, so the titles here are translated.')}</p>
+      </div>
+      <PostLog posts={posts} limit={15} lang={lang} />
+      {en && <p class="more"><a class="btn" href="/en/writing/">All essays →</a></p>}
+    </section>
+
+    <section class="s" id="talks">
+      <div class="sh">
+        <div class="lab">{L(`足跡 · ${year} 演講`, `Footprints · Talks in ${year}`)}</div>
+        <h2>{en ? <><b>{talkTotal}</b> talks on this year’s trail</> : <>今年爬升了 <b>{talkTotal}</b> 場</>}</h2>
+        <p>{L('累積場次的爬升剖面。標記點是大型場次，虛線是還沒走到的路。', 'An ascent profile of talks given this year. Marked points are major events; the dashed line is still ahead.')}</p>
+      </div>
+      <TalkProfile talks={talks} year={year} today={today} lang={lang} />
+      <div class="tlist">
+        {marks.map((t) => {
+          const p = find(t.postId);
+          const up = t.date > today;
+          const topic = en ? t.en?.topic : t.topic;
+          return (
+            <div class="tm">
+              <span class="lab">{t.date.replaceAll('-', '.')}{up ? L(' · 即將登場', ' · Upcoming') : ''}</span>
+              <h3>{en && t.en ? t.en.event : t.event}</h3>
+              <p>{topic ?? (up ? L('敬請期待', 'Details soon') : '')}</p>
+              {p && <a class="go" href={postUrl(p)}>{L('現場心得 →', 'Recap (in Chinese) →')}</a>}
+            </div>
+          );
+        })}
+      </div>
+      <p class="more">
+        <a class="btn" href={en ? '/en/speaking/' : '/speaking/'}>{L('演講題目與邀請方式 →', 'Topics and how to invite me →')}</a>
+        {!en && <a class="btn" href="/experience/">完整演講、獎項與報導 →</a>}
+      </p>
+    </section>
+
+    <section class="s" id="camps">
+      <div class="sh">
+        <div class="lab">{L('營地 · 作品', 'Base camps · Work')}</div>
+        <h2>{L('做出來的東西', 'Things I’ve built')}</h2>
+        <p>{L('大多開源在 GitHub，附教學文章。', 'Two products, plus open-source projects that usually come with a tutorial.')}</p>
+      </div>
+      <div class="camp lead">
+        <div class="cl">
+          <span class="lab">{L('基地營', 'Base camp')} · {leadT.status ?? ''}</span>
+          <h3>{leadT.name}</h3>
+          <p class="quote">{L('石堆（cairn）是登山客留給後來的人的路標。這張地圖用的就是 Cairn 的想法：每個人留下的經驗，會變成別人找得到的路。', 'A cairn is a pile of stones hikers leave to mark the way for whoever comes next. This map borrows the idea behind Cairn: what each person leaves behind becomes a path someone else can find.')}</p>
+          <p>{leadT.summary}</p>
+          <div class="stats">
+            <div><b>2.4%</b><span>{L('Hackathon 錄取率', 'hackathon acceptance')}</span></div>
+            <div><b>{L('6 天', '6 days')}</b><span>{L('一個人開發', 'built solo')}</span></div>
+            <div><b>Moss</b><span>custodian agent</span></div>
+          </div>
+          {lead.link && <a class="go" href={lead.link}>{leadT.label} →</a>}
+        </div>
+        {hackathon?.data.hero && (
+          <a class="art" href={postUrl(hackathon)}><img src={hackathon.data.hero} alt={L('Anthropic Hackathon 主視覺', 'Anthropic hackathon key visual')} loading="lazy" /><span class="lab">{L('開發心得 →', 'Build log (in Chinese) →')}</span></a>
+        )}
+      </div>
+      <div class="camps">
+        {rest.map((p) => {
+          const pt2 = projectText(p, lang);
+          return (
+            <div class="camp">
+              <span class="lab"><span>{pt2.note ? <span class="note">{pt2.note}</span> : p.stack.slice(0, 2).join(' · ')}</span>{pt2.status && <span>{pt2.status}</span>}</span>
+              <h3>{pt2.name}</h3>
+              <p>{pt2.summary}</p>
+              {p.link && <a class="go" href={p.link}>{pt2.label} →</a>}
+            </div>
+          );
+        })}
+      </div>
+      {en && <p class="more"><a class="btn" href="/en/work/">All work →</a></p>}
+    </section>
+
+    <section class="s" id="press">
+      <div class="sh">
+        <div class="lab">{L('報導', 'Press')}</div>
+        <h2>{L('聊龍蝦與 AI Agent 的那幾次', 'On OpenClaw and AI agents, in the press')}</h2>
+        <p>{L('OpenClaw（龍蝦）的實際應用、上手門檻與使用風險。', 'Interviews about OpenClaw, an open-source AI agent, and what it takes to use agents for real.')}</p>
+      </div>
+      <div class="press">
+        {media.map((m) => {
+          const p = find(m.postId);
+          const photo = m.photo ?? p?.data.hero;
+          const outlet = en && m.en ? m.en.outlet : m.outlet;
+          const inner = (
+            <>
+              {photo && <span class="ph"><img src={photo} alt={L(`${m.outlet}報導畫面`, `${outlet} coverage`)} loading="lazy" /></span>}
+              <span class="lab">{m.year}</span>
+              <h3>{outlet}</h3>
+              <p>{en && m.en ? m.en.detail : m.detail}</p>
+            </>
+          );
+          return p ? <a class="pr" href={postUrl(p)}>{inner}</a> : <div class="pr">{inner}</div>;
+        })}
+      </div>
+    </section>
+
+    <section class="s" id="about">
+      <div class="about">
+        <Summit lang={lang} />
+        <div>
+          <div class="lab" style="margin-bottom:14px">{L('關於 · 測繪者', 'About · The surveyor')}</div>
+          {en ? (
+            <>
+              <h2>I’m ChiChieh Huang, a founder and AI engineer in Taipei.</h2>
+              <p>I’m building Cairn, shared memory for people and AI agents. Before that I built AILogora, a Chinese-first community for AI practitioners that went through AppWorks Accelerator #31. Since late 2023 I’ve written {posts.length} essays explaining generative AI in Chinese, and in {year} I gave {talkTotal} talks across Taiwan.</p>
+            </>
+          ) : (
+            <>
+              <h2>我是黃琪婕，做 Generative AI 產品，也把它寫成中文。</h2>
+              <p>2023 年底，我發現生成式 AI 的中文技術文章少得可惜，於是開始寫。後來做了 AILogora、做了 Cairn，也在 {year} 年站上 {talkTotal} 個講台，聊 Agent 和它的記憶。</p>
+            </>
+          )}
+          <dl class="kv">
+            <dt>{L('專長', 'Focus')}</dt><dd>{L('LLM 應用、RAG、AI Agent、Agent Memory、語音技術、2D/3D Avatar', 'LLM applications, RAG, AI agents, agent memory, speech, 2D/3D avatars')}</dd>
+            <dt>{L('合作', 'Work with me')}</dt><dd><a href={en ? '/en/speaking/' : '/speaking/'}>{L('演講、工作坊、企業內訓、AI 顧問', 'Talks, workshops, corporate training, advisory')}</a></dd>
+            <dt>{L('聯絡', 'Contact')}</dt><dd><span>cch.chichieh@gmail.com</span><button class="btn copy" type="button" data-copy="cch.chichieh@gmail.com" data-done={L('已複製', 'Copied')}>{L('複製', 'Copy')}</button></dd>
+            <dt>{L('更多', 'More')}</dt><dd><a href={en ? '/en/about/' : '/about/'}>{L('完整介紹', 'Full bio')}</a>　<a href="https://github.com/wsxqaza12">GitHub</a>　<a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>　<a href="/rss.xml">RSS</a></dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  /* 最新路段 */
+  .route { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 64px); align-items: start; }
+  .legs { border-top: 1px solid var(--ink-2); }
+  .season { padding: 14px 0 4px; color: var(--trail); }
+  .leg { display: grid; grid-template-columns: 54px minmax(0, 1fr) 92px; gap: 6px 18px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+  .leg .k { font-family: var(--mono); font-stretch: 80%; font-size: 11px; letter-spacing: .12em; color: var(--trail); }
+  .leg h3 { margin: 0; font-weight: 500; font-size: clamp(18px, 1.6vw, 21px); line-height: 1.5; transition: color .2s; }
+  .leg .b p { margin: 4px 0 0; font-size: 14px; font-weight: 300; color: var(--ink-2); line-height: 1.7; }
+  .leg .d { font-family: var(--mono); font-stretch: 80%; font-size: 11.5px; color: var(--ink-2); text-align: right; line-height: 1.8; }
+  .leg .d b { display: block; font-weight: 500; color: var(--ink); font-size: 13px; }
+  a.leg:hover h3 { color: var(--trail); }
+  .leg.next h3 { font-weight: 300; color: var(--ink-2); }
+  .leg .orig { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-3); font-weight: 400; }
+  .profile { position: sticky; top: 24px; border: 1px solid var(--line); padding: 18px 18px 12px; background: var(--ground-2); }
+  .profile .cap { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .profile .cap b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 22px; }
+  .profile svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .profile :global(.axis text) { font-family: var(--mono); font-stretch: 80%; font-size: 10px; fill: var(--ink-3); }
+  .profile :global(.axis line) { stroke: var(--line); }
+  .profile :global(.area) { fill: var(--trail-soft); }
+  .profile :global(.ln) { fill: none; stroke: var(--trail); stroke-width: 2; stroke-linejoin: round; }
+  .profile :global(.dot) { fill: var(--trail); stroke: var(--ground-2); stroke-width: 2; }
+
+  /* 演講 */
+  .tlist { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 28px; border-top: 1px solid var(--line); }
+  .tm { padding: 16px 16px 18px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+  .tm .lab { color: var(--trail); }
+  .tm h3 { margin: 6px 0 4px; font-weight: 500; font-size: 16px; line-height: 1.5; }
+  .tm p { margin: 0; font-size: 13px; color: var(--ink-2); font-weight: 300; line-height: 1.7; }
+  .go { display: inline-block; margin-top: 8px; font-family: var(--mono); font-stretch: 80%; font-size: 11px; letter-spacing: .14em; color: var(--trail); }
+  .more { margin: 24px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
+  .camp .note { color: var(--trail); }
+
+  /* 作品 */
+  .camp.lead { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(24px, 4vw, 64px); align-items: center; margin-bottom: 40px; }
+  .cl { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .camp.lead h3 { margin: 0; font-weight: 200; font-size: clamp(48px, 7vw, 104px); line-height: 1; letter-spacing: .02em; }
+  .cl p { margin: 0; font-size: 17px; }
+  .quote { font-size: clamp(18px, 1.6vw, 22px) !important; font-weight: 300; border-left: 2px solid var(--trail); padding-left: 18px; line-height: 1.7; }
+  .stats { display: flex; gap: 28px; flex-wrap: wrap; }
+  .stats div { display: flex; flex-direction: column; }
+  .stats b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 28px; color: var(--trail); line-height: 1.2; }
+  .stats span { font-size: 12.5px; color: var(--ink-2); }
+  .art { position: relative; aspect-ratio: 1; max-width: 100%; border: 1px solid var(--line); background: var(--ground-2); overflow: hidden; display: block; }
+  .art img { width: 100%; height: 100%; object-fit: cover; display: block; mix-blend-mode: luminosity; opacity: .9; transition: opacity .2s; }
+  .art:hover img { opacity: 1; mix-blend-mode: normal; }
+  .art .lab { position: absolute; left: 12px; bottom: 10px; color: var(--ink); background: var(--ground); padding: 3px 7px; }
+  .camps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .camp:not(.lead) { border-top: 1px solid var(--ink-2); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .camp:not(.lead) .lab { display: flex; justify-content: space-between; gap: 8px; }
+  .camp:not(.lead) h3 { margin: 0; font-weight: 500; font-size: 21px; line-height: 1.4; }
+  .camp:not(.lead) p { margin: 0; font-size: 14.5px; font-weight: 300; color: var(--ink-2); line-height: 1.8; }
+  .camp .go { margin-top: auto; }
+
+  /* 報導 */
+  .press { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .pr { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .ph { aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid var(--line); background: var(--ground-2); display: block; }
+  .ph img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) contrast(1.05); opacity: .85; transition: filter .3s, opacity .3s; }
+  a.pr:hover img { filter: none; opacity: 1; }
+  .pr h3 { margin: 0; font-weight: 500; font-size: 18px; }
+  a.pr:hover h3 { color: var(--trail); }
+  .pr p { margin: 0; font-size: 14px; font-weight: 300; color: var(--ink-2); line-height: 1.75; }
+
+  /* 關於 */
+  .about { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+  .about h2 { margin: 0 0 18px; font-weight: 300; font-size: clamp(30px, 3.4vw, 48px); line-height: 1.25; }
+  .about p { margin: 0 0 14px; font-size: 16.5px; font-weight: 300; max-width: 36em; }
+  .kv { display: grid; grid-template-columns: 110px minmax(0, 1fr); border-top: 1px solid var(--line); margin-top: 22px; }
+  .kv dt, .kv dd { margin: 0; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+  .kv dt { font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .16em; color: var(--ink-3); padding-top: 15px; }
+  .kv dd { min-width: 0; }
+  .kv a { border-bottom: 1px solid var(--ink-3); }
+  .kv a:hover { color: var(--trail); border-color: var(--trail); }
+  .copy { margin-left: 10px; padding: 4px 8px; }
+
+  @media (max-width: 900px) {
+    .route, .camp.lead, .about { grid-template-columns: 1fr; }
+    .profile { position: static; }
+    .tlist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .camps, .press { grid-template-columns: 1fr; }
+    .about :global(.summit) { max-width: 340px; margin: 0 auto; }
+  }
+  @media (max-width: 520px) {
+    .leg { grid-template-columns: 40px minmax(0, 1fr); }
+    .leg .d { grid-column: 2; text-align: left; display: flex; gap: 12px; }
+    .leg .d b { display: inline; }
+    .tlist { grid-template-columns: 1fr; }
+    .kv { grid-template-columns: 84px minmax(0, 1fr); }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    const label = b.textContent;
+    b.onclick = async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = b.dataset.done ?? '✓'; }
+      catch { b.textContent = b.dataset.copy!; }
+      setTimeout(() => (b.textContent = label), 2000);
+    };
+  });
+</script>

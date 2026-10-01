@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { regionOf } from './regions';
 import { seriesOf } from '../data/series';
+import { enTitles } from '../data/en-titles';
 
 export type Post = CollectionEntry<'blog'> | CollectionEntry<'synced'>;
 
@@ -55,6 +56,20 @@ export function displayTitle(post: Post): string {
   return seriesOf(post.id) ? t.replace(/^\d+\s+/, '') : t;
 }
 
+/** 文章是用什麼語言寫的（英文文章的中文字很少） */
+export function postLang(post: Post): 'zh' | 'en' {
+  const text = plain(post.body ?? '');
+  const cjk = (text.match(CJK) ?? []).length;
+  const words = (text.replace(CJK, ' ').match(/[A-Za-z]+/g) ?? []).length;
+  return cjk < (cjk + words) * 0.15 ? 'en' : 'zh';
+}
+
+/** 依網站語言取標題：英文版優先用翻譯，沒有翻譯就用原標題 */
+export function titleIn(post: Post, lang: 'zh' | 'en'): string {
+  if (lang === 'zh') return displayTitle(post);
+  return enTitles[post.id] ?? displayTitle(post);
+}
+
 export function regionOfPost(post: Post): string {
   return regionOf(post.id, post.data.title, (post.data as { region?: string }).region);
 }
@@ -67,6 +82,8 @@ export interface PostSummary {
   n: number; // 字數
   topic: string; // 區域
   x: string; // 摘要
+  te?: string; // 英文標題（英文版地圖用）
+  lang: 'zh' | 'en'; // 文章本身的語言
   season?: number;
   ep?: number;
 }
@@ -80,6 +97,8 @@ export function summarize(post: Post): PostSummary {
     n: charCount(post.body ?? ''),
     topic: regionOfPost(post),
     x: post.data.description ?? '',
+    ...(enTitles[post.id] ? { te: enTitles[post.id] } : {}),
+    lang: postLang(post),
     ...(s ? { season: s.season.n, ep: s.ep } : {}),
   };
 }

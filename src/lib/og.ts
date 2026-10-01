@@ -148,7 +148,7 @@ export async function postCard(id: string, meta: { title: string; date: string; 
 }
 
 /** 首頁與其他頁面共用的卡片：整張地圖 */
-export async function siteCard() {
+export async function siteCard(lang: 'zh' | 'en' = 'zh') {
   const m = await model();
   const posts: PostSummary[] = await getSummaries();
   const total = posts.reduce((n, p) => n + p.n, 0);
@@ -157,6 +157,10 @@ export async function siteCard() {
   const files = await fonts();
   const years = Math.max(1, Math.round((Date.now() - Date.parse(posts[posts.length - 1].d)) / (365.25 * 864e5)));
   const zh = ['零', '一', '兩', '三', '四', '五', '六', '七', '八', '九', '十'][years] ?? String(years);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${C.ground}"/>${await terrainLayer(m, v)}${marks(m, v, null, [])}${frame(files.length > 0, '寫作地形圖 · GENERATIVE AI', `${zh}年的寫作，走成一座山。`, `${posts.length} 篇文章 · ${total.toLocaleString('en-US')} 字`)}</svg>`;
+  const enN = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'][years] ?? String(years);
+  const text = lang === 'en'
+    ? ['A MAP OF MY WRITING · FOUNDER · AI ENGINEER', `${enN} years of writing, one cairn at a time.`, `${posts.length} essays · ${total.toLocaleString('en-US')} characters`]
+    : ['寫作地形圖 · GENERATIVE AI', `${zh}年的寫作，走成一座山。`, `${posts.length} 篇文章 · ${total.toLocaleString('en-US')} 字`];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${C.ground}"/>${await terrainLayer(m, v)}${marks(m, v, null, [])}${frame(files.length > 0, text[0], text[1], text[2])}</svg>`;
   return render(svg);
 }

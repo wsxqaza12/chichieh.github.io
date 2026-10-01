@@ -1,0 +1,260 @@
+---
+// 邀請演講與合作（中、英共用）：講題、形式、講過的場子、怎麼邀請
+import Base from '../layouts/Base.astro';
+import TalkProfile from '../components/TalkProfile.astro';
+import { getAllPosts, postUrl } from '../lib/posts';
+import { REGIONS } from '../lib/regions';
+import { topics, formats } from '../data/speaking';
+import { talks, media, type Talk } from '../data/experience';
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const L = (zh: string, e: string) => (en ? e : zh);
+
+const posts = (await getAllPosts()).filter((p) => !p.data.draft);
+const find = (id?: string) => (id ? posts.find((p) => p.id === id) : undefined);
+const today = new Date().toISOString().slice(0, 10);
+const year = +today.slice(0, 4);
+const yearTalks = talks.filter((t) => t.date.startsWith(String(year)));
+const total = yearTalks.reduce((n, t) => n + (t.count ?? 1), 0);
+const ev = (t: Talk) => (en && t.en ? t.en.event : t.event);
+
+// 講過的場子：依活動名稱分成研討會、社群、校園、企業
+const kindOf = (t: Talk) => {
+  const s = t.event;
+  if (/Summit|WiDS|年會|Agile/.test(s)) return 0;
+  if (/大學|政大|校園/.test(s)) return 2;
+  if (/內訓|內部|企業|協會|Workshop/.test(s)) return 3;
+  return 1;
+};
+const kinds = en ? ['Conferences', 'Communities', 'Campuses', 'Companies'] : ['研討會', '社群', '校園', '企業'];
+const groups = kinds.map((name, k) => ({
+  name,
+  items: [...new Set(talks.filter((t) => kindOf(t) === k).map((t) => ev(t).replace(/（[^）]*）|\([^)]*\)/g, '').replace(/ 2026$/, '').trim()))],
+}));
+const upcoming = talks.filter((t) => t.date > today).sort((a, b) => a.date.localeCompare(b.date));
+const region = (key?: string) => REGIONS.find((r) => r.key === key);
+const photos = [
+  { src: '/assets/img/speaking/wids-crowd.webp', zh: 'WiDS Taiwan 2026', en: 'WiDS Taiwan 2026' },
+  { src: '/assets/img/speaking/aws-summit.webp', zh: 'AWS Summit Taipei 2026', en: 'AWS Summit Taipei 2026' },
+  { src: '/assets/img/speaking/agile-taiwan.webp', zh: 'Agile Taiwan', en: 'Agile Taiwan' },
+];
+---
+
+<Base lang={lang} title={L('邀請演講與合作', 'Speaking & workshops')} description={L(`邀請黃琪婕演講、工作坊、企業內訓與 AI 顧問。${year} 年 ${total} 場演講，講 AI Agent、Agent Memory 與 OpenClaw。`, `Invite ChiChieh Huang for talks, workshops, corporate training and advisory on AI agents and agent memory. ${total} talks in ${year}.`)}>
+  <main class="wrap">
+    <section class="hero">
+      <div class="ht">
+        <span class="lab">{L('邀請合作 · 演講、工作坊、內訓、顧問', 'Work with me · Talks, workshops, training, advisory')}</span>
+        <h1>{en ? <>Invite me to talk about <b>AI agents</b>.</> : <>邀請我來講 <b>AI Agent</b></>}</h1>
+        <p class="lede">
+          {en
+            ? `I’m ChiChieh Huang, a founder and AI engineer in Taipei. In ${year} I gave ${total} talks, from AWS Summit Taipei, WiDS Taiwan and the Taiwan AI Annual Conference to meetups, campuses and corporate trainings. Everything I talk about is something I’ve built, run or broken myself.`
+            : `${year} 年我站上 ${total} 個講台，從 AWS Summit Taipei、WiDS Taiwan、台灣人工智慧年會，到社群小聚、校園與企業內訓。我講的，都是自己實際做過、跑過、踩過坑的東西。`}
+        </p>
+        <div class="facts">
+          <div><b>{total}</b><span>{L(`${year} 年場次`, `talks in ${year}`)}</span></div>
+          <div><b>{media.length}</b><span>{L('家媒體採訪', 'media features')}</span></div>
+          <div><b>{posts.length}</b><span>{L('篇技術文章', 'essays')}</span></div>
+        </div>
+        <div class="acts">
+          <a class="btn primary" href="#book">{L('來信邀請 →', 'Get in touch →')}</a>
+          <a class="btn" href="#topics">{L('看講題 ↓', 'See topics ↓')}</a>
+        </div>
+      </div>
+      <figure class="photo">
+        <div class="frame"><img src="/assets/img/speaking/stage.webp" alt={L('黃琪婕在 WiDS Taiwan 2026 台上演講', 'ChiChieh Huang speaking at WiDS Taiwan 2026')} width="680" height="850" /></div>
+        <figcaption class="lab">{L('WiDS Taiwan 2026 · 台大集思會議中心 蘇格拉底廳', 'WiDS Taiwan 2026 · Socrates Hall, NTU')}</figcaption>
+      </figure>
+    </section>
+
+    <section class="s" id="topics">
+      <div class="sh">
+        <div class="lab">{L('講題', 'Topics')}</div>
+        <h2>{L('可以講的題目', 'Talks I give')}</h2>
+        <p>{L('都來自實際講過的場次，可以依對象調整長度與深度。', 'Each one has been given at real events, and each can be tuned to your audience and time slot.')}</p>
+      </div>
+      <ul class="topics">
+        {topics.map((tp) => {
+          const x = en ? tp.en : tp.zh;
+          const r = region(tp.region);
+          const post = find(tp.post);
+          return (
+            <li class="topic">
+              <span class="where">
+                <span class="pin" aria-hidden="true"></span>
+                <span class="lab">{r ? (en ? r.name : r.key + r.suffix) : L('地圖之外', 'Off the map')}</span>
+              </span>
+              <div class="body">
+                <h3 class="keep">{x.title}</h3>
+                <p>{x.pitch}</p>
+                <p class="for"><span class="lab">{L('適合', 'Good for')}</span>{x.for}</p>
+              </div>
+              <div class="given">
+                <span class="lab">{L('講過', 'Given at')}</span>
+                <ul>{x.given.map((g) => <li>{g}</li>)}</ul>
+                {post && <a class="go" href={postUrl(post)}>{L('相關文章 →', 'Related essay (in Chinese) →')}</a>}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section class="s" id="formats">
+      <div class="sh">
+        <div class="lab">{L('形式', 'Formats')}</div>
+        <h2>{L('怎麼合作', 'Ways to work together')}</h2>
+      </div>
+      <div class="formats">
+        {formats.map((f) => {
+          const x = en ? f.en : f.zh;
+          return (
+            <div class="fmt">
+              <h3>{x.name}</h3>
+              <p>{x.text}</p>
+              <p class="ex"><span class="lab">{L('例', 'e.g.')}</span>{x.example}</p>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="s" id="record">
+      <div class="sh">
+        <div class="lab">{L(`講過的場子 · ${year}`, `Where I’ve spoken · ${year}`)}</div>
+        <h2>{en ? <><b>{total}</b> talks this year</> : <>今年 <b>{total}</b> 場</>}</h2>
+        <p>{L('研討會、社群、校園與企業都有。下面是今年累積場次的爬升剖面。', 'Conferences, communities, campuses and companies. Below is the year’s cumulative ascent.')}</p>
+      </div>
+      <div class="photos">
+        {photos.map((ph) => (
+          <figure><img src={ph.src} alt={en ? ph.en : ph.zh} loading="lazy" width="1200" height="900" /><figcaption class="lab">{en ? ph.en : ph.zh}</figcaption></figure>
+        ))}
+      </div>
+      <div class="groups">
+        {groups.map((g) => g.items.length > 0 && (
+          <div class="grp"><span class="lab">{g.name}</span><ul>{g.items.map((i) => <li>{i}</li>)}</ul></div>
+        ))}
+      </div>
+      <TalkProfile talks={talks} year={year} today={today} lang={lang} />
+      {upcoming.length > 0 && (
+        <p class="next"><span class="lab">{L('下一站', 'Next')}</span>{upcoming.map((t) => <span><b>{t.date.slice(5).replace('-', '.')}</b> {ev(t)}</span>)}</p>
+      )}
+      <p class="press"><span class="lab">{L('受訪', 'Featured in')}</span>{media.map((m) => (en && m.en ? m.en.outlet : m.outlet)).join(L('、', ', '))}</p>
+      {!en && <p class="more"><a class="btn" href="/experience/">完整演講紀錄、獎項與報導 →</a></p>}
+    </section>
+
+    <section class="s" id="book">
+      <div class="book">
+        <div>
+          <span class="lab">{L('怎麼邀請', 'How to book')}</span>
+          <h2>{L('來信就好', 'Just email me')}</h2>
+          <p>{L('來信時附上這幾件事，我可以更快回覆你能不能配合、怎麼安排最好：', 'Include these and I can tell you quickly whether it works and how to shape it:')}</p>
+          <ol class="ask">
+            <li>{L('活動名稱、日期與地點（或線上）', 'The event, date and place (or online)')}</li>
+            <li>{L('對象是誰、大約多少人', 'Who the audience is, and roughly how many')}</li>
+            <li>{L('希望的形式與長度', 'The format and length you have in mind')}</li>
+            <li>{L('想聽的題目方向', 'The topic you’d like')}</li>
+          </ol>
+        </div>
+        <div class="contact">
+          <span class="lab">Email</span>
+          <p class="mail"><span id="mail">cch.chichieh@gmail.com</span></p>
+          <div class="acts">
+            <button class="btn primary" type="button" data-copy="cch.chichieh@gmail.com" data-done={L('已複製', 'Copied')}>{L('複製 Email', 'Copy email')}</button>
+            <a class="btn" href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>
+          </div>
+          <p class="note">{L('演講以中文為主，也可以用英文。', 'I speak in Mandarin Chinese and English.')}</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .hero { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding-block: clamp(40px, 6vw, 88px) 0; }
+  .ht { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+  h1 { margin: 0; font-weight: 200; font-size: clamp(44px, 6vw, 92px); line-height: 1.06; letter-spacing: .01em; text-wrap: balance; }
+  h1 b { font-weight: 500; color: var(--trail); }
+  .lede { margin: 0; font-size: clamp(17px, 1.4vw, 20px); font-weight: 300; max-width: 34em; line-height: 1.85; }
+  .facts { display: flex; gap: clamp(20px, 3vw, 44px); flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  .facts div { display: flex; flex-direction: column; }
+  .facts b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 32px; color: var(--trail); line-height: 1.1; }
+  .facts span { font-size: 13px; color: var(--ink-2); }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn.primary { border-color: var(--trail); color: var(--ground); background: var(--trail); }
+  .btn.primary:hover { background: transparent; color: var(--trail); }
+  .photo { margin: 0; position: relative; }
+  .frame { position: relative; padding: 12px; background: var(--ground-2); border: 1px solid var(--line); }
+  .frame::before, .frame::after { content: ""; position: absolute; width: 16px; height: 16px; border: 1px solid var(--ink-3); }
+  .frame::before { left: -9px; top: -9px; border-right: 0; border-bottom: 0; }
+  .frame::after { right: -9px; bottom: -9px; border-left: 0; border-top: 0; }
+  .frame img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(.55) contrast(1.05); transition: filter .4s; }
+  .photo:hover img { filter: none; }
+  .photo figcaption { margin-top: 12px; }
+
+  .topics { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--ink-2); }
+  .topic { display: grid; grid-template-columns: 170px minmax(0, 1fr) 240px; gap: 16px clamp(20px, 3vw, 44px); padding: 28px 0; border-bottom: 1px solid var(--line); align-items: start; }
+  .where { display: flex; gap: 10px; align-items: center; padding-top: 6px; }
+  .where .lab { color: var(--trail); }
+  .where .pin { width: 14px; height: 14px; border: 1.5px solid var(--trail); border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .where .pin::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--trail); }
+  .body h3 { margin: 0 0 10px; font-weight: 500; font-size: clamp(20px, 1.9vw, 26px); line-height: 1.45; }
+  .body p { margin: 0 0 10px; font-weight: 300; font-size: 16px; line-height: 1.85; max-width: 40em; color: var(--body); }
+  .body .for { font-size: 14px; color: var(--ink-2); display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  .given { font-size: 14px; color: var(--ink-2); }
+  .given ul { list-style: none; margin: 6px 0 10px; padding: 0; display: flex; flex-direction: column; gap: 2px; color: var(--ink); }
+  .go { font-family: var(--mono); font-stretch: 80%; font-size: 11px; letter-spacing: .14em; color: var(--trail); }
+
+  .formats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .fmt { border-top: 1px solid var(--ink-2); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .fmt h3 { margin: 0; font-weight: 500; font-size: 20px; }
+  .fmt p { margin: 0; font-size: 15px; font-weight: 300; line-height: 1.8; }
+  .fmt .ex { font-size: 13px; color: var(--ink-2); display: flex; gap: 10px; align-items: baseline; }
+
+  .photos { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: clamp(12px, 1.6vw, 22px); margin-bottom: 36px; }
+  .photos figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .photos img { width: 100%; height: clamp(200px, 21vw, 300px); object-fit: cover; display: block; border: 1px solid var(--line); filter: grayscale(.7); transition: filter .4s; }
+  .photos figure:hover img { filter: none; }
+  .groups { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); margin-bottom: 36px; }
+  .grp { border-top: 1px solid var(--line); padding-top: 12px; min-width: 0; }
+  .grp ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+  .next, .press { display: flex; gap: 8px 22px; flex-wrap: wrap; align-items: baseline; margin: 22px 0 0; font-size: 15px; }
+  .next b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; color: var(--trail); margin-right: 6px; }
+  .press { color: var(--ink); }
+  .more { margin: 22px 0 0; }
+
+  .book { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 80px); padding: clamp(28px, 4vw, 56px); border: 1px solid var(--line); border-left: 3px solid var(--trail); background: var(--ground-2); }
+  .book h2 { margin: 8px 0 14px; font-weight: 300; font-size: clamp(32px, 3.8vw, 56px); line-height: 1.15; }
+  .book p { margin: 0 0 12px; font-weight: 300; }
+  .ask { margin: 12px 0 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; }
+  .ask li::marker { font-family: var(--mono); color: var(--trail); }
+  .contact { display: flex; flex-direction: column; gap: 10px; justify-content: center; min-width: 0; }
+  .mail { font-family: var(--mono); font-stretch: 80%; font-size: clamp(18px, 1.8vw, 24px); color: var(--ink); word-break: break-all; margin: 0 !important; }
+  .note { font-size: 14px; color: var(--ink-2); }
+
+  @media (max-width: 980px) {
+    .topic { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .formats, .groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 760px) {
+    .hero, .book { grid-template-columns: 1fr; }
+    .photo { max-width: 420px; }
+    .photos { grid-template-columns: 1fr; }
+    .photos img { height: auto; aspect-ratio: 4 / 3; }
+    .formats, .groups { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    const label = b.textContent;
+    b.onclick = async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = b.dataset.done ?? '✓'; }
+      catch { const r = document.createRange(); r.selectNodeContents(document.getElementById('mail')!); const s = getSelection()!; s.removeAllRanges(); s.addRange(r); }
+      setTimeout(() => (b.textContent = label), 2000);
+    };
+  });
+</script>

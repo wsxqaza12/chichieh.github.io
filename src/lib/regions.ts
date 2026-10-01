@@ -4,24 +4,25 @@
 export interface Region {
   key: string; // 主題名，也是 frontmatter region 的值
   suffix: string; // 地名後綴：RAG 盆地、Agent 山脈
-  en: string;
+  en: string; // 地形英文（地圖上的小字）
+  name: string; // 英文版的地名
 }
 
 export const REGIONS: Region[] = [
-  { key: '資料工程', suffix: '低地', en: 'LOWLANDS' },
-  { key: 'LLM', suffix: '高原', en: 'PLATEAU' },
-  { key: 'RAG', suffix: '盆地', en: 'BASIN' },
-  { key: '語音・Avatar', suffix: '丘陵', en: 'HILLS' },
-  { key: 'Vibe Coding', suffix: '河谷', en: 'VALLEY' },
-  { key: 'Agent', suffix: '山脈', en: 'RANGE' },
-  { key: '龍蝦', suffix: '灣', en: 'BAY' },
-  { key: 'MCP', suffix: '隘口', en: 'PASS' },
-  { key: '記憶', suffix: '峰', en: 'SUMMIT' },
+  { key: '資料工程', suffix: '低地', en: 'LOWLANDS', name: 'Data Lowlands' },
+  { key: 'LLM', suffix: '高原', en: 'PLATEAU', name: 'LLM Plateau' },
+  { key: 'RAG', suffix: '盆地', en: 'BASIN', name: 'RAG Basin' },
+  { key: '語音・Avatar', suffix: '丘陵', en: 'HILLS', name: 'Voice & Avatar Hills' },
+  { key: 'Vibe Coding', suffix: '河谷', en: 'VALLEY', name: 'Vibe Coding Valley' },
+  { key: 'Agent', suffix: '山脈', en: 'RANGE', name: 'Agent Range' },
+  { key: '龍蝦', suffix: '灣', en: 'BAY', name: 'OpenClaw Bay' },
+  { key: 'MCP', suffix: '隘口', en: 'PASS', name: 'MCP Pass' },
+  { key: '記憶', suffix: '峰', en: 'SUMMIT', name: 'Memory Summit' },
 ];
 
-export const regionName = (key: string) => {
+export const regionName = (key: string, lang: 'zh' | 'en' = 'zh') => {
   const r = REGIONS.find((x) => x.key === key);
-  return r ? r.key + r.suffix : key;
+  return r ? (lang === 'en' ? r.name : r.key + r.suffix) : key;
 };
 
 // 依序比對，第一個命中的規則勝出（順序有意義：記憶 > MCP > 龍蝦 > Agent …）

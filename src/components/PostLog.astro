@@ -1,7 +1,8 @@
 ---
 // 野外紀錄：文章清單，可依地圖區域篩選。首頁、文章列表、分類頁共用。
-import { postUrl, dotDate, displayTitle, charCount, regionOfPost, type Post } from '../lib/posts';
+import { postUrl, dotDate, displayTitle, titleIn, postLang, charCount, regionOfPost, type Post } from '../lib/posts';
 import { REGIONS } from '../lib/regions';
+import { ui, type Lang } from '../i18n';
 
 interface Props {
   posts: Post[];
@@ -9,8 +10,11 @@ interface Props {
   limit?: number;
   /** 讀網址上的 ?r=區域 */
   readQuery?: boolean;
+  lang?: Lang;
 }
-const { posts, limit = 0, readQuery = false } = Astro.props;
+const { posts, limit = 0, readQuery = false, lang = 'zh' } = Astro.props;
+const t = ui[lang];
+const rname = (k: number) => (lang === 'en' ? REGIONS[k].name : REGIONS[k].key + REGIONS[k].suffix);
 const rows = posts.map((p) => {
   const key = regionOfPost(p);
   const k = REGIONS.findIndex((r) => r.key === key);
@@ -20,28 +24,37 @@ const counts = REGIONS.map((_, k) => rows.filter((r) => r.k === k).length);
 const order = REGIONS.map((_, k) => k).reverse().filter((k) => counts[k] > 0);
 ---
 
-<div class="plog" data-limit={limit} data-query={readQuery ? '1' : undefined}>
-  <div class="filters" role="toolbar" aria-label="依區域篩選">
-    <button class="f" type="button" aria-pressed="true" data-k="">全部<i>{rows.length}</i></button>
+<div class="plog" data-limit={limit} data-query={readQuery ? '1' : undefined} data-more={t.more(999).replace('999', '{n}')}>
+  <div class="filters" role="toolbar" aria-label={t.filterLabel}>
+    <button class="f" type="button" aria-pressed="true" data-k="">{t.all}<i>{rows.length}</i></button>
     {order.map((k) => (
-      <button class="f" type="button" aria-pressed="false" data-k={k} data-key={REGIONS[k].key}>{REGIONS[k].key}{REGIONS[k].suffix}<i>{counts[k]}</i></button>
+      <button class="f" type="button" aria-pressed="false" data-k={k} data-key={REGIONS[k].key}>{rname(k)}<i>{counts[k]}</i></button>
     ))}
   </div>
   <div class="log">
-    <div class="lr lhead" aria-hidden="true"><span>日期</span><span>區域</span><span>標題</span><span class="n">字數</span></div>
-    {rows.map(({ p, k, region }, i) => (
-      <a class="lr" href={postUrl(p)} data-k={k} hidden={limit > 0 && i >= limit ? true : undefined}>
-        <span class="d">{dotDate(p.data.date)}</span>
-        <span class="r">{region.key}{region.suffix}</span>
-        <span class="t">{displayTitle(p)}{p.data.draft && <em class="draft">草稿</em>}</span>
-        <span class="n">{charCount(p.body ?? '').toLocaleString('en-US')} 字</span>
-      </a>
-    ))}
+    <div class="lr lhead" aria-hidden="true"><span>{t.date}</span><span>{t.region}</span><span>{t.title}</span><span class="n">{t.length}</span></div>
+    {rows.map(({ p, k }, i) => {
+      const native = postLang(p);
+      const shown = titleIn(p, lang);
+      return (
+        <a class="lr" href={postUrl(p)} data-k={k} hidden={limit > 0 && i >= limit ? true : undefined} hreflang={native === 'en' ? 'en' : 'zh-Hant'}>
+          <span class="d">{dotDate(p.data.date)}</span>
+          <span class="r">{rname(k)}</span>
+          <span class="t">
+            <span lang={lang === 'en' && shown !== displayTitle(p) ? 'en' : undefined}>{shown}</span>
+            {p.data.draft && <em class="draft">{t.draft}</em>}
+            {lang === 'en' && native === 'en' && <em class="tag en">EN</em>}
+            {lang === 'en' && native !== 'en' && shown !== displayTitle(p) && <span class="orig" lang="zh-Hant">{displayTitle(p)}</span>}
+          </span>
+          <span class="n">{charCount(p.body ?? '').toLocaleString('en-US')} {lang === 'en' ? 'chars' : '字'}</span>
+        </a>
+      );
+    })}
   </div>
   {limit > 0 && rows.length > limit && (
-    <button class="morebtn" type="button">展開其餘 {rows.length - limit} 篇 ↓</button>
+    <button class="morebtn" type="button">{t.more(rows.length - limit)}</button>
   )}
-  <p class="empty" hidden>這個區域還沒有文章。</p>
+  <p class="empty" hidden>{t.empty}</p>
 </div>
 
 <style>
@@ -60,6 +73,8 @@ const order = REGIONS.map((_, k) => k).reverse().filter((k) => counts[k] > 0);
   .r { font-size: 12.5px; letter-spacing: .2em; color: var(--ink-3); }
   .t { font-size: 16px; line-height: 1.6; min-width: 0; }
   a.lr:hover .t { color: var(--trail); }
+  .orig { display: block; font-size: 12.5px; color: var(--ink-3); line-height: 1.6; margin-top: 2px; }
+  .tag { font-style: normal; font-family: var(--mono); font-stretch: 80%; font-size: 10px; letter-spacing: .1em; color: var(--trail); border: 1px solid var(--trail); padding: 0 5px; margin-left: 8px; vertical-align: 2px; }
   .draft { font-style: normal; font-family: var(--mono); font-stretch: 80%; font-size: 10px; letter-spacing: .1em; color: var(--ink-3); border: 1px dashed var(--ink-3); padding: 0 5px; margin-left: 8px; vertical-align: 2px; }
   .lhead { font-family: var(--mono); font-stretch: 80%; font-size: 10px; letter-spacing: .16em; color: var(--ink-3); padding: 10px 0; }
   .lhead .n { font-size: 10px; }
@@ -93,7 +108,7 @@ const order = REGIONS.map((_, k) => k).reverse().filter((k) => counts[k] > 0);
         r.hidden = !show;
         if (show) shown++;
       });
-      if (more) { more.hidden = !(k === null && !expanded && total > limit); more.textContent = `展開其餘 ${total - limit} 篇 ↓`; }
+      if (more) { more.hidden = !(k === null && !expanded && total > limit); more.textContent = root.dataset.more!.replace('{n}', String(total - limit)); }
       empty.hidden = total > 0;
     };
     const select = (next: number | null, notify = true) => {

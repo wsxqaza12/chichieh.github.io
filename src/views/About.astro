@@ -1,0 +1,111 @@
+---
+// 關於（中、英共用）
+import Base from '../layouts/Base.astro';
+import Summit from '../components/Summit.astro';
+import { getSummaries } from '../lib/posts';
+import { achievements, media, talks } from '../data/experience';
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const L = (zh: string, e: string) => (en ? e : zh);
+const n = (await getSummaries()).length;
+const year = new Date().getFullYear();
+const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t) => s + (t.count ?? 1), 0);
+---
+
+<Base lang={lang} title={L('關於', 'About')} description={L('關於黃琪婕 ChiChieh Huang：Generative AI 產品開發者、技術寫作者與講者。', 'About ChiChieh Huang, a founder and AI engineer in Taipei building shared memory for people and AI agents.')}>
+  <main class="wrap">
+    <section class="s first about">
+      <Summit lang={lang} />
+      <div>
+        <div class="lab">{L('關於 · 測繪者', 'About · The surveyor')}</div>
+        {en ? (
+          <>
+            <h1>I’m ChiChieh Huang, a founder and AI engineer in Taipei.</h1>
+            <div class="bio">
+              <p>I build products where people and AI agents work from the same memory. Right now that’s Cairn, shared memory for people and agents. It started at Anthropic’s global hackathon, where I was one of 500 builders selected from more than 20,000 applicants and built the first version solo in six days.</p>
+              <p>Before Cairn I built AILogora, a Chinese-first community where AI practitioners share and argue about viewpoints. It went through AppWorks Accelerator #31, and its weekly digest now reaches nearly 4,000 subscribers.</p>
+              <p>I started writing about generative AI in Chinese in late 2023, when I noticed how little good material existed. {n} essays later, the topics have moved from RAG and LLM evaluation to agents and agent memory. In {year} I also gave {total} talks, workshops and corporate trainings, including AWS Summit Taipei, WiDS Taiwan and the Taiwan AI Annual Conference.</p>
+              <p>I trained in statistics, which turns out to matter for building AI products far more than I expected.</p>
+            </div>
+          </>
+        ) : (
+          <>
+            <h1>我是黃琪婕，做 Generative AI 產品，也把它寫成中文。</h1>
+            <div class="bio">
+              <p>我是一名熱愛技術的自由接案開發者，也是位創業家。2023 年底注意到生成式 AI 的中文技術文章非常少，覺得可惜，於是開始以此為方向寫作，希望用淺顯易懂的語言，把 AI 的知識帶給中文社群。</p>
+              <p>後來做了 AILogora，入選 AppWorks Accelerator #31；2026 年以 Cairn 入選 Anthropic 全球 Hackathon。現在主要在研究 Agent Memory，也常在社群、校園和企業分享 AI Agent 的實戰經驗。</p>
+            </div>
+          </>
+        )}
+        <dl class="kv">
+          <dt>{L('正在做', 'Building')}</dt>
+          <dd><ul>
+            <li><b>Cairn</b>{L('人與 AI Agent 共享的記憶（2026–）', 'Shared memory for people and AI agents (2026–)')}</li>
+            <li><b>AILogora</b><a href="https://ailogora.com">{L('AI 技術實作者社群平台（2025–）', 'A community for AI practitioners (2025–)')}</a></li>
+          </ul></dd>
+          <dt>{L('專長', 'Focus')}</dt>
+          <dd><ul>
+            <li><b>{L('語言生成', 'Language')}</b>{L('LLM 應用、RAG 建置與評估、AI Agent 系統、Agent Memory', 'LLM applications, RAG and its evaluation, AI agent systems, agent memory')}</li>
+            <li><b>{L('語音技術', 'Speech')}</b>{L('Text-to-Speech、Speech Recognition 與中文聲音克隆', 'Text-to-speech, speech recognition, Chinese voice cloning')}</li>
+            <li><b>{L('視覺與動畫', 'Visual')}</b>{L('2D/3D Avatar、text-to-image 與 text-to-motion', '2D/3D avatars, text-to-image, text-to-motion')}</li>
+          </ul></dd>
+          <dt>{L('紀錄', 'Recognition')}</dt>
+          <dd><ul>{achievements.map((a) => <li>{a.year && <span class="y">{a.year}</span>}{en && a.en ? a.en.title : a.title}</li>)}</ul></dd>
+          <dt>{L('演講與媒體', 'Talks & press')}</dt>
+          <dd>{en
+            ? <>{total} talks in {year}, including AWS Summit Taipei, WiDS Taiwan and the Taiwan AI Annual Conference. Featured in {media.map((m) => m.en?.outlet ?? m.outlet).join(', ')}. <a href="/en/speaking/">Topics and booking →</a></>
+            : <>{year} 年 {total} 場演講與工作坊，包含 WiDS Taiwan、AWS Summit Taipei、台灣人工智慧年會；接受過《商業周刊》、非凡新聞與公視採訪。<a href="/speaking/">講題與邀請方式 →</a></>}
+          </dd>
+          <dt>{L('寫作', 'Writing')}</dt>
+          <dd>{en ? <>{n} essays on generative AI, written in Traditional Chinese. <a href="/en/writing/">Browse the titles in English →</a></> : <>{n} 篇生成式 AI 的中文技術文章。<a href="/posts/">全部文章 →</a></>}</dd>
+          <dt>{L('合作', 'Work with me')}</dt>
+          <dd>{L('演講、工作坊、企業內訓、AI 解決方案諮詢、職涯諮詢', 'Talks, workshops, corporate training, GenAI advisory, career advice')}</dd>
+          <dt>{L('聯絡', 'Contact')}</dt>
+          <dd><span id="mail">cch.chichieh@gmail.com</span><button class="btn copy" type="button" data-copy="cch.chichieh@gmail.com" data-done={L('已複製', 'Copied')}>{L('複製', 'Copy')}</button></dd>
+          <dt>{L('別處', 'Elsewhere')}</dt>
+          <dd class="links"><a href="https://github.com/wsxqaza12">GitHub</a><a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a><a href="https://ailogora.com">AILogora</a><a href="/rss.xml">RSS</a></dd>
+        </dl>
+        <blockquote>You can overcome anything, if and only if you love something enough.</blockquote>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .first { padding-top: clamp(40px, 6vw, 80px); }
+  .about { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+  .about > :global(.summit) { position: sticky; top: 40px; }
+  h1 { margin: 14px 0 22px; font-weight: 300; font-size: clamp(32px, 3.8vw, 52px); line-height: 1.22; }
+  .bio p { margin: 0 0 14px; font-size: 17px; font-weight: 300; max-width: 36em; line-height: 1.95; }
+  .kv { display: grid; grid-template-columns: 130px minmax(0, 1fr); border-top: 1px solid var(--line); margin-top: 28px; }
+  .kv dt, .kv dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.8; }
+  .kv dt { font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .16em; color: var(--ink-3); padding-top: 18px; text-transform: uppercase; }
+  .kv dd { min-width: 0; }
+  .kv ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .kv li b { font-weight: 500; margin-right: 12px; }
+  .kv .y { font-family: var(--mono); font-stretch: 80%; font-size: 12px; color: var(--trail); margin-right: 10px; }
+  .kv a { color: var(--ink); border-bottom: 1px solid var(--trail); }
+  .kv a:hover { color: var(--trail); }
+  .links { display: flex; gap: 18px; flex-wrap: wrap; }
+  .copy { margin-left: 10px; padding: 4px 8px; }
+  blockquote { margin: 32px 0 0; padding-left: 18px; border-left: 2px solid var(--trail); font-weight: 300; font-size: 19px; color: var(--ink); }
+  @media (max-width: 900px) {
+    .about { grid-template-columns: 1fr; }
+    .about > :global(.summit) { position: static; max-width: 320px; margin: 0 auto; }
+  }
+  @media (max-width: 520px) { .kv { grid-template-columns: 1fr; } .kv dt { padding-bottom: 0; border-bottom: 0; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
+    const label = b.textContent;
+    b.onclick = async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = b.dataset.done ?? '✓'; }
+      catch { b.textContent = b.dataset.copy!; }
+      setTimeout(() => (b.textContent = label), 2000);
+    };
+  });
+</script>
