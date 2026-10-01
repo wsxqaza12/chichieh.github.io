@@ -32,7 +32,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="alternate" type="application/rss+xml" title="黃琪婕 ChiChieh Huang" href="/rss.xml" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
