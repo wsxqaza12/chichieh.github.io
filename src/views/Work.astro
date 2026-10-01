@@ -1,0 +1,104 @@
+---
+// 作品（中、英共用）：主打作品放大，其餘列成格狀
+import Base from '../layouts/Base.astro';
+import { projects, projectText } from '../data/projects';
+import { getAllPosts, postUrl } from '../lib/posts';
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const L = (zh: string, e: string) => (en ? e : zh);
+const posts = await getAllPosts();
+const hackathon = posts.find((p) => p.id === 'antropic-hackathon');
+const infra = posts.find((p) => p.id === 'ailogora-infra');
+const featured = projects.filter((p) => p.featured);
+const rest = projects.filter((p) => !p.featured);
+const imageOf = (name: string) => (name === 'Cairn' ? hackathon?.data.hero : projects.find((p) => p.name === name)?.image);
+const story = (name: string) => (name === 'Cairn' ? hackathon : name === 'AILogora' ? infra : undefined);
+---
+
+<Base lang={lang} title={L('作品', 'Work')} description={L('黃琪婕的作品：Cairn、AILogora，以及 LLMAvatarTalk、GraphRAG 視覺化教學等開源專案。', 'ChiChieh Huang’s work: Cairn, AILogora, and open-source projects including LLMAvatarTalk and a GraphRAG visualization tutorial.')}>
+  <main class="wrap">
+    <section class="s first">
+      <div class="sh">
+        <div class="lab">{L('營地 · 作品', 'Base camps · Work')}</div>
+        <h1>{L('做出來的東西', 'Things I’ve built')}</h1>
+        <p>{L('兩個產品，加上一些開源專案。開源的都附上 repo，大多也有一篇教學文章。', 'Two products, plus open-source projects. Each repo usually comes with a tutorial essay.')}</p>
+      </div>
+
+      {featured.map((p, i) => {
+        const t = projectText(p, lang);
+        const img = imageOf(p.name);
+        const post = story(p.name);
+        return (
+          <article class:list={['lead', { flip: i % 2 === 1 }]}>
+            <div class="cl">
+              <span class="lab">{t.status}{p.year ? ` · ${p.year}` : ''}</span>
+              <h2>{t.name}</h2>
+              {t.note && <p class="note">{t.note}</p>}
+              {p.name === 'Cairn' && (
+                <p class="quote">{L('石堆（cairn）是登山客留給後來的人的路標。這個網站的地圖用的就是 Cairn 的想法：每個人留下的經驗，會變成別人找得到的路。', 'A cairn is a pile of stones hikers leave to mark the way for whoever comes next. The map on this site borrows the idea behind Cairn: what each person leaves behind becomes a path someone else can find.')}</p>
+              )}
+              <p>{t.summary}</p>
+              <p class="stack lab">{p.stack.join(' · ')}</p>
+              <div class="acts">
+                {p.link && <a class="btn primary" href={p.link}>{t.label} →</a>}
+                {post && <a class="btn" href={postUrl(post)}>{p.name === 'Cairn' ? L('Hackathon 開發心得 →', 'Hackathon build log (in Chinese) →') : L('上線的技術棧與踩坑 →', 'Launch stack and pitfalls (in Chinese) →')}</a>}
+              </div>
+            </div>
+            {img && (
+              <div class:list={['art', { wide: p.name !== 'Cairn' }]}>
+                <img src={img} alt={L(`${t.name} 的畫面`, `${t.name} screenshot`)} loading={i === 0 ? 'eager' : 'lazy'} />
+              </div>
+            )}
+          </article>
+        );
+      })}
+
+      <div class="grid">
+        {rest.map((p) => {
+          const t = projectText(p, lang);
+          return (
+            <article class="camp">
+              <span class="lab"><span>{p.stack.slice(0, 3).join(' · ')}</span>{p.year && <span>{p.year}</span>}</span>
+              <h2>{p.link ? <a href={p.link}>{t.name}</a> : t.name}</h2>
+              <p>{t.summary}</p>
+              {p.link && <a class="go" href={p.link}>{t.label} →</a>}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .first { padding-top: clamp(40px, 6vw, 80px); }
+  .lead { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(24px, 4vw, 64px); align-items: center; padding-block: clamp(32px, 4vw, 56px); border-bottom: 1px solid var(--line); }
+  .lead.flip .cl { order: 2; }
+  .cl { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .cl h2 { margin: 0; font-weight: 200; font-size: clamp(56px, 8vw, 120px); line-height: 1; letter-spacing: .01em; }
+  .cl p { margin: 0; font-size: 17px; line-height: 1.85; }
+  .note { font-family: var(--mono); font-stretch: 80%; font-size: 12px !important; letter-spacing: .12em; color: var(--trail); text-transform: uppercase; }
+  .quote { font-size: clamp(18px, 1.6vw, 21px) !important; font-weight: 300; border-left: 2px solid var(--trail); padding-left: 18px; }
+  .stack { color: var(--ink-3) !important; font-size: 11px !important; }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .acts .btn { white-space: normal; text-align: left; line-height: 1.5; }
+  .btn.primary { border-color: var(--trail); color: var(--ground); background: var(--trail); }
+  .btn.primary:hover { background: transparent; color: var(--trail); }
+  .art { position: relative; border: 1px solid var(--line); background: var(--ground-2); padding: 10px; }
+  .art::before, .art::after { content: ""; position: absolute; width: 16px; height: 16px; border: 1px solid var(--ink-3); }
+  .art::before { left: -9px; top: -9px; border-right: 0; border-bottom: 0; }
+  .art::after { right: -9px; bottom: -9px; border-left: 0; border-top: 0; }
+  .art img { width: 100%; height: auto; display: block; aspect-ratio: 1; object-fit: cover; }
+  .art.wide img { aspect-ratio: 3 / 1; object-fit: cover; object-position: top; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 2.4vw, 36px) clamp(16px, 2vw, 28px); margin-top: clamp(40px, 5vw, 64px); }
+  .camp { border-top: 1px solid var(--ink-2); padding-top: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .camp .lab { display: flex; justify-content: space-between; gap: 8px; }
+  .camp h2 { margin: 0; font-weight: 500; font-size: 22px; line-height: 1.4; }
+  .camp h2 a:hover { color: var(--trail); }
+  .camp p { margin: 0; font-size: 15px; font-weight: 300; color: var(--ink-2); line-height: 1.8; }
+  .go { margin-top: auto; padding-top: 6px; font-family: var(--mono); font-stretch: 80%; font-size: 11px; letter-spacing: .14em; color: var(--trail); }
+  @media (max-width: 900px) { .lead { grid-template-columns: 1fr; } .lead.flip .cl { order: 0; } .grid { grid-template-columns: 1fr; } }
+</style>

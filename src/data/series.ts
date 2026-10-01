@@ -8,17 +8,20 @@
 export interface Season {
   n: number;
   name: string;
+  /** 英文版的季名 */
+  nameEn: string;
   /** 這一季從第幾篇開始、到第幾篇（不填 to = 還在連載中，之後的都算這一季） */
   from: number;
   to?: number;
   /** 下一篇的預告：第 n 篇上站後自動消失 */
-  next?: { n: number; text: string };
+  next?: { n: number; text: string; en: string };
 }
 
 export interface Series {
   name: string;
-  /** 首頁「最新路段」的介紹 */
+  /** 首頁「最新路段」的介紹（中、英） */
   intro: string;
+  introEn: string;
   /** 文章網址符合這個規則就算進連載，第一個括號是篇數 */
   match: RegExp;
   seasons: Season[];
@@ -28,14 +31,20 @@ export const series: Series[] = [
   {
     name: 'Agent Memory',
     intro: '第一季四篇，從「大家講的 Memory 是同一件事嗎」一路談到記憶怎麼形成與遺忘。第二季開始追問，記住了就代表記對了嗎？',
+    introEn: 'Season one ran four essays, from whether we even mean the same thing by “memory” to how agent memory forms, updates and fades. Season two asks whether an agent that remembers also remembers right.',
     match: /^memory(\d+)$/,
     seasons: [
-      { n: 1, name: '把過去留下來', from: 1, to: 4 },
+      { n: 1, name: '把過去留下來', nameEn: 'Keeping the past', from: 1, to: 4 },
       {
         n: 2,
         name: '當過去不再適用',
+        nameEn: 'When the past stops applying',
         from: 5,
-        next: { n: 6, text: '如果有人知道 Agent 會相信自己的記憶，並且刻意讓錯誤的東西被留下來呢？' },
+        next: {
+          n: 6,
+          text: '如果有人知道 Agent 會相信自己的記憶，並且刻意讓錯誤的東西被留下來呢？',
+          en: 'What if someone knows your agent trusts its memory, and plants something false on purpose?',
+        },
       },
     ],
   },
@@ -68,6 +77,7 @@ export interface ResolvedSeason extends Season {
   posts: string[];
   /** 還沒上站的下一篇預告（上站後是 undefined） */
   upcoming?: string;
+  upcomingEn?: string;
 }
 
 /** 依目前上站的文章，算出每一季有哪幾篇 */
@@ -81,5 +91,6 @@ export function resolveSeries(s: Series, ids: string[]): ResolvedSeason[] {
     ...se,
     posts: eps.filter((e) => seasonOf(s, e.num) === se).sort((a, b) => a.num - b.num).map((e) => e.id),
     upcoming: se.next && latest < se.next.n ? se.next.text : undefined,
+    upcomingEn: se.next && latest < se.next.n ? se.next.en : undefined,
   }));
 }

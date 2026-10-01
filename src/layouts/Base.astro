@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { langOf, pairOf, ui, type Lang } from '../i18n';
 
 interface Props {
   title?: string;
@@ -10,28 +11,39 @@ interface Props {
   ogType?: string;
   /** 首頁：頁首疊在地圖上 */
   overlay?: boolean;
+  lang?: Lang;
 }
 
+const lang: Lang = Astro.props.lang ?? langOf(Astro.url.pathname);
+const t = ui[lang];
 const {
   title,
-  description = '黃琪婕 ChiChieh Huang：做 Generative AI 產品，也把它寫成中文。LLM、Agent、RAG、Agent Memory 的技術文章與演講。',
-  ogImage = '/og.jpg',
+  description = t.defaultDescription,
+  ogImage = lang === 'en' ? '/en/og.jpg' : '/og.jpg',
   ogType = 'website',
   overlay = false,
 } = Astro.props;
 
-const pageTitle = title ? `${title} | 黃琪婕 ChiChieh Huang` : '黃琪婕 ChiChieh Huang';
+const pageTitle = title ? `${title} | ${t.siteName}` : lang === 'en' ? 'ChiChieh Huang · 黃琪婕' : t.siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const pair = pairOf(Astro.url.pathname);
 ---
 
 <!doctype html>
-<html lang="zh-Hant">
+<html lang={lang === 'en' ? 'en' : 'zh-Hant'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {pair && (
+      <>
+        <link rel="alternate" hreflang="zh-Hant" href={new URL(pair[0], Astro.site)} />
+        <link rel="alternate" hreflang="en" href={new URL(pair[1], Astro.site)} />
+        <link rel="alternate" hreflang="x-default" href={new URL(pair[0], Astro.site)} />
+      </>
+    )}
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png" />
@@ -45,9 +57,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={title ? `${title}：在黃琪婕寫作地形圖上的位置` : '黃琪婕的寫作地形圖'} />
+    <meta property="og:image:alt" content={lang === 'en' ? 'A map of ChiChieh Huang’s writing' : title ? `${title}：在黃琪婕寫作地形圖上的位置` : '黃琪婕的寫作地形圖'} />
     <meta property="og:site_name" content="黃琪婕 ChiChieh Huang" />
-    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'zh_TW'} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0E1613" />
@@ -56,7 +68,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap"
+      href={`https://fonts.googleapis.com/css2?${lang === 'en' ? 'family=Hanken+Grotesk:wght@200;300;400;500;700&' : ''}family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap`}
     />
     <script is:inline>
       document.documentElement.classList.add('js');
@@ -67,8 +79,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </script>
   </head>
   <body>
-    <Header overlay={overlay} />
+    <Header overlay={overlay} lang={lang} />
     <slot />
-    <Footer />
+    <Footer lang={lang} />
   </body>
 </html>

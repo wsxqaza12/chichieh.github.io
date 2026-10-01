@@ -2,7 +2,11 @@
 // 首頁的寫作地形圖：桌機橫向（時間由西向東），手機直向（最新在上）。
 import { getSummaries } from '../lib/posts';
 import { REGIONS, regionName } from '../lib/regions';
+import { ui, numberWords, type Lang } from '../i18n';
 
+interface Props { lang?: Lang }
+const { lang = 'zh' } = Astro.props;
+const t = ui[lang];
 const posts = await getSummaries();
 const total = posts.reduce((n, p) => n + p.n, 0);
 const first = posts[posts.length - 1];
@@ -10,30 +14,44 @@ const latest = posts[0];
 const years = Math.max(1, Math.round((Date.now() - Date.parse(first.d)) / (365.25 * 864e5)));
 const zh = ['零', '一', '兩', '三', '四', '五', '六', '七', '八', '九', '十'][years] ?? String(years);
 const ym = (d: string) => d.slice(0, 7).replace('-', '.');
+const en = numberWords[years] ?? String(years);
+const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, zhNote: 'Written in Chinese' };
 ---
 
-<div class="map" id="map">
+<div class="map" id="map" data-lang={lang} data-t={JSON.stringify(strings)}>
   <div class="title">
-    <span class="lab">寫作地形圖 · {ym(first.d)} — {ym(latest.d)}</span>
-    <h1>{zh}年的寫作，<br />走成一座<b>山</b>。</h1>
-    <p>
-      {posts.length} 篇文章、<span class="mono">{total.toLocaleString('en-US')}</span> 字。每一篇是一座石堆，路線從
-      {first.d.slice(0, 4)} 年的{regionName(first.topic)}，一路爬到現在的{regionName(latest.topic)}。滑過石堆看是哪一篇。
-    </p>
+    <span class="lab">{t.mapLabel} · {ym(first.d)} — {ym(latest.d)}</span>
+    {lang === 'en' ? (
+      <>
+        <h1 class="en">{en[0].toUpperCase() + en.slice(1)} years of writing,<br />one <b>cairn</b> at a time.</h1>
+        <p>
+          {posts.length} essays and <span class="mono">{total.toLocaleString('en-US')}</span> characters on AI, written in Traditional Chinese.
+          Each essay is a cairn on this map. The trail runs from the {regionName(first.topic, 'en')} of {first.d.slice(0, 4)} up to {regionName(latest.topic, 'en')} today. Hover a cairn to see what it’s about.
+        </p>
+      </>
+    ) : (
+      <>
+        <h1>{zh}年的寫作，<br />走成一座<b>山</b>。</h1>
+        <p>
+          {posts.length} 篇文章、<span class="mono">{total.toLocaleString('en-US')}</span> 字。每一篇是一座石堆，路線從
+          {first.d.slice(0, 4)} 年的{regionName(first.topic)}，一路爬到現在的{regionName(latest.topic)}。滑過石堆看是哪一篇。
+        </p>
+      </>
+    )}
   </div>
   <div class="mapbox" id="mapbox">
-    <canvas id="cv" role="img" aria-label={`寫作地形圖：${posts.length} 篇文章依時間與主題畫成石堆，路線從${regionName(first.topic)}到${regionName(latest.topic)}。完整清單在下方的文章列表。`}></canvas>
+    <canvas id="cv" role="img" aria-label={lang === 'en' ? `A map of ${posts.length} essays drawn as cairns by time and topic, with a trail from the ${regionName(first.topic, 'en')} to ${regionName(latest.topic, 'en')}. The full list is below.` : `寫作地形圖：${posts.length} 篇文章依時間與主題畫成石堆，路線從${regionName(first.topic)}到${regionName(latest.topic)}。完整清單在下方的文章列表。`}></canvas>
     <div id="overlay"></div>
     <a class="tip" id="tip" href="/posts/" tabindex="-1">
       <span class="lab"><span id="tipR"></span><span id="tipD"></span></span>
-      <span class="tt" id="tipT"></span><span class="tx" id="tipX"></span><span class="go">閱讀全文 →</span>
+      <span class="tt" id="tipT"></span><span class="tx" id="tipX"></span><span class="go" id="tipGo">{t.read}</span>
     </a>
   </div>
-  <div class="legend" aria-label="圖例">
-    <div class="row"><svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><g fill="var(--trail)"><ellipse cx="11" cy="15" rx="8" ry="2.6" /><ellipse cx="11" cy="10.5" rx="6" ry="2.3" /><ellipse cx="11" cy="6.5" rx="4" ry="2" /></g></svg>石堆＝一篇文章，石頭越多字越多</div>
-    <div class="row"><svg width="22" height="10" aria-hidden="true"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--trail)" stroke-width="2" stroke-dasharray="4 3" /></svg>每月的寫作路線</div>
-    <div class="row"><svg width="22" height="12" aria-hidden="true"><path d="M1 9 Q6 2 11 6 T21 4" fill="none" stroke="var(--contour-major)" stroke-width="1.2" /></svg>等高線＝主題的累積</div>
-    <div class="scale" id="scale"><i style="width:60px"></i><span>3 個月</span></div>
+  <div class="legend" aria-label={lang === 'en' ? 'Legend' : '圖例'}>
+    <div class="row"><svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><g fill="var(--trail)"><ellipse cx="11" cy="15" rx="8" ry="2.6" /><ellipse cx="11" cy="10.5" rx="6" ry="2.3" /><ellipse cx="11" cy="6.5" rx="4" ry="2" /></g></svg>{t.legendCairn}</div>
+    <div class="row"><svg width="22" height="10" aria-hidden="true"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--trail)" stroke-width="2" stroke-dasharray="4 3" /></svg>{t.legendTrail}</div>
+    <div class="row"><svg width="22" height="12" aria-hidden="true"><path d="M1 9 Q6 2 11 6 T21 4" fill="none" stroke="var(--contour-major)" stroke-width="1.2" /></svg>{t.legendContour}</div>
+    <div class="scale" id="scale"><i style="width:60px"></i><span>{t.months3}</span></div>
   </div>
   <noscript><style>.mapbox{display:none}</style></noscript>
 </div>
@@ -46,6 +64,9 @@ const ym = (d: string) => d.slice(0, 7).replace('-', '.');
   .title .lab { display: block; margin-bottom: 18px; text-shadow: 0 0 8px var(--halo); }
   h1 { margin: 0; font-weight: 200; font-size: clamp(46px, 6.2vw, 96px); line-height: 1.08; letter-spacing: .02em; text-shadow: 0 0 18px var(--halo), 0 0 3px var(--halo); }
   h1 b { font-weight: 500; color: var(--trail); }
+  h1.en { font-weight: 200; font-size: clamp(40px, 4.6vw, 72px); line-height: 1.06; letter-spacing: -.015em; }
+  .map[data-lang='en'] .title { max-width: min(780px, 56vw); }
+  .map[data-lang='en'] .title p { max-width: 34em; }
   .title p { margin: 22px 0 0; font-size: clamp(15px, 1.25vw, 18px); font-weight: 300; max-width: 30em; text-shadow: 0 0 10px var(--halo), 0 0 2px var(--halo); }
   .title p .mono { font-size: .86em; color: var(--trail); }
   .map :global(.region) { position: absolute; z-index: 3; transform: translate(-50%, -50%); font-weight: 500; font-size: 13px; letter-spacing: .16em; color: var(--ink-2); white-space: nowrap; cursor: default; text-shadow: 0 0 6px var(--halo), 0 0 2px var(--halo), 0 0 1px var(--halo); transition: color .2s; }
@@ -75,7 +96,7 @@ const ym = (d: string) => d.slice(0, 7).replace('-', '.');
   @media (prefers-reduced-motion: reduce) { .map :global(.here i:nth-child(2)) { animation: none; opacity: 0; } }
   @media (max-width: 900px) {
     .map { height: auto; }
-    .title { position: relative; left: auto; top: auto; max-width: none; padding: 96px var(--gut) 8px; }
+    .title, .map[data-lang='en'] .title { position: relative; left: auto; top: auto; max-width: none; padding: 96px var(--gut) 8px; }
     .mapbox { position: relative; inset: auto; aspect-ratio: 1 / 3; }
     .legend { position: relative; right: auto; bottom: auto; margin: 0 var(--gut) 24px; }
   }
@@ -88,6 +109,9 @@ const ym = (d: string) => d.slice(0, 7).replace('-', '.');
   import type { PostSummary } from '../lib/posts';
 
   const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const LANG = $('map').dataset.lang === 'en' ? 'en' : 'zh';
+  const T = JSON.parse($('map').dataset.t || '{}') as Record<string, string>;
+  const tt = (p: PostSummary) => (LANG === 'en' ? p.te ?? p.t : p.t);
   const mapEl = $('map'), box = $('mapbox'), cv = $<HTMLCanvasElement>('cv'), ov = $('overlay'), tip = $<HTMLAnchorElement>('tip');
   let data: PostSummary[] = [];
   const models: Partial<Record<'h' | 'v', Model>> = {};
@@ -197,7 +221,7 @@ const ym = (d: string) => d.slice(0, 7).replace('-', '.');
     ov.appendChild(here);
     placed.push({ x0: last.x - 16, y0: last.y - 22, x1: last.x + 16, y1: last.y + 10 });
     const hl = document.createElement('div');
-    hl.className = 'herelab'; hl.innerHTML = `<b>你在這裡</b>${M.pts[0].p.d.slice(0, 7).replace('-', '.')}`;
+    hl.className = 'herelab'; hl.innerHTML = `<b>${T.you}</b>${M.pts[0].p.d.slice(0, 7).replace('-', '.')}`;
     const hc: [number, number, number][] = [];
     for (const dx of [-1, 1]) for (const dy of [-1, 0, 1]) for (const dd of [60, 90, 120]) hc.push([last.x + dx * dd, last.y + dy * dd * 0.6, dd / 10]);
     const hb = labelAt(hl, hc);
@@ -213,7 +237,7 @@ const ym = (d: string) => d.slice(0, 7).replace('-', '.');
       const el = document.createElement('div');
       el.className = 'region' + (vertical ? ' vert' : '');
       el.dataset.k = String(ki);
-      el.innerHTML = `${r.key}${r.suffix}<small>${r.en} · ${idx.length}</small>`;
+      el.innerHTML = LANG === 'en' ? `${r.name}<small>${idx.length}</small>` : `${r.key}${r.suffix}<small>${r.en} · ${idx.length}</small>`;
       const us = idx.map((i) => M.pts[i].u).sort((a, b) => a - b), umin = us[0], umax = us[us.length - 1];
       const v = (ki + 0.5) / REGIONS.length;
       const cands: [number, number, number][] = [];
@@ -237,10 +261,11 @@ const ym = (d: string) => d.slice(0, 7).replace('-', '.');
   function showTip(i: number) {
     if (i < 0) { tip.classList.remove('show'); tip.tabIndex = -1; return; }
     const q = M.pts[i], r = REGIONS[q.k];
-    $('tipR').textContent = r.key + r.suffix;
-    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')} · ${q.p.n.toLocaleString('en-US')} 字`;
-    $('tipT').textContent = q.p.t;
-    $('tipX').textContent = q.p.x;
+    $('tipR').textContent = LANG === 'en' ? r.name : r.key + r.suffix;
+    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')} · ${q.p.n.toLocaleString('en-US')} ${T.chars}`;
+    $('tipT').textContent = tt(q.p);
+    $('tipX').textContent = LANG === 'en' ? (q.p.lang === 'en' ? '' : `${T.zhNote} · ${q.p.t}`) : q.p.x;
+    $('tipGo').textContent = LANG === 'en' && q.p.lang === 'en' ? T.readEn : T.read;
     tip.href = `/posts/${q.p.id}/`;
     tip.tabIndex = 0;
     const tw = Math.min(300, W - 32);
