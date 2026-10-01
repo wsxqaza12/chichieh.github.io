@@ -46,7 +46,7 @@ const seriesIds = place ? place.series.seasons.flatMap((s) => s.posts.map((id, i
 const pageUrl = new URL(postUrl(post), Astro.site).toString();
 ---
 
-<Base title={title} description={post.data.description ?? title} ogImage={post.data.hero} ogType="article">
+<Base title={title} description={post.data.description ?? title} ogImage={`/og/${post.id}.jpg`} ogType="article">
   <div class="prog" id="prog" aria-hidden="true"></div>
   <main class="wrap">
     <section class="hero">

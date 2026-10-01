@@ -1,4 +1,6 @@
 node_modules/
+# 分享卡片用的字型快取（建置時從 Google Fonts 下載）
+.cache/
 dist/
 .astro/
 npm-debug.log*
