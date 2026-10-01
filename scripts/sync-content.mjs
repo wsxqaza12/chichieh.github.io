@@ -29,9 +29,11 @@ if (!contentDir) {
 const firstCommitDate = new Map();
 try {
   // core.quotepath=false：不設的話中文路徑會輸出成 "\345..." 跳脫字串，比對永遠失敗（CI 的預設值）
+  // --no-renames：文章常從 raw/ 用 git mv 搬進「寫過的文章」，預設的改名偵測會把它記成 R 而不是 A，
+  // 新路徑就查不到日期、退回檔案 mtime（CI 上等於建置時間）。關掉後，搬進來的那一刻就是上站日期。
   const log = execFileSync(
     'git',
-    ['-c', 'core.quotepath=false', 'log', '--diff-filter=A', '--name-only', '--format=@%aI', '--reverse'],
+    ['-c', 'core.quotepath=false', 'log', '--no-renames', '--diff-filter=A', '--name-only', '--format=@%aI', '--reverse'],
     { cwd: contentDir, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }
   );
   let current = null;
