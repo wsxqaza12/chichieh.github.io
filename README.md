@@ -112,7 +112,7 @@ sourceHash: '…'            # 中文原文的指紋，用 npm run i18n -- --sta
 ### 自動翻譯
 
 文章庫 push 之後，`.github/workflows/translate.yml` 會找出還沒有英文版、或中文改過的文章，
-交給 Claude Code 翻譯，翻完跑檢查，通過就 commit 到 `main` 並重新部署：
+交給 Claude Code 翻譯（Claude 失敗時改用 Gemini），翻完跑檢查，通過就 commit 到 `main` 並重新部署：
 
 ```
 content-dna push ──► 部署（中文版上站）
@@ -124,8 +124,13 @@ content-dna push ──► 部署（中文版上站）
 - 檢查（`scripts/check-translation.mjs`）：圖片、章節標題、表格、code block、連結都要跟中文對得上，不能留任何中文。
   沒通過的那篇不會上站，workflow 會亮紅燈（GitHub 會寄信），隔天排程會再試一次。
 - 一次最多翻 3 篇，其餘留到下一輪（每日 09:30 也會跑一次）。
-- 需要 repo secret `CLAUDE_CODE_OAUTH_TOKEN`（在自己電腦跑 `claude setup-token` 產生，用 Claude 訂閱額度）
-  或 `ANTHROPIC_API_KEY`（按用量計費）。都沒設的話這個 workflow 會直接跳過。
+- 翻譯引擎依序嘗試，前一個失敗（例如 Claude 額度用完）就換下一個，翻出來的都要通過同一套檢查。
+  commit 訊息和 workflow 摘要會註明每篇是哪個引擎翻的。
+  - Claude：repo secret `CLAUDE_CODE_OAUTH_TOKEN`（在自己電腦跑 `claude setup-token` 產生，用 Claude 訂閱額度）
+    或 `ANTHROPIC_API_KEY`（按用量計費）。
+  - Gemini（備援）：repo secret `GEMINI_API_KEY`（Google AI Studio 的 key）。直接呼叫 Gemini API，
+    自動挑這把 key 能用的最新 pro 模型，不行再退到 flash；要指定模型可設 `GEMINI_MODEL`。
+  - 都沒設的話這個 workflow 會直接跳過。
 
 本機也能跑同一套流程（用你登入的 `claude`）：
 
@@ -133,6 +138,7 @@ content-dna push ──► 部署（中文版上站）
 npm run translate                       # 同步文章、翻譯所有缺的與改過的（一次最多 3 篇）
 npm run translate -- --dry-run          # 只列出會翻哪幾篇
 npm run translate -- --limit 10         # 一次多翻幾篇
+npm run translate -- --engine gemini    # 只用 Gemini（需要環境變數 GEMINI_API_KEY）
 npm run i18n                            # 哪些文章還沒有英文版、哪些中文改過
 node scripts/check-translation.mjs --all   # 檢查全部英文版
 ```
