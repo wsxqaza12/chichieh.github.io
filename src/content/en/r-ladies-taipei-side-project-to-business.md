@@ -6,7 +6,7 @@ description: >-
   AILogora with vibe coding, the gap between writing code and running a
   business, and how much a statistics background still helps.
 tags: []
-sourceHash: '86baa0c5b6e9'
+sourceHash: 'ed26f7bf6abd'
 ---
 
 Thanks to R-Ladies Taipei for giving me the chance to tidy up the past two years, and amazingly, people were even willing to listen 😂

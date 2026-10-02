@@ -6,7 +6,7 @@ description: >-
   What I built with a team of C-level OpenClaw agents, and a question for
   everyone else.
 tags: []
-sourceHash: 'a262ecc78072'
+sourceHash: 'd23f99997dcc'
 ---
 
 I've been playing with OpenClaw and raising my lobster for almost a week now. I've already spent $100 on APIs, plus a Mac mini. Total spoiled child 😭

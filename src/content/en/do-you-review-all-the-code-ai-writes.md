@@ -6,7 +6,7 @@ description: >-
   path, deciding review depth by risk and keeping everything behind branches and
   PRs, and why I stopped skipping reviews.
 tags: []
-sourceHash: '373c534942fc'
+sourceHash: '74a8f8653d60'
 ---
 
 I've been talking with people recently about using AI to help with development, and it turns out people's approaches to vibe coding vary wildly. Some insist on reading every line, some don't look at all, and I'm somewhere in the middle 🤣

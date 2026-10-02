@@ -6,7 +6,7 @@ description: >-
   Agents are moving from models that move into high-stakes work and
   customer-facing roles, and the real question is control.
 tags: []
-sourceHash: '8e0d5a02783f'
+sourceHash: 'e18af3c0c03f'
 ---
 
 In my years of writing about AI, I've rarely felt as conflicted as I do lately. On one hand, there are new models, new tools and new buzzwords every day. On the other, fewer and fewer readers click through. Not because AI doesn't matter, but because people are drowning in update fatigue. So I want to try a more honest approach: talk about the agent news I saw this week and the signals it actually sends.

@@ -26,10 +26,11 @@
 
 ## 日常寫作流程
 
-1. 在 `my_content_style` 寫文章（純 markdown，不用 frontmatter）
-2. 放到 `寫過的文章/技術` 或 `寫過的文章/趨勢談` → 下次建置自動上站
-3. `待發表的文章` 內的檔案會被視為草稿（`npm run dev` 看得到、正式站看不到）
-4. 要下架某篇：把檔名加進 `sync.config.json` 的 `excludeFiles`
+1. 在 `my_content_style` 寫文章（純 markdown，不用 frontmatter），一樣寫中文就好
+2. 放到 `寫過的文章/技術` 或 `寫過的文章/趨勢談`，push → 幾分鐘內中文版上站
+3. 接著自動翻譯成英文，檢查通過後英文版跟著上站（見下方「英文版」），不用另外做什麼
+4. `待發表的文章` 內的檔案會被視為草稿（`npm run dev` 看得到、正式站看不到，也不會翻譯）
+5. 要下架某篇：把檔名加進 `sync.config.json` 的 `excludeFiles`
 
 frontmatter 全自動生成：標題取第一個標題行、日期取 git 首次 commit、分類取資料夾名。
 想覆寫任何欄位，直接在文章開頭加 YAML frontmatter 即可（手寫的優先）。
@@ -107,13 +108,37 @@ sourceHash: '…'            # 中文原文的指紋，用 npm run i18n -- --sta
 - 日期、地形圖上的區域、連載集數都跟著中文原文，不用另外寫。
 - 內文連到其他文章（`/posts/<id>/`、`../<id>/`、舊的 Medium 網址）時，建置會自動換成該文的英文網址。
 - **還沒翻譯的文章，英文網站先不列**（地圖、列表、RSS 都不會出現），建置 log 會列出還缺哪幾篇。
-- 中文原文改過之後，`npm run i18n` 會提醒哪幾篇英文版要跟著更新。
+
+### 自動翻譯
+
+文章庫 push 之後，`.github/workflows/translate.yml` 會找出還沒有英文版、或中文改過的文章，
+交給 Claude Code 翻譯，翻完跑檢查，通過就 commit 到 `main` 並重新部署：
+
+```
+content-dna push ──► 部署（中文版上站）
+                └──► 翻譯 ──► 檢查 ──► commit 英文版 ──► 再部署（英文版上站）
+```
+
+- **新文章**：整篇翻譯，自己取英文網址。**中文改過**：只改英文版裡對應的段落，其他不動，網址不變。
+- 翻譯規則（語氣、用詞、不能動的東西）在 [`docs/translating.md`](docs/translating.md)，想調整英文版的寫法改這份。
+- 檢查（`scripts/check-translation.mjs`）：圖片、章節標題、表格、code block、連結都要跟中文對得上，不能留任何中文。
+  沒通過的那篇不會上站，workflow 會亮紅燈（GitHub 會寄信），隔天排程會再試一次。
+- 一次最多翻 3 篇，其餘留到下一輪（每日 09:30 也會跑一次）。
+- 需要 repo secret `CLAUDE_CODE_OAUTH_TOKEN`（在自己電腦跑 `claude setup-token` 產生，用 Claude 訂閱額度）
+  或 `ANTHROPIC_API_KEY`（按用量計費）。都沒設的話這個 workflow 會直接跳過。
+
+本機也能跑同一套流程（用你登入的 `claude`）：
 
 ```bash
-npm run i18n                  # 哪些文章還沒有英文版、哪些中文改過
-npm run i18n -- --json        # 完整清單
-npm run i18n -- --stamp src/content/en/xxx.md   # 翻譯或更新完，記下中文原文目前的指紋
+npm run translate                       # 同步文章、翻譯所有缺的與改過的（一次最多 3 篇）
+npm run translate -- --dry-run          # 只列出會翻哪幾篇
+npm run translate -- --limit 10         # 一次多翻幾篇
+npm run i18n                            # 哪些文章還沒有英文版、哪些中文改過
+node scripts/check-translation.mjs --all   # 檢查全部英文版
 ```
+
+自己改了英文版、不想被下次的自動更新蓋掉也沒關係：更新只在中文原文改過時才會發生，而且只改對應的段落。
+手動翻譯或修改完，用 `npm run i18n -- --stamp src/content/en/xxx.md` 記下中文原文目前的指紋。
 
 Medium 時期另外發過英文版的三篇（`d30783070827`、`a1d263ce61b4`、`a3476af62056`），
 frontmatter 標了 `translationOf`，英文網站改用 `src/content/en/` 裡的版本，不會重複列出。
@@ -161,8 +186,11 @@ push 到 `main` → GitHub Actions 建置 → 推到 `gh-pages` branch → Cloud
 （可讀取 `wsxqaza12/content-dna` 的 fine-grained PAT），CI 才拉得到文章庫。
 沒設的話網站仍會建置，但只有 Medium 遷移的文章。
 
-另有每日 09:00（台北）排程重建作為保底；content-dna 若加上 repository_dispatch
-workflow（`event_type: content-updated`）可做到 push 即重建。
+content-dna 的 `.github/workflows/notify-site.yml` 在每次 push 時送出 `content-updated`，
+網站的部署和自動翻譯都會跟著跑（content-dna 那邊需要 `SITE_TRIGGER_TOKEN`）。
+另有每日 09:00（台北）排程重建作為保底。
+
+自動翻譯另外需要 `CLAUDE_CODE_OAUTH_TOKEN` 或 `ANTHROPIC_API_KEY`，見上方「自動翻譯」。
 
 ## 舊站
 

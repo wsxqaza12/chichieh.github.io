@@ -6,7 +6,7 @@ description: >-
   cheap, scalable proxy for embodied pretraining, and it's more practical than
   it first sounds.
 tags: []
-sourceHash: 'dd615997742a'
+sourceHash: '41af0b43d201'
 ---
 
 Lately I've been reading a paper called D2E: Scaling Vision-Action Pretraining on Desktop Data for Transfer to Embodied AI, and honestly, I was a bit skeptical at first.

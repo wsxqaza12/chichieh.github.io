@@ -5,7 +5,7 @@ description: >-
   Karpathy's review of 2025 is well worth reading. The six themes I noted, from
   RLVR and jagged intelligence to Claude Code, vibe coding and LLM GUIs.
 tags: []
-sourceHash: '2fac462ad5a7'
+sourceHash: '57c5b7161bfa'
 ---
 
 Karpathy's year-end review is well worth reading. A few notes:

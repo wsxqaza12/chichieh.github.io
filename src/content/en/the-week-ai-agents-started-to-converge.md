@@ -6,7 +6,7 @@ description: >-
   became an open standard, agents moved into DevTools and task modes, and agent
   frameworks started to look like systems meant to be maintained.
 tags: []
-sourceHash: '5e61edd88273'
+sourceHash: 'c6e01cdb60ef'
 ---
 
 Following on from what I wrote last week, this week's news didn't shock me all over again. Instead it brought a steadier feeling. A lot hasn't changed, but the overall trend has become clearer. I can feel the agent space moving from everyone talking past each other to slowly converging on a way of doing things that people are willing to share.

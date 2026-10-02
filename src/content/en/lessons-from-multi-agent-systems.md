@@ -6,7 +6,7 @@ description: >-
   flattened my agents into parallel C-level roles, and why tracing every
   decision belongs in the design from day one.
 tags: []
-sourceHash: 'b48ee37de144'
+sourceHash: 'b64a1dbf2cca'
 ---
 
 I've stepped into a few potholes building multi-agent systems over the past few months, and I want to share them.

@@ -6,7 +6,7 @@ description: >-
   price per token. It's recomputing the same opening prompt hundreds of times a
   day.
 tags: []
-sourceHash: '31dd2d9542e4'
+sourceHash: '180e8e179888'
 ---
 
 ngrok's article on prompt caching is well worth reading. When building products, I used to just calculate how much ten thousand tokens cost. Reading it made me realize that what really costs money is recomputing the same opening prompt hundreds of times a day.

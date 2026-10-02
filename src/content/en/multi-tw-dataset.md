@@ -6,7 +6,7 @@ description: >-
   testing image, listening and text comprehension with real exam questions, and
   measuring latency too. A guided read.
 tags: []
-sourceHash: '019e80532037'
+sourceHash: 'fdb3fb412bf4'
 ---
 
 The Multi-TW dataset

@@ -6,7 +6,7 @@ description: >-
   builds on newer Python packaging standards and refuses to carry a decade of
   historical baggage.
 tags: []
-sourceHash: '6d31e61544e9'
+sourceHash: '465cdf4334cf'
 ---
 
 People often say it's because it's written in Rust,

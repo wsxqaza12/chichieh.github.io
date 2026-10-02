@@ -6,7 +6,7 @@ description: >-
   coding frameworks backfire, and seven minimal practices derived from first
   principles about context, code and verification.
 tags: []
-sourceHash: '82736012bde4'
+sourceHash: 'a13cd544b9bd'
 ---
 
 I recently heard a fantastic talk by YC, an AI project engineer at MediaTek. He shared his experience and principles from using AI coding in practice, and it really resonated with me, because I've been through a lot of the same potholes he described.

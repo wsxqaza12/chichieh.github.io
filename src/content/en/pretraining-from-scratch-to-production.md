@@ -6,7 +6,7 @@ description: >-
   Gemma-3-270m for Traditional Chinese, from building the FineWeb-Edu-zhtw
   dataset to the learning rates that make a small model actually learn.
 tags: []
-sourceHash: '0897c066d0b8'
+sourceHash: '1ee616540f60'
 ---
 
 A while ago I went to GDG DevFest Taipei 2025 and heard Liang-Hsun Huang 🧠🧪 speak on "From Scratch to Production: Lessons in Pretraining and Applications." I learned a ton, so I've written it up to share. The images come from the speaker's slides XD

@@ -6,7 +6,7 @@ description: >-
   development, from browsers and IDEs to agent operating systems and research
   workspaces, show agents turning into work systems.
 tags: []
-sourceHash: 'cb8065bfb740'
+sourceHash: '7cb264a4b9e2'
 ---
 
 ![Six lines of AI agent development](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E8%B6%A8%E5%8B%A2%E8%AB%87/images/image.webp)

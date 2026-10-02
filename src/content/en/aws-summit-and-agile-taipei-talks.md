@@ -6,7 +6,7 @@ description: >-
   both packed, and why team-level memory is a different problem from personal
   memory.
 tags: []
-sourceHash: 'd95e3985a929'
+sourceHash: '6a6fe26db9e8'
 ---
 
 Last Thursday I gave two talks back to back, at AWS Summit Taipei and Agile Taipei. I didn't expect both to be completely packed. Honestly, far more people came than I expected 😅 Thank you so much to everyone who made time to come, and it was really nice to see a lot of familiar faces in the audience.

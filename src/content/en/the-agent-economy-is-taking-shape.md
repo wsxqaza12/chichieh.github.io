@@ -10,7 +10,7 @@ tags:
   - Agent
   - AgentEconomy
   - AITrends
-sourceHash: '00877c3c7797'
+sourceHash: 'c321a6136a2c'
 ---
 
 Over the past two weeks there's been another thread that's less technical but that I think matters a lot: agents aren't only maturing technically; the infrastructure for their commercial and economic side is starting to grow too.

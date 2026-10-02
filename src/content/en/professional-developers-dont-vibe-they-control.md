@@ -6,7 +6,7 @@ description: >-
   reflects the state of things before GPT-5.2 and Claude 4.5, but it's still
   well worth a look.
 tags: []
-sourceHash: 'e7f01afce8aa'
+sourceHash: '8e21a2cb4982'
 ---
 
 Professional Software Developers Don't Vibe, They Control:

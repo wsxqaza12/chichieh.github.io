@@ -6,7 +6,7 @@ description: >-
   is that vibe coding gets you started fast but turns chaotic without planning,
   and why engineers who can design systems aren't going anywhere.
 tags: []
-sourceHash: 'd3112e4640d1'
+sourceHash: 'a8d857763e0e'
 ---
 
 I've been using all kinds of vibe coding tools intensively lately: v0, Lovable and Bolt for web design, and Cursor, Codex and Augment for code.

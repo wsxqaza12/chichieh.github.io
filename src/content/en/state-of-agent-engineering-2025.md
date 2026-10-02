@@ -5,7 +5,7 @@ description: >-
   State of Agent Engineering 2025 by LangChain - Production momentum is real,
   with 57% of re…
 tags: []
-sourceHash: '42cbe6624702'
+sourceHash: '8fc8b40315df'
 ---
 State of Agent Engineering 2025 by LangChain 
 - Production momentum is real, with 57% of respondents having agents in production, with large enterprises leading in adoption
