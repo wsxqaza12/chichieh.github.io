@@ -6,7 +6,7 @@ description: >-
   coding agents like Antigravity, Claude Code and Cursor maintain your OpenClaw
   setup, saving me about $25 a day.
 tags: []
-sourceHash: '6376bcc4322e'
+sourceHash: 'a29d2e43bf18'
 ---
 
 Antigravity stopped letting people use the OAuth account feature a while back, and I was one of the casualties. So I recently worked out a new way to get a free ride again... using coding agents like Antigravity, Claude Code and Cursor to maintain or improve your OpenClaw setup.

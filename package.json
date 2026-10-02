@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "sync": "node scripts/sync-content.mjs",
     "migrate:medium": "node scripts/migrate-medium.mjs",
-    "i18n": "node scripts/i18n-status.mjs"
+    "i18n": "node scripts/i18n-status.mjs",
+    "translate": "npm run sync && node scripts/translate.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

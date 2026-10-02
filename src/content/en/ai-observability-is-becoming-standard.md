@@ -6,7 +6,7 @@ description: >-
   but whether you can see what it's doing and where it goes wrong. Why
   observability is becoming standard, and why Langfuse is worth a look.
 tags: []
-sourceHash: 'd3fb66a97891'
+sourceHash: '628b044e77ee'
 ---
 
 I keep seeing LLM observability come up lately, because once an LLM app goes into production, you find the question is no longer how strong the model is, but whether you can see what it's doing and where it goes wrong. An LLM isn't done once you've written the prompt; it's a system that keeps drifting.

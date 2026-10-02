@@ -196,7 +196,8 @@ for (const source of config.sources) {
     if (config.excludePatterns.some((p) => file.includes(p))) continue;
 
     const fullPath = path.join(dir, file);
-    const raw = fs.readFileSync(fullPath, 'utf8');
+    // 統一成 LF：Windows 那份工作目錄是 CRLF、GitHub 上是 LF，不統一的話英文版的 sourceHash 在本機和 CI 會對不上
+    const raw = fs.readFileSync(fullPath, 'utf8').replace(/\r\n?/g, '\n');
     const parsed = matter(raw);
 
     let { title, body } = extractTitle(parsed.content.trim(), file.replace(/\.md$/, '').trim());

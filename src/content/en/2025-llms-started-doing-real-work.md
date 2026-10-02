@@ -6,7 +6,7 @@ description: >-
   things. Notes on Simon Willison's year-end review and why the real shift is AI
   fitting into how people work.
 tags: []
-sourceHash: 'f629fd7ac089'
+sourceHash: 'eab603d7adf7'
 ---
 
 It's 2026, and looking back at how LLMs developed in 2025, I can clearly feel that AI finally stopped just talking and started doing things.

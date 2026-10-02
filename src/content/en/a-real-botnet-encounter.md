@@ -6,7 +6,7 @@ description: >-
   found it in journalctl, traced it to CVE-2025-66478 in Next.js, and what we're
   changing so it doesn't happen again.
 tags: []
-sourceHash: '34103e4af1b2'
+sourceHash: '700ea084b79a'
 ---
 
 I never thought I'd run into a cyberattack one day. I'm writing it down for reference, and I made a few slides so you can get the gist quickly.

@@ -6,7 +6,7 @@ description: >-
   problem isn't the tools but invisible architecture debt, and how I keep
   service boundaries intact.
 tags: []
-sourceHash: '81856ef66ef7'
+sourceHash: 'b3e281e82f84'
 ---
 
 Lessons on architecture traps in the age of vibe coding 🪤

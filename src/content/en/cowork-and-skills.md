@@ -6,7 +6,7 @@ description: >-
   open-source clones turn agents into desktop coworkers, and Agent Skills turn
   know-how into installable, versioned modules.
 tags: []
-sourceHash: '549d73be9357'
+sourceHash: '6e8d87dbf6f8'
 ---
 
 Looking at this week's AI agent updates, two main threads have become clearer. The first, kicked off by Claude Cowork, turns agents into coworkers on your desktop. The second turns skills into portable, installable modules, and it's starting to feel a bit like a package ecosystem.

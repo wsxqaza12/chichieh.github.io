@@ -6,7 +6,7 @@ description: >-
   itself. Why his calm, hands-on take hit home, and why understanding is
   becoming the scarce skill.
 tags: []
-sourceHash: '7b12bcc69d1f'
+sourceHash: '8af8d46bd28e'
 ---
 
 *Don't fall into the anti-AI hype*

@@ -6,7 +6,7 @@ description: >-
   pitfalls, from broken multi-account routing to a model silently switching to
   Opus and a provider stuck restarting. What happened and how to avoid them.
 tags: []
-sourceHash: 'f750ac8483ab'
+sourceHash: '046c98d6827a'
 ---
 
 Last time I shared the Telegram IPv6 networking pothole. This time it's LINE's turn 😂 Over the past few days I built a new agent on OpenClaw for a LINE channel, and stepped into so many potholes I started questioning my life choices. Here are the four problems I hit, in the hope of saving anyone else connecting LINE a bit of debugging time... and some money...

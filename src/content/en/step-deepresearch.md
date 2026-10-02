@@ -6,7 +6,7 @@ description: >-
   on ResearchRubrics at under a tenth of the inference cost, with a mid-sized
   32B model.
 tags: []
-sourceHash: 'e18ae9a85ad6'
+sourceHash: '9bec36c2d4a4'
 ---
 
 I recently came across StepFun's open-source Step-DeepResearch, and I think it's well worth watching.

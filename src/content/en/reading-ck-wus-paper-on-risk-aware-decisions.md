@@ -6,7 +6,7 @@ description: >-
   the paper OpenAI cited, on why models misjudge risk and how prompt chaining
   helps.
 tags: []
-sourceHash: '8014efb0e398'
+sourceHash: '9b91066e3efb'
 ---
 
 After reading OpenAI's "Why language models hallucinate," I went on to read CK Wu's paper that OpenAI cites, "Answer, Refuse, or Guess? Investigating Risk-Aware Decision Making in Language Models," and wrote a short guided read that I want more people to see.

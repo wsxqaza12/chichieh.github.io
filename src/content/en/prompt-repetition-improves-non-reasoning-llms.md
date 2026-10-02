@@ -6,7 +6,7 @@ description: >-
   more accurate across most benchmarks, with almost no change in output length.
   Why such a crude trick works.
 tags: []
-sourceHash: 'e4ee4e94cf89'
+sourceHash: '464ef2d69528'
 ---
 
 Prompt Repetition Improves Non-Reasoning LLMs

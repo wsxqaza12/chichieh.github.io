@@ -6,7 +6,7 @@ description: >-
   "Network request failed," IPv6 may be to blame. Why Node.js 22 triggers it,
   and the workaround.
 tags: []
-sourceHash: '526d365ce86a'
+sourceHash: '8cea214de475'
 ---
 
 These past few days I ran into a networking pothole deep inside OpenClaw, and I've seen others in the community hit the same thing. I'm writing it up for anyone setting up agents or automated workflows, to save you some debugging time and some money... This is the story of me paying $20 to have Opus 4.6 fix it 🤣

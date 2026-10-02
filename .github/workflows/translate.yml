@@ -1,0 +1,104 @@
+name: Translate new posts
+
+# 文章庫（content-dna）有新 push 時，把還沒有英文版、或中文改過的文章翻成英文，
+# 檢查通過就直接 commit 回 main，再觸發一次部署，英文版跟著上站。
+# （手動在別的 branch 跑時，commit 回那個 branch、不部署，可以拿來測試。）
+# 翻譯規則：docs/translating.md；流程：scripts/translate.mjs。
+#
+# 需要 repo secret（擇一）：
+#   CLAUDE_CODE_OAUTH_TOKEN：在自己電腦跑 `claude setup-token` 產生，用 Claude 訂閱的額度
+#   ANTHROPIC_API_KEY：Claude API 金鑰，按用量計費
+# 兩個都沒設時會跳過（不會紅燈），英文網站先不列新文章，跟現在一樣。
+
+on:
+  repository_dispatch:
+    types: [content-updated]
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: '這次最多翻幾篇'
+        default: '3'
+  schedule:
+    # 每日保底（台北 09:30，在每日重建之後）：補上次沒翻完或失敗的
+    - cron: '30 1 * * *'
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      HAS_CLAUDE: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '' }}
+      HAS_CONTENT: ${{ secrets.CONTENT_DNA_TOKEN != '' }}
+    steps:
+      - name: Secrets not configured
+        if: env.HAS_CLAUDE != 'true' || env.HAS_CONTENT != 'true'
+        run: echo "CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY 或 CONTENT_DNA_TOKEN 未設定，跳過自動翻譯。"
+
+      - uses: actions/checkout@v4
+        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+
+      - name: Checkout content-dna
+        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: wsxqaza12/content-dna
+          token: ${{ secrets.CONTENT_DNA_TOKEN }}
+          path: external/content-dna
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Find posts to translate
+        id: todo
+        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        run: |
+          npm ci
+          npm run sync
+          node scripts/i18n-status.mjs
+          n=$(node scripts/i18n-status.mjs --json | node -e "const j=JSON.parse(require('fs').readFileSync(0,'utf8'));console.log(j.missing.length+j.stale.length)")
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+
+      - name: Install Claude Code
+        if: steps.todo.outputs.count > 0
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Translate
+        id: translate
+        if: steps.todo.outputs.count > 0
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/translate.mjs --limit "${{ inputs.limit || '3' }}"
+
+      # 有翻成功的就 commit（就算同一輪有別篇失敗）
+      - name: Commit translations
+        id: commit
+        if: ${{ !cancelled() && steps.translate.outputs.translated > 0 }}
+        env:
+          TITLES: ${{ steps.translate.outputs.titles }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/content/en
+          printf 'i18n: English versions of %s post(s)\n\n%s\n' "${{ steps.translate.outputs.translated }}" "$TITLES" | git commit -F -
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # 用 GITHUB_TOKEN push 不會觸發其他 workflow，所以明確叫部署跑一次
+      - name: Deploy
+        if: ${{ !cancelled() && steps.commit.outputs.pushed == 'true' && github.ref_name == 'main' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main

@@ -6,7 +6,7 @@ description: >-
   EC2 and Next.js on Bun to Supabase and two free email tiers, and a question
   about monitoring.
 tags: []
-sourceHash: '884c01857f5a'
+sourceHash: 'e38a09e82d11'
 ---
 
 AILogora went live last Friday, and we sent out the invitation emails at the same time. We made it just in time. We hit a lot of problems along the way and stepped in every pothole there was, so here's a record of the stack we're using now. The principle: use whatever free tiers we can 🤣

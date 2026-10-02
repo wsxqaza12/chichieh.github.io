@@ -6,7 +6,7 @@ description: >-
   and briefly pulled ahead in 2025. Notes on a WSJ piece about the three things
   it got right.
 tags: []
-sourceHash: '784671aab241'
+sourceHash: '5b0c464fd9c8'
 ---
 
 Most people remember 2022–2023 as the era when OpenAI and ChatGPT defined generative AI, while Google, caught in the innovator's dilemma, looked for a while like it was done for.

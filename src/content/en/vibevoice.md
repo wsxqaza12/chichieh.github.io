@@ -6,7 +6,7 @@ description: >-
   generating up to 90 minutes of continuous speech with up to four speakers. Why
   that matters for podcasts and audiobooks.
 tags: []
-sourceHash: 'e15d1bf38cc9'
+sourceHash: '4bbc79e6b5c6'
 ---
 
 A few days ago Microsoft released VibeVoice, a new open-source TTS technology aimed at solving these problems with traditional TTS:

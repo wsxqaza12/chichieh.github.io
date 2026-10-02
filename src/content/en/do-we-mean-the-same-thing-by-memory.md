@@ -6,7 +6,7 @@ description: >-
   RAG, context engineering and fine-tuning answer different questions. The first
   essay in my Agent Memory series pulls them apart.
 tags: []
-sourceHash: '8a86679fa65a'
+sourceHash: '1d93632c9e71'
 ---
 
 We used to think that if we got RAG right and filled the context window, AI would get smart. Then you actually build an agent system and find that what hurts most often isn't that it can't answer something new. It's that it forgets the hard lesson the two of you learned together yesterday.

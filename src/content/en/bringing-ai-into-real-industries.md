@@ -6,7 +6,7 @@ description: >-
   of AI adoption I heard about from traditional industries, and why companies
   have to share the dividend for it to stick.
 tags: []
-sourceHash: 'c244a7ed4d5c'
+sourceHash: '8e2c313f27aa'
 ---
 
 Everyone is learning AI tools these days, and there are courses and tutorials everywhere. But does learning them actually help at work? Or because you're faster now, do you just get loaded with more work? That's a complaint I hear a lot. Recently I've been working with a lot of traditional-industry organizations, and I happened to hear a talk on this topic that I found quite illuminating, so I'm sharing it.

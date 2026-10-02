@@ -6,7 +6,7 @@ description: >-
   success means. Notes on Anthropic's Demystifying evals for AI agents, from
   pass@k versus pass^k to grading outcomes instead of paths.
 tags: []
-sourceHash: '1c529e6f065f'
+sourceHash: 'eb1a8b8a97c3'
 ---
 
 Last time I wrote about LLM observability becoming standard. The core of it is making system behavior "visible." But once you can see it, the next question surfaces immediately. You can see a pile of traces. So what? How do you know whether changing a prompt, swapping a model or tuning tool routing actually made things better or worse?
