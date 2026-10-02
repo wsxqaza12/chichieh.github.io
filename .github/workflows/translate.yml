@@ -5,10 +5,11 @@ name: Translate new posts
 # （手動在別的 branch 跑時，commit 回那個 branch、不部署，可以拿來測試。）
 # 翻譯規則：docs/translating.md；流程：scripts/translate.mjs。
 #
-# 需要 repo secret（擇一）：
+# 翻譯引擎（repo secret，至少一個）：
 #   CLAUDE_CODE_OAUTH_TOKEN：在自己電腦跑 `claude setup-token` 產生，用 Claude 訂閱的額度
 #   ANTHROPIC_API_KEY：Claude API 金鑰，按用量計費
-# 兩個都沒設時會跳過（不會紅燈），英文網站先不列新文章，跟現在一樣。
+#   GEMINI_API_KEY：Google AI Studio 的 key。有 Claude 時當備援（Claude 失敗才用），沒有 Claude 時當主力
+# 都沒設時會跳過（不會紅燈），英文網站先不列新文章。
 
 on:
   repository_dispatch:
@@ -36,17 +37,18 @@ jobs:
     timeout-minutes: 120
     env:
       HAS_CLAUDE: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '' }}
+      HAS_ENGINE: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' || secrets.ANTHROPIC_API_KEY != '' || secrets.GEMINI_API_KEY != '' }}
       HAS_CONTENT: ${{ secrets.CONTENT_DNA_TOKEN != '' }}
     steps:
       - name: Secrets not configured
-        if: env.HAS_CLAUDE != 'true' || env.HAS_CONTENT != 'true'
-        run: echo "CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY 或 CONTENT_DNA_TOKEN 未設定，跳過自動翻譯。"
+        if: env.HAS_ENGINE != 'true' || env.HAS_CONTENT != 'true'
+        run: echo "翻譯引擎的 secret（CLAUDE_CODE_OAUTH_TOKEN / ANTHROPIC_API_KEY / GEMINI_API_KEY）或 CONTENT_DNA_TOKEN 未設定，跳過自動翻譯。"
 
       - uses: actions/checkout@v4
-        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        if: env.HAS_ENGINE == 'true' && env.HAS_CONTENT == 'true'
 
       - name: Checkout content-dna
-        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        if: env.HAS_ENGINE == 'true' && env.HAS_CONTENT == 'true'
         uses: actions/checkout@v4
         with:
           repository: wsxqaza12/content-dna
@@ -54,14 +56,14 @@ jobs:
           path: external/content-dna
 
       - uses: actions/setup-node@v4
-        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        if: env.HAS_ENGINE == 'true' && env.HAS_CONTENT == 'true'
         with:
           node-version: 22
           cache: npm
 
       - name: Find posts to translate
         id: todo
-        if: env.HAS_CLAUDE == 'true' && env.HAS_CONTENT == 'true'
+        if: env.HAS_ENGINE == 'true' && env.HAS_CONTENT == 'true'
         run: |
           npm ci
           npm run sync
@@ -70,7 +72,7 @@ jobs:
           echo "count=$n" >> "$GITHUB_OUTPUT"
 
       - name: Install Claude Code
-        if: steps.todo.outputs.count > 0
+        if: steps.todo.outputs.count > 0 && env.HAS_CLAUDE == 'true'
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Translate
@@ -79,7 +81,13 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/translate.mjs --limit "${{ inputs.limit || '3' }}"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # 有設 secret 的引擎才排進去：Claude 優先，Gemini 備援
+          engines=""
+          if [ -n "$CLAUDE_CODE_OAUTH_TOKEN$ANTHROPIC_API_KEY" ]; then engines="claude"; fi
+          if [ -n "$GEMINI_API_KEY" ]; then engines="${engines:+$engines,}gemini"; fi
+          node scripts/translate.mjs --engine "$engines" --limit "${{ inputs.limit || '3' }}"
 
       # 有翻成功的就 commit（就算同一輪有別篇失敗）
       - name: Commit translations

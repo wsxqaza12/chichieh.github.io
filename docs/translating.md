@@ -1,6 +1,6 @@
 # Translating essays into English
 
-這份是給翻譯的 Claude 看的規則（自動翻譯流程 `scripts/translate.mjs` 會叫它先讀這份）。
+這份是給翻譯的 AI 看的規則（自動翻譯流程 `scripts/translate.mjs` 交給 Claude 或 Gemini 時都會附上這份）。
 想調整英文版的語氣或用詞，改這份就好，之後的翻譯都會照新的規則。
 
 ---
@@ -64,4 +64,4 @@ When the Chinese original changes, you are given the existing English file inste
 
 ## Check
 
-Run `node scripts/check-translation.mjs src/content/en/<slug>.md`, fix every problem it reports, and run it again until it prints ✓. Edit only that one English file.
+If you can run commands, run `node scripts/check-translation.mjs src/content/en/<slug>.md`, fix every problem it reports, and run it again until it prints ✓. If you can't, the pipeline runs the same check and sends the problems back to you. Edit only that one English file.
