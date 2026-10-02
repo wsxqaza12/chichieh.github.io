@@ -66,7 +66,7 @@ function svg(W: number, H: number, narrow: boolean) {
       s += `<line x1="${X}" x2="${X}" y1="${Y - 6}" y2="${ly + 3}" class="lead"/><circle cx="${X}" cy="${Y}" r="6" class="dot"/><text x="${flip ? X + 6 : X - 6}" y="${ly}" text-anchor="${flip ? 'start' : 'end'}" class="name">${esc(name)}</text>`;
     }
     const topic = tp(p);
-    s += `<circle cx="${X}" cy="${Y}" r="12" fill="transparent"><title>${esc(p.date)} ${esc(ev(p))}${topic ? (lang === 'en' ? ': ' : '：') + esc(topic) : ''}（${t.cumulative} ${p.c}）</title></circle>`;
+    s += `<circle cx="${X}" cy="${Y}" r="12" fill="transparent"><title>${esc(p.date)} ${esc(ev(p))}${topic ? (lang === 'en' ? ': ' : '：') + esc(topic) : ''}${lang === 'en' ? ` (${t.cumulative} ${p.c})` : `（${t.cumulative} ${p.c}）`}</title></circle>`;
   });
   return { view: `0 0 ${W} ${H}`, body: s };
 }

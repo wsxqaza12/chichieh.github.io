@@ -12,6 +12,8 @@ interface Props {
   /** 首頁：頁首疊在地圖上 */
   overlay?: boolean;
   lang?: Lang;
+  /** 這一頁的中英對照網址（文章頁用；其他頁從 i18n 的 PAIRS 查） */
+  alternate?: { zh: string; en: string };
 }
 
 const lang: Lang = Astro.props.lang ?? langOf(Astro.url.pathname);
@@ -22,11 +24,13 @@ const {
   ogImage = lang === 'en' ? '/en/og.jpg' : '/og.jpg',
   ogType = 'website',
   overlay = false,
+  alternate,
 } = Astro.props;
 
-const pageTitle = title ? `${title} | ${t.siteName}` : lang === 'en' ? 'ChiChieh Huang · 黃琪婕' : t.siteName;
+const pageTitle = title ? `${title} | ${t.siteName}` : lang === 'en' ? 'ChiChieh Huang · Founder & AI engineer' : t.siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const pair = pairOf(Astro.url.pathname);
+const pair: [string, string] | null = alternate ? [alternate.zh, alternate.en] : pairOf(Astro.url.pathname);
+const isZhHome = Astro.url.pathname === '/';
 ---
 
 <!doctype html>
@@ -49,7 +53,7 @@ const pair = pairOf(Astro.url.pathname);
     <link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="alternate" type="application/rss+xml" title="黃琪婕 ChiChieh Huang" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={t.siteName} href={lang === 'en' ? '/en/rss.xml' : '/rss.xml'} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
@@ -57,8 +61,8 @@ const pair = pairOf(Astro.url.pathname);
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={lang === 'en' ? 'A map of ChiChieh Huang’s writing' : title ? `${title}：在黃琪婕寫作地形圖上的位置` : '黃琪婕的寫作地形圖'} />
-    <meta property="og:site_name" content="黃琪婕 ChiChieh Huang" />
+    <meta property="og:image:alt" content={lang === 'en' ? (title ? `${title}, on the map of ChiChieh Huang’s writing` : 'A map of ChiChieh Huang’s writing') : title ? `${title}：在黃琪婕寫作地形圖上的位置` : '黃琪婕的寫作地形圖'} />
+    <meta property="og:site_name" content={t.siteName} />
     <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'zh_TW'} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
@@ -70,6 +74,23 @@ const pair = pairOf(Astro.url.pathname);
       rel="stylesheet"
       href={`https://fonts.googleapis.com/css2?${lang === 'en' ? 'family=Hanken+Grotesk:wght@200;300;400;500;700&' : ''}family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap`}
     />
+    {isZhHome && (
+      <script is:inline>
+        // 第一次直接打開中文首頁、瀏覽器語言裡沒有中文的人 → 帶到英文版。
+        // 不轉的情況：自己選過語言、從站內點過來（例如在英文版按「中文」）、搜尋引擎爬蟲。
+        (function () {
+          try {
+            var pref = localStorage.getItem('lang');
+            if (pref) return;
+            if (document.referrer && new URL(document.referrer).host === location.host) return;
+            if (/bot|crawl|spider|slurp|lighthouse|facebookexternalhit|linkedin|embedly|preview/i.test(navigator.userAgent)) return;
+            var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+            if (langs.some(function (l) { return /^zh\b/i.test(l); })) return;
+            location.replace('/en/' + location.search + location.hash);
+          } catch (e) {}
+        })();
+      </script>
+    )}
     <script is:inline>
       document.documentElement.classList.add('js');
       try {
@@ -79,8 +100,29 @@ const pair = pairOf(Astro.url.pathname);
     </script>
   </head>
   <body>
-    <Header overlay={overlay} lang={lang} />
+    <Header overlay={overlay} lang={lang} alt={pair ? pair[lang === 'en' ? 0 : 1] : undefined} />
     <slot />
     <Footer lang={lang} />
+    {lang === 'zh' && pair && (
+      <div class="enhint" id="enhint" lang="en" hidden>
+        <span>This page is also available in English.</span>
+        <a href={pair[1]} hreflang="en">Read in English →</a>
+        <button type="button" id="enhint-x" aria-label="Dismiss">✕</button>
+      </div>
+      <script is:inline>
+        // 中文頁、但瀏覽器語言沒有中文：右下角提示有英文版（深層連結不自動轉址，交給讀者選）
+        (function () {
+          try {
+            var pref = localStorage.getItem('lang');
+            var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+            if (pref || langs.some(function (l) { return /^zh\b/i.test(l); })) return;
+            var box = document.getElementById('enhint');
+            box.hidden = false;
+            box.querySelector('a').addEventListener('click', function () { try { localStorage.setItem('lang', 'en'); } catch (e) {} });
+            document.getElementById('enhint-x').addEventListener('click', function () { box.hidden = true; try { localStorage.setItem('lang', 'zh'); } catch (e) {} });
+          } catch (e) {}
+        })();
+      </script>
+    )}
   </body>
 </html>

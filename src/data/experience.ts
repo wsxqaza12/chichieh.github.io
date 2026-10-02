@@ -154,6 +154,6 @@ export const media: Media[] = [
     detail: '新聞採訪 +《尖峰對談》節目，以龍蝦（OpenClaw）使用者身分分享 AI Agent 的日常。',
     year: '2026',
     postId: '公視媒體經驗',
-    en: { outlet: 'PTS (Taiwan Public Television)', detail: 'A news interview and an appearance on the talk show 尖峰對談, sharing daily life with AI agents as an OpenClaw user.' },
+    en: { outlet: 'PTS (Taiwan Public Television)', detail: 'A news interview and a PTS talk-show appearance, sharing daily life with AI agents as an OpenClaw user.' },
   },
 ];

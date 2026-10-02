@@ -88,24 +88,60 @@ region: Agent
 
 ## 英文版（/en/）
 
-英文版有首頁地圖、文章列表、演講與合作、作品、關於。文章本身只有中文，英文版只翻譯標題，
-點進去會看到中文原文（英文寫的舊文章會標 EN）。
+英文版是完整的英文網站：首頁地圖、文章（全文翻譯）、演講與合作、作品、關於，頁面上除了切換到中文的按鈕，不會出現中文。
+
+### 文章的英文版
+
+每篇中文文章的英文版是 `src/content/en/<英文網址>.md`，網址是 `/en/writing/<英文網址>/`：
+
+```yaml
+---
+original: memory5          # 中文文章的 id（= 中文網址 /posts/<id>/）
+title: Remembering Isn't the Same as Remembering Right
+description: 一兩句英文摘要（列表、地圖、分享卡片都用這個）
+tags: []
+sourceHash: '…'            # 中文原文的指紋，用 npm run i18n -- --stamp 產生
+---
+```
+
+- 日期、地形圖上的區域、連載集數都跟著中文原文，不用另外寫。
+- 內文連到其他文章（`/posts/<id>/`、`../<id>/`、舊的 Medium 網址）時，建置會自動換成該文的英文網址。
+- **還沒翻譯的文章，英文網站先不列**（地圖、列表、RSS 都不會出現），建置 log 會列出還缺哪幾篇。
+- 中文原文改過之後，`npm run i18n` 會提醒哪幾篇英文版要跟著更新。
+
+```bash
+npm run i18n                  # 哪些文章還沒有英文版、哪些中文改過
+npm run i18n -- --json        # 完整清單
+npm run i18n -- --stamp src/content/en/xxx.md   # 翻譯或更新完，記下中文原文目前的指紋
+```
+
+Medium 時期另外發過英文版的三篇（`d30783070827`、`a1d263ce61b4`、`a3476af62056`），
+frontmatter 標了 `translationOf`，英文網站改用 `src/content/en/` 裡的版本，不會重複列出。
+
+### 語言切換
+
+- 第一次直接打開中文首頁、而且瀏覽器語言沒有中文的人，會自動帶到 `/en/`；搜尋引擎爬蟲、從站內點過來的人不會被轉。
+- 在任何一頁按「EN／中文」切換之後會記住選擇，之後不會再被自動轉。
+- 中文的文章頁不自動轉址，非中文瀏覽器會在右下角看到「This page is also available in English」提示。
+- 每篇文章的中英兩頁互相用 `hreflang` 標示，Google 會依搜尋者的語言顯示對應版本。
+
+### 其他英文內容
 
 | 要改什麼 | 在哪裡 |
 |---|---|
-| 文章的英文標題 | `src/data/en-titles.ts`（新文章沒加的話，英文版會顯示中文標題） |
 | 介面文字（選單、按鈕、圖例） | `src/i18n.ts` |
+| 文章頁的英文介面 | `src/views/Post.astro`（中英共用） |
 | 演講講題、合作形式（中、英） | `src/data/speaking.ts` |
 | 作品的英文介紹 | `src/data/projects.ts` 每個作品的 `en` |
 | 演講場次、獎項、報導的英文 | `src/data/experience.ts` 的 `en` |
-| 連載的英文介紹與季名 | `src/data/series.ts` |
+| 連載的英文介紹、季名、下一篇預告 | `src/data/series.ts` |
 | 關於頁的英文自介 | `src/views/About.astro` |
 
 中英頁面共用同一份版型（`src/views/`），`src/pages/` 底下只是兩個語言的入口。
 
 ## 分享卡片
 
-每篇文章在建置時會產生一張分享卡片（`/og/<slug>.jpg`，1200×630），畫的是這篇在地形圖上的位置，
+每篇文章在建置時會產生一張分享卡片（`/og/<slug>.jpg`，英文版 `/og/en/<英文網址>.jpg`，1200×630），畫的是這篇在地形圖上的位置，
 首頁與其他頁面共用 `/og.jpg`。卡片的字型在建置時從 Google Fonts 下載並快取在 `.cache/og-fonts/`；
 下載失敗時卡片照樣產生，只是沒有文字。程式在 `src/lib/og.ts`、`src/lib/og-text.ts`。
 

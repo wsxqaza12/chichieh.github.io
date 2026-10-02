@@ -19,10 +19,10 @@ const C = {
   shadeHi: [255, 255, 240], shadeLo: [0, 0, 0], shadeK: 1,
   ink: '#E8EAE1', ink2: '#97A49A', ink3: '#66756B', trail: '#F2B05C', line: '#2C3D34',
 };
-const SANS = 'Noto Sans TC', MONO = 'Martian Mono';
+const SANS = 'Noto Sans TC', LATIN = 'Hanken Grotesk', MONO = 'Martian Mono';
 
 /* ── 字型 ── */
-const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500&family=Martian+Mono:wght@500';
+const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500&family=Hanken+Grotesk:wght@300;500&family=Martian+Mono:wght@500';
 const CACHE = path.join('.cache', 'og-fonts');
 let fontsP: Promise<string[]> | null = null;
 function fonts(): Promise<string[]> {
@@ -98,7 +98,8 @@ function marks(m: Model, v: View, target: Pt | null, series: Pt[]) {
   return s;
 }
 
-function frame(withText: boolean, kicker: string, title: string, meta: string) {
+function frame(withText: boolean, kicker: string, title: string, meta: string, lang: 'zh' | 'en' = 'zh') {
+  const TITLE = lang === 'en' ? LATIN : SANS;
   // 左側壓暗，讓文字讀得清楚；外框是地圖的圖廓線
   let s = `<defs><linearGradient id="shade" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="${C.ground}" stop-opacity="0.94"/><stop offset="0.5" stop-color="${C.ground}" stop-opacity="0.78"/><stop offset="0.78" stop-color="${C.ground}" stop-opacity="0"/></linearGradient></defs>`;
   s += `<rect width="${W}" height="${H}" fill="url(#shade)"/>`;
@@ -108,13 +109,16 @@ function frame(withText: boolean, kicker: string, title: string, meta: string) {
   const { size, lines } = fitTitle(title, 640);
   const lh = size * 1.22, top = 168;
   s += `<text x="72" y="104" font-family="${MONO}" font-weight="500" font-size="17" letter-spacing="3" fill="${C.ink2}">${esc(kicker)}</text>`;
-  lines.forEach((l, i) => (s += `<text x="68" y="${(top + size * 0.88 + i * lh).toFixed(0)}" font-family="${SANS}" font-weight="300" font-size="${size}" fill="${C.ink}" stroke="${C.ground}" stroke-width="8" stroke-opacity="0.6" paint-order="stroke" stroke-linejoin="round">${esc(l)}</text>`));
+  lines.forEach((l, i) => (s += `<text x="68" y="${(top + size * 0.88 + i * lh).toFixed(0)}" font-family="${TITLE}" font-weight="300" font-size="${size}" fill="${C.ink}" stroke="${C.ground}" stroke-width="8" stroke-opacity="0.6" paint-order="stroke" stroke-linejoin="round">${esc(l)}</text>`));
   const my = top + lines.length * lh + 46;
   s += `<text x="72" y="${my.toFixed(0)}" font-family="${MONO}" font-weight="500" font-size="21" letter-spacing="1" fill="${C.trail}">${esc(meta)}</text>`;
   // 署名
   s += `<circle cx="88" cy="${H - 82}" r="15" fill="none" stroke="${C.trail}" stroke-width="2"/><circle cx="88" cy="${H - 82}" r="4" fill="${C.trail}"/>`;
-  s += `<text x="116" y="${H - 74}" font-family="${SANS}" font-weight="500" font-size="24" letter-spacing="3" fill="${C.ink}">黃琪婕</text>`;
-  s += `<text x="214" y="${H - 75}" font-family="${MONO}" font-weight="500" font-size="15" letter-spacing="2.5" fill="${C.ink2}">CHICHIEH HUANG</text>`;
+  if (lang === 'en') s += `<text x="116" y="${H - 74}" font-family="${LATIN}" font-weight="500" font-size="24" letter-spacing="0.5" fill="${C.ink}">ChiChieh Huang</text>`;
+  else {
+    s += `<text x="116" y="${H - 74}" font-family="${SANS}" font-weight="500" font-size="24" letter-spacing="3" fill="${C.ink}">黃琪婕</text>`;
+    s += `<text x="214" y="${H - 75}" font-family="${MONO}" font-weight="500" font-size="15" letter-spacing="2.5" fill="${C.ink2}">CHICHIEH HUANG</text>`;
+  }
   s += `<text x="${W - 72}" y="${H - 75}" text-anchor="end" font-family="${MONO}" font-weight="500" font-size="16" letter-spacing="2" fill="${C.ink2}" stroke="${C.ground}" stroke-width="6" paint-order="stroke" stroke-linejoin="round">chichieh-huang.com</text>`;
   return s;
 }
@@ -129,7 +133,7 @@ let modelP: Promise<Model> | null = null;
 const model = () => (modelP ??= getSummaries().then((s) => makeModel(s, 'h')));
 
 /** 單篇文章的分享卡片 */
-export async function postCard(id: string, meta: { title: string; date: string; chars: number; minutes: number }) {
+export async function postCard(id: string, meta: { title: string; date: string; chars: number; minutes: number }, lang: 'zh' | 'en' = 'zh') {
   const m = await model();
   const target = m.pts.find((q) => q.p.id === id) ?? null;
   const place = seriesOf(id);
@@ -139,28 +143,34 @@ export async function postCard(id: string, meta: { title: string; date: string; 
   const cx = target ? target.x : m.VW / 2, cy = target ? target.y : m.VH / 2;
   const v: View = { x: cx - vw * 0.72, y: cy - vh * 0.56, w: vw, h: vh };
   const r = REGIONS[target?.k ?? 0];
-  const kicker = place
-    ? `${r.key}${r.suffix} · ${place.series.name.toUpperCase()} · S${place.season.n}·${place.ep}`
-    : `寫作地形圖 · ${r.key}${r.suffix} · ${r.en}`;
+  const kicker = lang === 'en'
+    ? (place ? `${r.name.toUpperCase()} · ${place.series.name.toUpperCase()} · S${place.season.n}·${place.ep}` : `A MAP OF MY WRITING · ${r.name.toUpperCase()}`)
+    : place
+      ? `${r.key}${r.suffix} · ${place.series.name.toUpperCase()} · S${place.season.n}·${place.ep}`
+      : `寫作地形圖 · ${r.key}${r.suffix} · ${r.en}`;
+  const metaLine = lang === 'en'
+    ? `${meta.date} · ${meta.chars.toLocaleString('en-US')} words · ${meta.minutes} min read`
+    : `${meta.date} · ${meta.chars.toLocaleString('en-US')} 字 · 約 ${meta.minutes} 分鐘`;
   const files = await fonts();
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${C.ground}"/>${await terrainLayer(m, v)}${marks(m, v, target, series)}${frame(files.length > 0, kicker, meta.title, `${meta.date} · ${meta.chars.toLocaleString('en-US')} 字 · 約 ${meta.minutes} 分鐘`)}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${C.ground}"/>${await terrainLayer(m, v)}${marks(m, v, target, series)}${frame(files.length > 0, kicker, meta.title, metaLine, lang)}</svg>`;
   return render(svg);
 }
 
 /** 首頁與其他頁面共用的卡片：整張地圖 */
 export async function siteCard(lang: 'zh' | 'en' = 'zh') {
   const m = await model();
-  const posts: PostSummary[] = await getSummaries();
-  const total = posts.reduce((n, p) => n + p.n, 0);
+  const all: PostSummary[] = await getSummaries();
+  const posts = lang === 'en' ? all.filter((p) => p.es) : all;
+  const total = posts.reduce((n, p) => n + (lang === 'en' ? p.ne ?? 0 : p.n), 0);
   const vh = (m.VW * H) / W;
   const v: View = { x: 0, y: (m.VH - vh) / 2 + 20, w: m.VW, h: vh };
   const files = await fonts();
-  const years = Math.max(1, Math.round((Date.now() - Date.parse(posts[posts.length - 1].d)) / (365.25 * 864e5)));
+  const years = Math.max(1, Math.round((Date.now() - Date.parse(all[all.length - 1].d)) / (365.25 * 864e5)));
   const zh = ['零', '一', '兩', '三', '四', '五', '六', '七', '八', '九', '十'][years] ?? String(years);
   const enN = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'][years] ?? String(years);
   const text = lang === 'en'
-    ? ['A MAP OF MY WRITING · FOUNDER · AI ENGINEER', `${enN} years of writing, one cairn at a time.`, `${posts.length} essays · ${total.toLocaleString('en-US')} characters`]
+    ? ['A MAP OF MY WRITING · FOUNDER · AI ENGINEER', `${enN} years of writing, one cairn at a time.`, `${posts.length} essays · ${total.toLocaleString('en-US')} words`]
     : ['寫作地形圖 · GENERATIVE AI', `${zh}年的寫作，走成一座山。`, `${posts.length} 篇文章 · ${total.toLocaleString('en-US')} 字`];
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${C.ground}"/>${await terrainLayer(m, v)}${marks(m, v, null, [])}${frame(files.length > 0, text[0], text[1], text[2])}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${C.ground}"/>${await terrainLayer(m, v)}${marks(m, v, null, [])}${frame(files.length > 0, text[0], text[1], text[2], lang)}</svg>`;
   return render(svg);
 }

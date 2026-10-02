@@ -1,0 +1,17 @@
+---
+// 英文版文章：/en/writing/<英文網址>/，只產生有翻譯的文章
+import PostView from '../../../views/Post.astro';
+import { getEnglishPosts, englishOf, type Post } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getEnglishPosts();
+  return posts.map((post, i) => ({
+    params: { slug: englishOf(post)!.id },
+    props: { post, newer: posts[i - 1] ?? null, older: posts[i + 1] ?? null },
+  }));
+}
+
+const { post, newer, older } = Astro.props as { post: Post; newer: Post | null; older: Post | null };
+---
+
+<PostView post={post} lang="en" newer={newer} older={older} />

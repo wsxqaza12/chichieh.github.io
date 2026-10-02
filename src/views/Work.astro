@@ -44,7 +44,7 @@ const story = (name: string) => (name === 'Cairn' ? hackathon : name === 'AILogo
               <p class="stack lab">{p.stack.join(' · ')}</p>
               <div class="acts">
                 {p.link && <a class="btn primary" href={p.link}>{t.label} →</a>}
-                {post && <a class="btn" href={postUrl(post)}>{p.name === 'Cairn' ? L('Hackathon 開發心得 →', 'Hackathon build log (in Chinese) →') : L('上線的技術棧與踩坑 →', 'Launch stack and pitfalls (in Chinese) →')}</a>}
+                {post && <a class="btn" href={postUrl(post, lang)}>{p.name === 'Cairn' ? L('Hackathon 開發心得 →', 'Hackathon build log →') : L('上線的技術棧與踩坑 →', 'Launch stack and pitfalls →')}</a>}
               </div>
             </div>
             {img && (

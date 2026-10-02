@@ -1,0 +1,21 @@
+---
+// Cloudflare Pages 會用最近的 404.html：/en/ 底下找不到的頁面顯示英文版
+import Base from '../../layouts/Base.astro';
+---
+
+<Base lang="en" title="Page not found">
+  <main class="wrap lost">
+    <svg width="96" height="96" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="var(--trail)" stroke-width="1.6"><ellipse cx="32" cy="55" rx="24" ry="7" /><ellipse cx="33" cy="42" rx="18" ry="6.2" stroke-dasharray="3 3" /></g></svg>
+    <span class="lab">404 · No trail here</span>
+    <h1>A lobster moved this cairn</h1>
+    <p>The address may be mistyped, or the essay has moved.</p>
+    <p class="acts"><a class="btn" href="/en/">Back to the map</a><a class="btn" href="/en/writing/">All essays</a></p>
+  </main>
+</Base>
+
+<style>
+  .lost { text-align: center; padding-block: clamp(64px, 10vw, 140px) 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  h1 { margin: 8px 0 0; font-weight: 300; font-size: clamp(30px, 4vw, 48px); }
+  p { margin: 0; color: var(--ink-2); }
+  .acts { display: flex; gap: 8px; margin-top: 12px; }
+</style>

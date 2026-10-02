@@ -1,5 +1,5 @@
 // 網站的兩種語言：中文（預設，網址不加前綴）與英文（/en/）。
-// 文章本身只有中文版；英文版是首頁地圖、文章列表（翻譯標題）、演講與合作、作品、關於。
+// 英文版的文章在 src/content/en/（翻譯），網址 /en/writing/<英文網址>/；英文網站只列有翻譯的文章。
 
 export type Lang = 'zh' | 'en';
 
@@ -79,9 +79,9 @@ export const ui = {
     otherLang: '中文', otherLangLabel: '中文版',
     invite: 'Work with me',
     footer: 'Powered by words and one lobster',
-    scale: 'Scale 1 :', chars: 'characters',
+    scale: 'Scale 1 :', chars: 'words',
     mapLabel: 'A map of my writing',
-    you: 'You are here', read: 'Read (in Chinese) →',
+    you: 'You are here', read: 'Read →',
     legendCairn: 'Cairn = one essay; more stones, longer essay', legendTrail: 'Monthly writing trail', legendContour: 'Contours = topics building up', months3: '3 months',
     all: 'All', date: 'Date', region: 'Region', title: 'Title', length: 'Length',
     more: (n: number) => `Show ${n} more ↓`, empty: 'Nothing in this region yet.', draft: 'Draft', filterLabel: 'Filter by region',

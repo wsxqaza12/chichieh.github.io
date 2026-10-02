@@ -10,7 +10,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const en = lang === 'en';
 const L = (zh: string, e: string) => (en ? e : zh);
-const n = (await getSummaries()).length;
+const n = (await getSummaries()).filter((p) => lang === 'zh' || p.es).length;
 const year = new Date().getFullYear();
 const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t) => s + (t.count ?? 1), 0);
 ---
@@ -60,7 +60,7 @@ const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t)
             : <>{year} 年 {total} 場演講與工作坊，包含 WiDS Taiwan、AWS Summit Taipei、台灣人工智慧年會；接受過《商業周刊》、非凡新聞與公視採訪。<a href="/speaking/">講題與邀請方式 →</a></>}
           </dd>
           <dt>{L('寫作', 'Writing')}</dt>
-          <dd>{en ? <>{n} essays on generative AI, written in Traditional Chinese. <a href="/en/writing/">Browse the titles in English →</a></> : <>{n} 篇生成式 AI 的中文技術文章。<a href="/posts/">全部文章 →</a></>}</dd>
+          <dd>{en ? <>{n} essays on generative AI, written in Traditional Chinese and translated into English. <a href="/en/writing/">Read them in English →</a></> : <>{n} 篇生成式 AI 的中文技術文章。<a href="/posts/">全部文章 →</a></>}</dd>
           <dt>{L('合作', 'Work with me')}</dt>
           <dd>{L('演講、工作坊、企業內訓、AI 解決方案諮詢、職涯諮詢', 'Talks, workshops, corporate training, GenAI advisory, career advice')}</dd>
           <dt>{L('聯絡', 'Contact')}</dt>
