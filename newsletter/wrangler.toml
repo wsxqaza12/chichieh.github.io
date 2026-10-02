@@ -1,0 +1,19 @@
+# 電子報 Worker。部署：cd newsletter && npx wrangler deploy
+# 秘密（npx wrangler secret put …）：AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY（只能用 chichieh-huang.com 寄信的 IAM 使用者）、
+# ADMIN_TOKEN（寄信流程用，GitHub 的 NEWSLETTER_ADMIN_TOKEN）、SES_EVENTS_KEY（SNS 通知網址裡的金鑰）
+name = "chichieh-newsletter"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = false
+routes = [{ pattern = "chichieh-huang.com/api/newsletter/*", zone_name = "chichieh-huang.com" }]
+
+[vars]
+SES_REGION = "ap-northeast-1"
+FROM_ADDRESS = "hi@chichieh-huang.com"
+CONFIGURATION_SET = "chichieh-newsletter"
+SNS_TOPIC_ARN = "arn:aws:sns:ap-northeast-1:332802448312:chichieh-newsletter-events"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "chichieh-newsletter"
+database_id = "694f4536-8d21-433f-a839-bccacb00fb2c"

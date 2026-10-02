@@ -170,6 +170,30 @@ frontmatter 標了 `translationOf`，英文網站改用 `src/content/en/` 裡的
 
 中英頁面共用同一份版型（`src/views/`），`src/pages/` 底下只是兩個語言的入口。
 
+## 電子報
+
+新文章上站時寄一封信給訂閱者。中文頁訂閱的人收中文、英文頁訂閱的人收英文版；寄出前會先寄預覽給自己，到 GitHub 按核准才寄。
+
+```
+訂閱框（文章結尾、/newsletter/）─► Worker ─► D1 名單 ─► SES 寄確認信
+部署完成 ─► newsletter.yml：找出新文章 ─► 寄預覽給自己 ─► 你按核准 ─► 寄給訂閱者
+退信、檢舉 ─► SES ─► SNS ─► Worker 停寄那個地址
+```
+
+- **網站**：`src/components/Subscribe.astro`（訂閱框）、`src/views/Newsletter.astro`（/newsletter/、/en/newsletter/，也是確認信與退訂連結導回來的頁面）。
+- **Worker**：`newsletter/`，掛在 `chichieh-huang.com/api/newsletter/*`，名單在 D1 `chichieh-newsletter`（結構見 `newsletter/schema.sql`）。
+  訂閱要點確認信（double opt-in）；每封信都有一鍵退訂（RFC 8058）；擋機器人：隱藏欄位、每個 IP 每小時 8 次、收不到信的網域直接拒絕。
+  改了程式要部署：`cd newsletter && npx wrangler deploy`。
+- **寄信**：`scripts/newsletter.mjs` 由 `.github/workflows/newsletter.yml` 在每次部署完成後執行。第一次執行會把現有文章記成 baseline，不會寄舊文章。
+  信件版型在 `newsletter/src/mail.js`。repo 是公開的，Actions 的紀錄不會印出訂閱者的 Email。
+- **核准**：收到預覽信後，到 GitHub 的那次執行按 **Review deployments → Approve**。不想寄就按 Reject，那篇之後不會再被提出來；要補寄就手動執行 Newsletter workflow 並勾 `retry_pending`。
+- **AWS（東京 ap-northeast-1，和 AILogora 共用帳號）**：SES 寄件網域 `chichieh-huang.com`（DKIM、MAIL FROM `mail.chichieh-huang.com`）、
+  configuration set `chichieh-newsletter`、SNS topic `chichieh-newsletter-events`、IAM 使用者 `chichieh-site-mailer`（只能用 `@chichieh-huang.com` 寄信）。
+- **回信**：寄件地址 `hi@chichieh-huang.com`，由 Cloudflare Email Routing 轉到 Gmail。
+- **Secrets**：GitHub `NEWSLETTER_ADMIN_TOKEN`、`NEWSLETTER_AWS_ACCESS_KEY_ID`、`NEWSLETTER_AWS_SECRET_ACCESS_KEY`、`NEWSLETTER_PREVIEW_TO`；
+  Worker `ADMIN_TOKEN`（與 GitHub 那把相同）、`AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`、`SES_EVENTS_KEY`。
+- 文章標題會直接變成信件主旨：檔名當標題的文章（例如 jev-lab）記得在第一行寫 `# 標題`，或在 `sync.config.json` 的 `titleOverrides` 補上。
+
 ## 分享卡片
 
 每篇文章在建置時會產生一張分享卡片（`/og/<slug>.jpg`，英文版 `/og/en/<英文網址>.jpg`，1200×630），畫的是這篇在地形圖上的位置，

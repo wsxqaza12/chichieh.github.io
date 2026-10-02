@@ -9,6 +9,7 @@ const PAIRS: [string, string][] = [
   ['/speaking/', '/en/speaking/'],
   ['/projects/', '/en/work/'],
   ['/about/', '/en/about/'],
+  ['/newsletter/', '/en/newsletter/'],
 ];
 
 export const langOf = (path: string): Lang => (path === '/en' || path.startsWith('/en/') ? 'en' : 'zh');

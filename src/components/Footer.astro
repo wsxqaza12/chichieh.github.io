@@ -14,6 +14,7 @@ const year = new Date().getFullYear();
   <span class="links lab">
     <a href="https://github.com/wsxqaza12">GitHub</a>
     <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>
+    <a href={lang === 'en' ? '/en/newsletter/' : '/newsletter/'}>{lang === 'en' ? 'Newsletter' : '電子報'}</a>
     <a href={lang === 'en' ? '/en/rss.xml' : '/rss.xml'}>RSS</a>
     <a href={lang === 'en' ? '/' : '/en/'} data-setlang={lang === 'en' ? 'zh' : 'en'} hreflang={lang === 'en' ? 'zh-Hant' : 'en'}>{lang === 'en' ? '中文' : 'English'}</a>
   </span>

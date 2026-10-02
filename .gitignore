@@ -18,3 +18,7 @@ external/
 !.vscode/settings.json
 
 .DS_Store
+
+# 電子報 Worker 的本機秘密與暫存
+newsletter/.dev.vars
+newsletter/.wrangler/
