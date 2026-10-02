@@ -1,8 +1,8 @@
 ---
 import { nav, ui, altPath, type Lang } from '../i18n';
 
-interface Props { overlay?: boolean; lang?: Lang }
-const { overlay = false, lang = 'zh' } = Astro.props;
+interface Props { overlay?: boolean; lang?: Lang; /** 另一種語言的同一頁 */ alt?: string }
+const { overlay = false, lang = 'zh', alt } = Astro.props;
 const t = ui[lang];
 const path = Astro.url.pathname;
 const home = lang === 'en' ? '/en/' : '/';
@@ -28,7 +28,7 @@ const invite = lang === 'en' ? '/en/speaking/#book' : '/speaking/#book';
         </a>
       ))}
       <a class="invite" href={invite}>{t.invite}</a>
-      <a class="lang" href={altPath(path)} hreflang={lang === 'en' ? 'zh-Hant' : 'en'} lang={lang === 'en' ? 'zh-Hant' : 'en'} aria-label={t.otherLangLabel}>{t.otherLang}</a>
+      <a class="lang" href={alt ?? altPath(path)} data-setlang={lang === 'en' ? 'zh' : 'en'} hreflang={lang === 'en' ? 'zh-Hant' : 'en'} lang={lang === 'en' ? 'zh-Hant' : 'en'} aria-label={t.otherLangLabel}>{t.otherLang}</a>
       <button class="tgl" id="theme-toggle" type="button" aria-label={t.themeLabel} data-day={t.day} data-night={t.night}>{t.day}</button>
     </nav>
   </div>
@@ -86,6 +86,10 @@ const invite = lang === 'en' ? '/en/speaking/#book' : '/speaking/#book';
     sync();
     window.dispatchEvent(new Event('themechange'));
   });
+  // 自己切換過語言就記住，之後打開中文首頁不會再被自動帶去英文版
+  document.querySelectorAll<HTMLElement>('[data-setlang]').forEach((a) => a.addEventListener('click', () => {
+    try { localStorage.setItem('lang', a.dataset.setlang!); } catch (err) {}
+  }));
   const menu = document.getElementById('menu-btn')!, navEl = document.getElementById('main-nav')!;
   const setMenu = (open: boolean) => { navEl.classList.toggle('open', open); menu.setAttribute('aria-expanded', String(open)); };
   menu.addEventListener('click', () => setMenu(!navEl.classList.contains('open')));

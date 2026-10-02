@@ -95,7 +95,7 @@ const photos = [
               <div class="given">
                 <span class="lab">{L('講過', 'Given at')}</span>
                 <ul>{x.given.map((g) => <li>{g}</li>)}</ul>
-                {post && <a class="go" href={postUrl(post)}>{L('相關文章 →', 'Related essay (in Chinese) →')}</a>}
+                {post && <a class="go" href={postUrl(post, lang)}>{L('相關文章 →', 'Related essay →')}</a>}
               </div>
             </li>
           );

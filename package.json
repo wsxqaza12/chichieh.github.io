@@ -5,11 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "npm run sync && astro dev",
-    "build": "npm run sync && astro build",
+    "build": "npm run sync && node scripts/i18n-status.mjs && astro build",
     "build:nosync": "astro build",
     "preview": "astro preview",
     "sync": "node scripts/sync-content.mjs",
-    "migrate:medium": "node scripts/migrate-medium.mjs"
+    "migrate:medium": "node scripts/migrate-medium.mjs",
+    "i18n": "node scripts/i18n-status.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.11",

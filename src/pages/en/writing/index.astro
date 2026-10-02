@@ -1,20 +1,19 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import PostLog from '../../../components/PostLog.astro';
-import { getAllPosts, charCount, postLang } from '../../../lib/posts';
+import { getEnglishPosts, lengthOf } from '../../../lib/posts';
 
-const posts = await getAllPosts();
-const total = posts.reduce((n, p) => n + charCount(p.body ?? ''), 0);
-const english = posts.filter((p) => postLang(p) === 'en').length;
+const posts = await getEnglishPosts();
+const total = posts.reduce((n, p) => n + lengthOf(p, 'en'), 0);
 ---
 
-<Base lang="en" title="Writing" description="ChiChieh Huang’s essays on generative AI, LLMs, AI agents and agent memory, written in Traditional Chinese, with titles translated into English.">
+<Base lang="en" title="Writing" description="ChiChieh Huang’s essays on generative AI, LLMs, AI agents and agent memory, translated from the Traditional Chinese originals.">
   <main class="wrap">
     <section class="s first">
       <div class="sh">
         <div class="lab">Field log · Writing</div>
-        <h1>{posts.length} essays, <b>{total.toLocaleString('en-US')}</b> characters</h1>
-        <p>I write about generative AI in Traditional Chinese, so the titles below are translated. The essays open in Chinese, and your browser can translate them for you. {english > 0 && <>A few early tutorials are in English and marked EN.</>}</p>
+        <h1>{posts.length} essays, <b>{total.toLocaleString('en-US')}</b> words</h1>
+        <p>I write about generative AI in Traditional Chinese first, for readers in Taiwan. These are the English translations. Pick a region to see what I’ve written there.</p>
       </div>
       <PostLog posts={posts} readQuery lang="en" />
     </section>

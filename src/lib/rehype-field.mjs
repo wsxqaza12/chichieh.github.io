@@ -5,6 +5,9 @@
 // - 文末「參考資料」清單 → 內文第一次引用處加上 [n]，並在段落後放一張引用註記
 // - 第一段文字 → 引言（lede）；站外連結開新分頁
 // 必須排在 rehypeHeadingIds 之後，這樣標題 id 與目錄不受影響。
+// 英文版文章（src/content/en/）的標籤、圖說、按鈕用英文，連到其他文章的連結換成英文版網址。
+import fs from 'node:fs';
+import path from 'node:path';
 
 const isEl = (n, tag) => n && n.type === 'element' && (!tag || n.tagName === tag);
 const isBlank = (n) => n.type === 'text' && !n.value.trim();
@@ -33,6 +36,12 @@ function walk(node, fn, parent = null) {
   for (const c of node.children || []) walk(c, fn, node);
 }
 
+const STR = {
+  zh: { fig: (n) => `圖 ${n}`, zoom: (n) => `放大圖 ${n}`, table: '表格', note: (n) => `註 ${n}`, open: '開啟原文 ↗', link: '連結' },
+  en: { fig: (n) => `Fig. ${n}`, zoom: (n) => `Enlarge figure ${n}`, table: 'Table', note: (n) => `Note ${n}`, open: 'Read the source ↗', link: 'link' },
+};
+let S = STR.zh;
+
 const normUrl = (u) => String(u || '').replace(/#.*$/, '').replace(/\/+$/, '');
 
 function headings(root) {
@@ -43,6 +52,7 @@ function headings(root) {
     let m;
     if ((m = t.match(/^(\d{1,2})[.．、]\s*\S/))) { label = m[1].padStart(2, '0'); re = /^\s*\d{1,2}[.．、]\s*/; }
     else if ((m = t.match(/^(結語|結論|前言|後記|總結|小結)[：:]\s*\S/))) { label = m[1]; re = /^\s*(結語|結論|前言|後記|總結|小結)[：:]\s*/; }
+    else if ((m = t.match(/^(Conclusion|Closing|Introduction|Afterword|Summary|Recap|Wrap-up)[：:]\s*\S/i))) { label = m[1]; re = /^\s*(Conclusion|Closing|Introduction|Afterword|Summary|Recap|Wrap-up)[：:]\s*/i; }
     else if (/^(參考資料|參考文獻|資料來源|References)$/i.test(t)) label = 'REF';
     if (re) stripPrefix(h, re);
     const ht = el('span', { className: ['ht'] }, h.children);
@@ -79,14 +89,14 @@ function figures(root) {
     }
     if (count > 1) { img.properties.loading = 'lazy'; img.properties.decoding = 'async'; }
     const fig = el('figure', { className: ['plate'] }, [
-      el('button', { type: 'button', className: ['zoom'], ariaLabel: `放大圖 ${count}` }, [img]),
+      el('button', { type: 'button', className: ['zoom'], ariaLabel: S.zoom(count) }, [img]),
     ]);
     if (caption) {
       const holder = el('span', { className: ['ct'] }, caption);
       const t = textOf(holder).trim();
-      const m = t.match(/^(圖\s*\d+)/);
-      let label = `圖 ${count}`;
-      if (m) { label = m[1].replace(/\s+/g, ' ').replace(/圖(\d)/, '圖 $1'); stripPrefix(holder, /^\s*圖\s*\d+[\s　：:]*/); }
+      const m = t.match(/^(?:圖|Figure|Fig\.)\s*(\d+)/i);
+      let label = S.fig(count);
+      if (m) { label = S.fig(m[1]); stripPrefix(holder, /^\s*(?:圖|Figure|Fig\.)\s*\d+[\s　：:.]*/i); }
       fig.children.push(el('figcaption', {}, [el('span', { className: ['fn'] }, [txt(label)]), holder]));
     }
     kids[i] = fig;
@@ -104,7 +114,7 @@ function tables(root) {
       for (const td of tr.children) if (isEl(td, 'td')) { td.properties.dataLabel = head[k] || ''; k++; }
     });
     const idx = parent.children.indexOf(n);
-    parent.children[idx] = el('div', { className: ['tbl'], role: 'region', tabIndex: 0, ariaLabel: '表格' }, [n]);
+    parent.children[idx] = el('div', { className: ['tbl'], role: 'region', tabIndex: 0, ariaLabel: S.table }, [n]);
     return false;
   });
 }
@@ -112,7 +122,7 @@ function tables(root) {
 function sourceLabel(href) {
   const ax = String(href).match(/arxiv\.org\/(?:abs|html|pdf)\/(\d{4}\.\d{4,5})/);
   if (ax) return `arXiv ${ax[1]}`;
-  try { return new URL(href).hostname.replace(/^www\./, ''); } catch { return '連結'; }
+  try { return new URL(href).hostname.replace(/^www\./, ''); } catch { return S.link; }
 }
 
 function citations(root) {
@@ -143,7 +153,7 @@ function citations(root) {
       });
       if (!hit) continue;
       const pos = hitParent.children.indexOf(hit);
-      hitParent.children.splice(pos + 1, 0, el('sup', { className: ['ref'] }, [el('a', { href: `#sn${k}`, ariaLabel: `註 ${k}` }, [txt(String(k))])]));
+      hitParent.children.splice(pos + 1, 0, el('sup', { className: ['ref'] }, [el('a', { href: `#sn${k}`, ariaLabel: S.note(k) }, [txt(String(k))])]));
       const name = textOf(hit).trim();
       const strong = name.length >= 2 ? name : r.title;
       const aside = el('aside', { className: ['sn'], id: `sn${k}` }, [
@@ -151,7 +161,7 @@ function citations(root) {
         el('strong', {}, [txt(strong)]),
         ...(r.title && r.title !== strong ? [el('span', { className: ['snt'] }, [txt(r.title)])] : []),
         ...(r.note ? [el('span', { className: ['snw'] }, [txt(r.note)])] : []),
-        el('a', { href: r.href, target: '_blank', rel: 'noopener' }, [txt('開啟原文 ↗')]),
+        el('a', { href: r.href, target: '_blank', rel: 'noopener' }, [txt(S.open)]),
       ]);
       inserts.push([t, aside]);
       return;
@@ -159,6 +169,40 @@ function citations(root) {
   });
   // 由後往前插，索引才不會亂
   inserts.sort((a, b) => b[0] - a[0]).forEach(([t, aside]) => kids.splice(t + 1, 0, aside));
+}
+
+// 中文文章 id（含 Medium 時期的網址 hash）→ 英文版網址
+let enSlugs = null;
+function englishSlugs() {
+  if (enSlugs) return enSlugs;
+  enSlugs = new Map();
+  const ls = (dir) => (fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.md')) : []);
+  for (const f of ls('src/content/en')) {
+    const m = fs.readFileSync(path.join('src/content/en', f), 'utf8').match(/^original:\s*['"]?([^'"\n]+)/m);
+    if (m) enSlugs.set(m[1].trim(), f.slice(0, -3));
+  }
+  // Medium 時期另外發過的英文版，連過去也導到同一篇
+  for (const f of ls('src/content/blog')) {
+    const m = fs.readFileSync(path.join('src/content/blog', f), 'utf8').match(/^translationOf:\s*(\S+)/m);
+    if (m && enSlugs.has(m[1])) enSlugs.set(f.slice(0, -3), enSlugs.get(m[1]));
+  }
+  return enSlugs;
+}
+
+function englishLinks(root) {
+  const map = englishSlugs();
+  walk(root, (n) => {
+    if (!isEl(n, 'a')) return;
+    const href = String(n.properties.href || '');
+    let id = null, hash = '';
+    const m = href.match(/^(?:\.\.\/|\/posts\/|https?:\/\/(?:www\.)?chichieh-huang\.com\/posts\/)([^/#?]+)\/?(#.*)?$/);
+    if (m) { try { id = decodeURIComponent(m[1]).toLowerCase(); } catch { id = m[1]; } hash = m[2] ?? ''; }
+    else {
+      const mm = href.match(/^https?:\/\/(?:[\w-]+\.)?medium\.com\/@cch\.chichieh\/[^?#]*-([0-9a-f]{12})(?:[?#].*)?$/);
+      if (mm) id = mm[1];
+    }
+    if (id && map.has(id)) n.properties.href = `/en/writing/${map.get(id)}/${hash}`;
+  });
 }
 
 function lede(root) {
@@ -196,10 +240,14 @@ async function imageSizes(tree) {
 }
 
 export default function rehypeField() {
-  return async (tree) => {
+  return async (tree, file) => {
     await imageSizes(tree);
+    // 在 await 之後才設定語言：之後都是同步的，不會被同時處理的其他文章蓋掉
+    const fm = file?.data?.astro?.frontmatter ?? {};
+    S = fm.original || /[\\/]content[\\/]en[\\/]/.test(String(file?.path ?? '')) ? STR.en : STR.zh;
     // 只在最外層整理，避免動到清單、引言裡的結構
     tree.children = tree.children.filter((n) => n.type !== 'comment');
+    if (S === STR.en) englishLinks(tree);
     headings(tree);
     figures(tree);
     tables(tree);

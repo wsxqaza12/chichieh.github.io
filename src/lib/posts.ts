@@ -1,20 +1,39 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { createHash } from 'node:crypto';
 import { regionOf } from './regions';
 import { seriesOf } from '../data/series';
-import { enTitles } from '../data/en-titles';
 
 export type Post = CollectionEntry<'blog'> | CollectionEntry<'synced'>;
+export type EnPost = CollectionEntry<'en'>;
+
+// 中文文章 id → 英文版（src/content/en/）。getAllPosts() 每次都會重新整理。
+const EN = new Map<string, EnPost>();
 
 /** 合併兩個文章來源，依日期新到舊排序。production 會過濾草稿。 */
 export async function getAllPosts(): Promise<Post[]> {
-  const [blog, synced] = await Promise.all([getCollection('blog'), getCollection('synced')]);
+  const [blog, synced, en] = await Promise.all([getCollection('blog'), getCollection('synced'), getCollection('en')]);
+  EN.clear();
+  for (const e of en) EN.set(e.data.original, e);
   const posts = [...blog, ...synced].filter((p) => import.meta.env.DEV || !p.data.draft);
   return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.id.localeCompare(b.id));
 }
 
-export function postUrl(post: Post): string {
-  return `/posts/${post.id}/`;
+/** 有英文版的文章（英文網站只列這些） */
+export async function getEnglishPosts(): Promise<Post[]> {
+  return (await getAllPosts()).filter((p) => EN.has(p.id));
 }
+
+/** 文章的英文版（要先呼叫過 getAllPosts） */
+export const englishOf = (post: Post): EnPost | undefined => EN.get(post.id);
+
+/** 依網站語言給文章網址；英文版還沒翻譯的文章回到中文頁 */
+export function postUrl(post: Post, lang: 'zh' | 'en' = 'zh'): string {
+  const e = lang === 'en' ? EN.get(post.id) : undefined;
+  return e ? `/en/writing/${e.id}/` : `/posts/${post.id}/`;
+}
+
+/** 中文原文的指紋：翻譯檔記下這個值，原文之後改過就對不上 */
+export const sourceHash = (post: Post) => createHash('sha1').update((post.body ?? '').trim()).digest('hex').slice(0, 12);
 
 export function formatMonth(d: Date): string {
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -44,6 +63,17 @@ export function readingTime(body: string): number {
   return Math.max(1, Math.round(cjk / 350 + words / 200));
 }
 
+/** 英文的字數（words） */
+export function wordCount(body: string): number {
+  return (plain(body).match(/[A-Za-z0-9][A-Za-z0-9'’.-]*/g) ?? []).length;
+}
+
+/** 依網站語言的篇幅：中文版是字數，英文版是英文翻譯的 words */
+export function lengthOf(post: Post, lang: 'zh' | 'en' = 'zh'): number {
+  const e = lang === 'en' ? EN.get(post.id) : undefined;
+  return e ? wordCount(e.body ?? '') : charCount(post.body ?? '');
+}
+
 /** 字數：CJK 字 + 英文單字 */
 export function charCount(body: string): number {
   const text = plain(body);
@@ -64,10 +94,10 @@ export function postLang(post: Post): 'zh' | 'en' {
   return cjk < (cjk + words) * 0.15 ? 'en' : 'zh';
 }
 
-/** 依網站語言取標題：英文版優先用翻譯，沒有翻譯就用原標題 */
+/** 依網站語言取標題：英文版用翻譯的標題，沒有翻譯就用原標題 */
 export function titleIn(post: Post, lang: 'zh' | 'en'): string {
   if (lang === 'zh') return displayTitle(post);
-  return enTitles[post.id] ?? displayTitle(post);
+  return EN.get(post.id)?.data.title ?? displayTitle(post);
 }
 
 export function regionOfPost(post: Post): string {
@@ -82,7 +112,11 @@ export interface PostSummary {
   n: number; // 字數
   topic: string; // 區域
   x: string; // 摘要
-  te?: string; // 英文標題（英文版地圖用）
+  // 英文版（有翻譯才有）：標題、摘要、網址、words
+  te?: string;
+  xe?: string;
+  es?: string;
+  ne?: number;
   lang: 'zh' | 'en'; // 文章本身的語言
   season?: number;
   ep?: number;
@@ -90,6 +124,7 @@ export interface PostSummary {
 
 export function summarize(post: Post): PostSummary {
   const s = seriesOf(post.id);
+  const e = EN.get(post.id);
   return {
     id: post.id,
     t: displayTitle(post),
@@ -97,7 +132,7 @@ export function summarize(post: Post): PostSummary {
     n: charCount(post.body ?? ''),
     topic: regionOfPost(post),
     x: post.data.description ?? '',
-    ...(enTitles[post.id] ? { te: enTitles[post.id] } : {}),
+    ...(e ? { te: e.data.title, xe: e.data.description ?? '', es: e.id, ne: wordCount(e.body ?? '') } : {}),
     lang: postLang(post),
     ...(s ? { season: s.season.n, ep: s.ep } : {}),
   };

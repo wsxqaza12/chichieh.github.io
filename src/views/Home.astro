@@ -5,7 +5,7 @@ import HomeMap from '../components/HomeMap.astro';
 import PostLog from '../components/PostLog.astro';
 import TalkProfile from '../components/TalkProfile.astro';
 import Summit from '../components/Summit.astro';
-import { getAllPosts, postUrl, dotDate, displayTitle, titleIn, postLang, charCount, type Post } from '../lib/posts';
+import { getAllPosts, getEnglishPosts, postUrl, dotDate, titleIn, lengthOf, englishOf, type Post } from '../lib/posts';
 import { series, seriesOf, resolveSeries } from '../data/series';
 import { projects, projectText } from '../data/projects';
 import { talks, media } from '../data/experience';
@@ -17,17 +17,18 @@ const en = lang === 'en';
 const L = (zh: string, e: string) => (en ? e : zh);
 const zhNum = ['一', '二', '三', '四', '五', '六'];
 
-const posts = await getAllPosts();
+// 英文版只列有英文翻譯的文章
+const posts = en ? await getEnglishPosts() : await getAllPosts();
 const byId = new Map(posts.map((p) => [p.id, p]));
 const find = (id?: string) => (id ? byId.get(id) : undefined);
-const chars = (p: Post) => charCount(p.body ?? '').toLocaleString('en-US');
+const chars = (p: Post) => lengthOf(p, lang).toLocaleString('en-US');
 
 // 最新路段：最近更新的連載
 const latest = series[0];
 const seasons = resolveSeries(latest, posts.map((p) => p.id));
 const legs = seasons.flatMap((s) => s.posts.map((id) => ({ s, ep: seriesOf(id)!.ep, post: byId.get(id) }))).filter((l): l is { s: typeof l.s; ep: number; post: Post } => !!l.post);
 let cum = 0;
-const prof = legs.map((l) => ({ ...l, c: (cum += charCount(l.post.body ?? '')) }));
+const prof = legs.map((l) => ({ ...l, c: (cum += lengthOf(l.post, lang)) }));
 const W = 360, H = 200, pl = 8, pr = 14, pt = 18, pb = 34;
 const ymax = Math.ceil(cum / 5000) * 5000 || 5000;
 const X = (i: number) => pl + (i * (W - pl - pr)) / Math.max(1, prof.length - 1);
@@ -38,7 +39,7 @@ prof.forEach((q, i) => (svg += `<text x="${X(i)}" y="${H - 12}" text-anchor="mid
 svg += '</g>';
 svg += `<path d="M${X(0)},${Y(0)} L${prof.map((q, i) => `${X(i)},${Y(q.c)}`).join(' L')} L${X(prof.length - 1)},${Y(0)} Z" class="area"/>`;
 svg += `<polyline points="${prof.map((q, i) => `${X(i)},${Y(q.c)}`).join(' ')}" class="ln"/>`;
-prof.forEach((q, i) => (svg += `<circle cx="${X(i)}" cy="${Y(q.c)}" r="5" class="dot"><title>S${q.s.n}·${q.ep} ${titleIn(q.post, lang).replace(/[<&]/g, '')} · ${q.c.toLocaleString('en-US')} ${L('字', 'characters')}</title></circle>`));
+prof.forEach((q, i) => (svg += `<circle cx="${X(i)}" cy="${Y(q.c)}" r="5" class="dot"><title>S${q.s.n}·${q.ep} ${titleIn(q.post, lang).replace(/[<&]/g, '')} · ${q.c.toLocaleString('en-US')} ${L('字', 'words')}</title></circle>`));
 
 // 演講
 const today = new Date().toISOString().slice(0, 10);
@@ -70,13 +71,13 @@ const leadT = projectText(lead, lang);
               {s.posts.map((id) => {
                 const p = byId.get(id);
                 return p && (
-                  <a class="leg" href={postUrl(p)}>
+                  <a class="leg" href={postUrl(p, lang)}>
                     <span class="k">S{s.n}·{seriesOf(id)!.ep}</span>
                     <span class="b">
                       <h3 class="keep">{titleIn(p, lang)}</h3>
-                      {en ? <span class="orig" lang="zh-Hant">{displayTitle(p)}</span> : p.data.description && <p>{p.data.description}</p>}
+                      {(en ? englishOf(p)?.data.description : p.data.description) && <p>{en ? englishOf(p)?.data.description : p.data.description}</p>}
                     </span>
-                    <span class="d"><b>{chars(p)} {L('字', 'chars')}</b>{dotDate(p.data.date)}</span>
+                    <span class="d"><b>{chars(p)} {L('字', 'words')}</b>{dotDate(p.data.date)}</span>
                   </a>
                 );
               })}
@@ -87,8 +88,8 @@ const leadT = projectText(lead, lang);
           ))}
         </div>
         <div class="profile">
-          <div class="cap"><span class="lab">{L('累積字數', 'Characters so far')}</span><b>{cum.toLocaleString('en-US')}</b></div>
-          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={L(`${latest.name} 各段累積字數`, `${latest.name}: characters written per episode, cumulative`)} set:html={svg} />
+          <div class="cap"><span class="lab">{L('累積字數', 'Words so far')}</span><b>{cum.toLocaleString('en-US')}</b></div>
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={L(`${latest.name} 各段累積字數`, `${latest.name}: words written per episode, cumulative`)} set:html={svg} />
         </div>
       </div>
     </section>
@@ -97,7 +98,7 @@ const leadT = projectText(lead, lang);
       <div class="sh">
         <div class="lab">{L('野外紀錄 · 全部文章', 'Field log · All essays')}</div>
         <h2>{en ? `${posts.length} essays, by region` : `${posts.length} 篇，依區域篩選`}</h2>
-        <p>{L('區域就是地圖上的地名。點一個區域，上面地圖的石堆也會跟著亮起來。', 'Regions are the place names on the map above; pick one and its cairns light up. The essays are written in Chinese, so the titles here are translated.')}</p>
+        <p>{L('區域就是地圖上的地名。點一個區域，上面地圖的石堆也會跟著亮起來。', 'Regions are the place names on the map above; pick one and its cairns light up.')}</p>
       </div>
       <PostLog posts={posts} limit={15} lang={lang} />
       {en && <p class="more"><a class="btn" href="/en/writing/">All essays →</a></p>}
@@ -120,7 +121,7 @@ const leadT = projectText(lead, lang);
               <span class="lab">{t.date.replaceAll('-', '.')}{up ? L(' · 即將登場', ' · Upcoming') : ''}</span>
               <h3>{en && t.en ? t.en.event : t.event}</h3>
               <p>{topic ?? (up ? L('敬請期待', 'Details soon') : '')}</p>
-              {p && <a class="go" href={postUrl(p)}>{L('現場心得 →', 'Recap (in Chinese) →')}</a>}
+              {p && <a class="go" href={postUrl(p, lang)}>{L('現場心得 →', 'Recap →')}</a>}
             </div>
           );
         })}
@@ -151,7 +152,7 @@ const leadT = projectText(lead, lang);
           {lead.link && <a class="go" href={lead.link}>{leadT.label} →</a>}
         </div>
         {hackathon?.data.hero && (
-          <a class="art" href={postUrl(hackathon)}><img src={hackathon.data.hero} alt={L('Anthropic Hackathon 主視覺', 'Anthropic hackathon key visual')} loading="lazy" /><span class="lab">{L('開發心得 →', 'Build log (in Chinese) →')}</span></a>
+          <a class="art" href={postUrl(hackathon, lang)}><img src={hackathon.data.hero} alt={L('Anthropic Hackathon 主視覺', 'Anthropic hackathon key visual')} loading="lazy" /><span class="lab">{L('開發心得 →', 'Build log →')}</span></a>
         )}
       </div>
       <div class="camps">
@@ -189,7 +190,7 @@ const leadT = projectText(lead, lang);
               <p>{en && m.en ? m.en.detail : m.detail}</p>
             </>
           );
-          return p ? <a class="pr" href={postUrl(p)}>{inner}</a> : <div class="pr">{inner}</div>;
+          return p ? <a class="pr" href={postUrl(p, lang)}>{inner}</a> : <div class="pr">{inner}</div>;
         })}
       </div>
     </section>

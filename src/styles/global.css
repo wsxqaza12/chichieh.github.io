@@ -122,6 +122,8 @@ section.s { padding-block: clamp(72px, 9vw, 128px) 0; }
   color: var(--ink);
   background-image: linear-gradient(var(--trail), var(--trail)); background-size: 100% 1px;
   background-repeat: no-repeat; background-position: 0 100%; padding-bottom: 1px; transition: color .15s;
+  /* 參考資料常直接貼長網址，手機上要能斷行 */
+  overflow-wrap: anywhere;
 }
 .prose a:hover { color: var(--trail); }
 .prose strong { font-weight: 700; color: var(--ink); }
@@ -205,3 +207,11 @@ section.s { padding-block: clamp(72px, 9vw, 128px) 0; }
 @media (max-width: 640px) {
   .prose { font-size: 17px; line-height: 1.95; }
 }
+
+/* 中文頁給非中文瀏覽器的英文版提示 */
+.enhint { position: fixed; right: 16px; bottom: 16px; z-index: 70; display: flex; align-items: center; gap: 14px; max-width: calc(100vw - 32px); padding: 12px 12px 12px 16px; background: var(--ground); border: 1px solid var(--trail); box-shadow: 0 18px 40px -20px rgba(0, 0, 0, .55); font-family: "Hanken Grotesk", var(--sans); font-size: 14px; color: var(--ink-2); }
+.enhint[hidden] { display: none; }
+.enhint a { color: var(--trail); font-weight: 500; white-space: nowrap; }
+.enhint button { background: none; border: 0; color: var(--ink-3); cursor: pointer; font-size: 14px; padding: 4px 6px; }
+.enhint button:hover { color: var(--ink); }
+@media (max-width: 640px) { .enhint { left: 16px; right: 16px; flex-wrap: wrap; gap: 6px 14px; } .enhint span { flex-basis: 100%; } .enhint button { position: absolute; right: 6px; top: 6px; } }

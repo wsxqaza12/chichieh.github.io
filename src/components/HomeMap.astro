@@ -7,15 +7,16 @@ import { ui, numberWords, type Lang } from '../i18n';
 interface Props { lang?: Lang }
 const { lang = 'zh' } = Astro.props;
 const t = ui[lang];
-const posts = await getSummaries();
-const total = posts.reduce((n, p) => n + p.n, 0);
+// 英文版只畫有英文翻譯的文章，篇幅用英文的 words
+const posts = (await getSummaries()).filter((p) => lang === 'zh' || p.es);
+const total = posts.reduce((n, p) => n + (lang === 'en' ? p.ne ?? 0 : p.n), 0);
 const first = posts[posts.length - 1];
 const latest = posts[0];
 const years = Math.max(1, Math.round((Date.now() - Date.parse(first.d)) / (365.25 * 864e5)));
 const zh = ['零', '一', '兩', '三', '四', '五', '六', '七', '八', '九', '十'][years] ?? String(years);
 const ym = (d: string) => d.slice(0, 7).replace('-', '.');
 const en = numberWords[years] ?? String(years);
-const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, zhNote: 'Written in Chinese' };
+const strings = { you: t.you, read: t.read, chars: t.chars };
 ---
 
 <div class="map" id="map" data-lang={lang} data-t={JSON.stringify(strings)}>
@@ -25,7 +26,7 @@ const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, 
       <>
         <h1 class="en">{en[0].toUpperCase() + en.slice(1)} years of writing,<br />one <b>cairn</b> at a time.</h1>
         <p>
-          {posts.length} essays and <span class="mono">{total.toLocaleString('en-US')}</span> characters on AI, written in Traditional Chinese.
+          {posts.length} essays and <span class="mono">{total.toLocaleString('en-US')}</span> words on AI, written first in Traditional Chinese and translated here.
           Each essay is a cairn on this map. The trail runs from the {regionName(first.topic, 'en')} of {first.d.slice(0, 4)} up to {regionName(latest.topic, 'en')} today. Hover a cairn to see what it’s about.
         </p>
       </>
@@ -42,7 +43,7 @@ const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, 
   <div class="mapbox" id="mapbox">
     <canvas id="cv" role="img" aria-label={lang === 'en' ? `A map of ${posts.length} essays drawn as cairns by time and topic, with a trail from the ${regionName(first.topic, 'en')} to ${regionName(latest.topic, 'en')}. The full list is below.` : `寫作地形圖：${posts.length} 篇文章依時間與主題畫成石堆，路線從${regionName(first.topic)}到${regionName(latest.topic)}。完整清單在下方的文章列表。`}></canvas>
     <div id="overlay"></div>
-    <a class="tip" id="tip" href="/posts/" tabindex="-1">
+    <a class="tip" id="tip" href={lang === 'en' ? '/en/writing/' : '/posts/'} tabindex="-1">
       <span class="lab"><span id="tipR"></span><span id="tipD"></span></span>
       <span class="tt" id="tipT"></span><span class="tx" id="tipX"></span><span class="go" id="tipGo">{t.read}</span>
     </a>
@@ -112,6 +113,7 @@ const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, 
   const LANG = $('map').dataset.lang === 'en' ? 'en' : 'zh';
   const T = JSON.parse($('map').dataset.t || '{}') as Record<string, string>;
   const tt = (p: PostSummary) => (LANG === 'en' ? p.te ?? p.t : p.t);
+  const urlOf = (p: PostSummary) => (LANG === 'en' ? `/en/writing/${p.es}/` : `/posts/${p.id}/`);
   const mapEl = $('map'), box = $('mapbox'), cv = $<HTMLCanvasElement>('cv'), ov = $('overlay'), tip = $<HTMLAnchorElement>('tip');
   let data: PostSummary[] = [];
   const models: Partial<Record<'h' | 'v', Model>> = {};
@@ -262,11 +264,10 @@ const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, 
     if (i < 0) { tip.classList.remove('show'); tip.tabIndex = -1; return; }
     const q = M.pts[i], r = REGIONS[q.k];
     $('tipR').textContent = LANG === 'en' ? r.name : r.key + r.suffix;
-    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')} · ${q.p.n.toLocaleString('en-US')} ${T.chars}`;
+    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')} · ${(LANG === 'en' ? q.p.ne ?? 0 : q.p.n).toLocaleString('en-US')} ${T.chars}`;
     $('tipT').textContent = tt(q.p);
-    $('tipX').textContent = LANG === 'en' ? (q.p.lang === 'en' ? '' : `${T.zhNote} · ${q.p.t}`) : q.p.x;
-    $('tipGo').textContent = LANG === 'en' && q.p.lang === 'en' ? T.readEn : T.read;
-    tip.href = `/posts/${q.p.id}/`;
+    $('tipX').textContent = LANG === 'en' ? q.p.xe ?? '' : q.p.x;
+    tip.href = urlOf(q.p);
     tip.tabIndex = 0;
     const tw = Math.min(300, W - 32);
     let x = S[i].x + 18, y = S[i].y - 20;
@@ -289,7 +290,7 @@ const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, 
     box.style.cursor = i >= 0 ? 'pointer' : 'default';
   });
   box.addEventListener('pointerleave', () => { hover = -1; draw(); hideT = window.setTimeout(() => showTip(-1), 300); });
-  box.addEventListener('click', (e) => { if (hover >= 0 && !(e.target as HTMLElement).closest('.tip') && matchMedia('(hover: hover)').matches) location.href = `/posts/${M.pts[hover].p.id}/`; });
+  box.addEventListener('click', (e) => { if (hover >= 0 && !(e.target as HTMLElement).closest('.tip') && matchMedia('(hover: hover)').matches) location.href = urlOf(M.pts[hover].p); });
   tip.addEventListener('pointerenter', () => clearTimeout(hideT));
 
   // 文章列表的區域篩選會通知地圖
@@ -305,7 +306,7 @@ const strings = { you: t.you, read: t.read, readEn: 'Read →', chars: t.chars, 
   addEventListener('themechange', () => build());
 
   fetch('/map-data.json').then((r) => r.json()).then(async (d: PostSummary[]) => {
-    data = d;
+    data = LANG === 'en' ? d.filter((p) => p.es) : d;
     await document.fonts?.ready;
     build();
     if (prog < 1) run();

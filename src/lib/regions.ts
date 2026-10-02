@@ -6,18 +6,19 @@ export interface Region {
   suffix: string; // 地名後綴：RAG 盆地、Agent 山脈
   en: string; // 地形英文（地圖上的小字）
   name: string; // 英文版的地名
+  id: string; // 英文版網址參數用（?r=memory），避免網址出現中文
 }
 
 export const REGIONS: Region[] = [
-  { key: '資料工程', suffix: '低地', en: 'LOWLANDS', name: 'Data Lowlands' },
-  { key: 'LLM', suffix: '高原', en: 'PLATEAU', name: 'LLM Plateau' },
-  { key: 'RAG', suffix: '盆地', en: 'BASIN', name: 'RAG Basin' },
-  { key: '語音・Avatar', suffix: '丘陵', en: 'HILLS', name: 'Voice & Avatar Hills' },
-  { key: 'Vibe Coding', suffix: '河谷', en: 'VALLEY', name: 'Vibe Coding Valley' },
-  { key: 'Agent', suffix: '山脈', en: 'RANGE', name: 'Agent Range' },
-  { key: '龍蝦', suffix: '灣', en: 'BAY', name: 'OpenClaw Bay' },
-  { key: 'MCP', suffix: '隘口', en: 'PASS', name: 'MCP Pass' },
-  { key: '記憶', suffix: '峰', en: 'SUMMIT', name: 'Memory Summit' },
+  { key: '資料工程', suffix: '低地', en: 'LOWLANDS', name: 'Data Lowlands', id: 'data' },
+  { key: 'LLM', suffix: '高原', en: 'PLATEAU', name: 'LLM Plateau', id: 'llm' },
+  { key: 'RAG', suffix: '盆地', en: 'BASIN', name: 'RAG Basin', id: 'rag' },
+  { key: '語音・Avatar', suffix: '丘陵', en: 'HILLS', name: 'Voice & Avatar Hills', id: 'voice' },
+  { key: 'Vibe Coding', suffix: '河谷', en: 'VALLEY', name: 'Vibe Coding Valley', id: 'vibe-coding' },
+  { key: 'Agent', suffix: '山脈', en: 'RANGE', name: 'Agent Range', id: 'agent' },
+  { key: '龍蝦', suffix: '灣', en: 'BAY', name: 'OpenClaw Bay', id: 'openclaw' },
+  { key: 'MCP', suffix: '隘口', en: 'PASS', name: 'MCP Pass', id: 'mcp' },
+  { key: '記憶', suffix: '峰', en: 'SUMMIT', name: 'Memory Summit', id: 'memory' },
 ];
 
 export const regionName = (key: string, lang: 'zh' | 'en' = 'zh') => {
