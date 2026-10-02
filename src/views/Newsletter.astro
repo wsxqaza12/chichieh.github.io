@@ -1,0 +1,140 @@
+---
+// 電子報頁（中、英共用）：訂閱說明與表單，也是確認信、退訂連結導回來的地方（?s=check|confirmed|unsubscribe|unsubscribed|expired|invalid|slow|error）
+import Base from '../layouts/Base.astro';
+import Subscribe from '../components/Subscribe.astro';
+import { getAllPosts, getEnglishPosts, postUrl, titleIn } from '../lib/posts';
+import type { Lang } from '../i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const en = lang === 'en';
+const L = (zh: string, e: string) => (en ? e : zh);
+
+const recent = (en ? await getEnglishPosts() : (await getAllPosts()).filter((p) => !p.data.draft)).slice(0, 3);
+const dotDate = (d: Date) => d.toISOString().slice(0, 10).replaceAll('-', '.');
+
+const states: Record<string, { h: string; p: string }> = en
+  ? {
+      check: { h: 'Check your inbox', p: 'Click the link in the email I just sent and you’re subscribed. Not there? Look in spam or the Promotions tab.' },
+      confirmed: { h: 'You’re subscribed', p: 'The next essay will land in your inbox. Thanks for letting me write to you.' },
+      unsubscribe: { h: 'Unsubscribe?', p: 'You won’t get emails about new essays any more.' },
+      unsubscribed: { h: 'You’re unsubscribed', p: 'No more emails. If you change your mind, you can subscribe again below.' },
+      expired: { h: 'This link is invalid or has expired', p: 'You can subscribe again below.' },
+      invalid: { h: 'That address can’t receive mail', p: 'Check for a typo and try again.' },
+      slow: { h: 'Too many tries', p: 'Please wait a little and try again.' },
+      error: { h: 'Something went wrong', p: 'Please try again later, or email hi@chichieh-huang.com.' },
+    }
+  : {
+      check: { h: '確認信寄出了', p: '到信箱點信裡的連結，就訂閱好了。沒看到的話，看一下垃圾信匣或「促銷內容」分頁。' },
+      confirmed: { h: '訂閱好了', p: '下一篇寫好時會寄到你的信箱。謝謝你願意讓我寫信給你。' },
+      unsubscribe: { h: '確定要取消訂閱嗎？', p: '取消之後，就不會再收到新文章的信。' },
+      unsubscribed: { h: '已取消訂閱', p: '不會再收到信了。改變主意的話，隨時可以在下面重新訂閱。' },
+      expired: { h: '這個連結無效或已經過期', p: '可以在下面重新訂閱一次。' },
+      invalid: { h: '這個 Email 看起來收不到信', p: '檢查一下有沒有打錯，再試一次。' },
+      slow: { h: '嘗試太多次了', p: '等一下再試。' },
+      error: { h: '出了點問題', p: '請稍後再試，或直接寄信到 hi@chichieh-huang.com。' },
+    };
+
+const facts = en
+  ? [
+      ['When', 'Only when a new essay goes up. Usually a few a month.'],
+      ['What', 'One essay per email: title, summary and a link.'],
+      ['Language', 'Subscribe here and you get the English versions. The Chinese edition is at chichieh-huang.com/newsletter/.'],
+      ['Leaving', 'Every email has a one-click unsubscribe link.'],
+    ]
+  : [
+      ['頻率', '有新文章上站時才寄，大約一個月幾篇。'],
+      ['內容', '一封信一篇文章：標題、摘要和連結。'],
+      ['語言', '在這裡訂閱收中文版；英文版請到 chichieh-huang.com/en/newsletter/。'],
+      ['退訂', '每封信底下都有一鍵退訂。'],
+    ];
+---
+
+<Base lang={lang} title={L('電子報', 'Newsletter')} description={L('訂閱黃琪婕的電子報：新文章上站時寄一封信，寫 AI Agent、Agent Memory 與實作經驗。', 'Subscribe to ChiChieh Huang’s newsletter: one email when a new essay on AI agents, agent memory and building with LLMs goes up.')}>
+  <main class="wrap">
+    <section class="hero">
+      <span class="lab">{L('電子報 · Newsletter', 'Newsletter')}</span>
+      <h1 class="keep">{en ? <>New essays, <b>in your inbox.</b></> : <>新文章，<b>寄到你的信箱。</b></>}</h1>
+
+      <div class="state" id="state" hidden>
+        <h2 id="stateH"></h2>
+        <p id="stateP"></p>
+        <div class="acts" id="unsubActs" hidden>
+          <button class="btn primary" type="button" id="unsubGo">{L('取消訂閱', 'Unsubscribe')}</button>
+          <a class="btn" href={en ? '/en/' : '/'}>{L('不用了，回到網站', 'Keep me subscribed')}</a>
+        </div>
+        <noscript><p>{L('取消訂閱需要開啟 JavaScript，或直接回信告訴我。', 'Unsubscribing needs JavaScript, or just reply to any email and tell me.')}</p></noscript>
+      </div>
+
+      <p class="lede">
+        {en
+          ? 'I write about building with AI: agents, agent memory, and what actually happens when you run them. When a new essay goes up, I’ll send it to you. Nothing else.'
+          : '我寫 AI 的實作：Agent、Agent Memory，還有真的把它們跑起來之後發生的事。新文章上站時寄給你，不寄別的。'}
+      </p>
+      <div class="form"><Subscribe lang={lang} variant="page" /></div>
+    </section>
+
+    <section class="more">
+      <dl class="facts">
+        {facts.map(([k, v]) => <div><dt class="lab">{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+      <div class="recent">
+        <span class="lab">{L('最近寫的', 'Recent essays')}</span>
+        {recent.map((p) => (
+          <a href={postUrl(p, lang)}><span class="lab">{dotDate(p.data.date)}</span><b class="keep">{titleIn(p, lang)}</b></a>
+        ))}
+      </div>
+    </section>
+  </main>
+</Base>
+
+<script is:inline define:vars={{ states }}>
+  (function () {
+    var q = new URLSearchParams(location.search), s = q.get('s'), t = q.get('t');
+    if (!s || !states[s]) return;
+    var box = document.getElementById('state');
+    function show(k) {
+      document.getElementById('stateH').textContent = states[k].h;
+      document.getElementById('stateP').textContent = states[k].p;
+      box.dataset.state = k;
+      box.hidden = false;
+      document.getElementById('unsubActs').hidden = !(k === 'unsubscribe' && t);
+    }
+    show(s === 'unsubscribe' && !t ? 'expired' : s);
+    var go = document.getElementById('unsubGo');
+    go.addEventListener('click', function () {
+      go.disabled = true;
+      fetch('/api/newsletter/unsubscribe?t=' + encodeURIComponent(t), { method: 'POST' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { show(j.ok ? 'unsubscribed' : 'expired'); history.replaceState(null, '', location.pathname + '?s=' + box.dataset.state); })
+        .catch(function () { go.disabled = false; show('error'); });
+    });
+  })();
+</script>
+
+<style>
+  .hero { max-width: 760px; padding-block: clamp(56px, 8vw, 112px) clamp(40px, 5vw, 64px); }
+  h1 { margin: 14px 0 0; font-weight: 300; font-size: clamp(38px, 5.4vw, 72px); line-height: 1.12; letter-spacing: .005em; }
+  h1 b { font-weight: 500; color: var(--trail); }
+  .lede { margin: 28px 0 0; color: var(--ink-2); font-weight: 300; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.8; max-width: 36em; }
+  .form { margin-top: 32px; max-width: 560px; }
+  .state { margin-top: 32px; padding: 22px 24px; border: 1px solid var(--line); border-left: 3px solid var(--trail); background: var(--ground-2); }
+  .state h2 { margin: 0 0 6px; font-weight: 500; font-size: 22px; line-height: 1.4; }
+  .state p { margin: 0; color: var(--ink-2); }
+  .state .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .state .acts[hidden] { display: none; }
+  .btn.primary { background: var(--trail); border-color: var(--trail); color: var(--ground); }
+  .btn.primary:hover { background: transparent; color: var(--trail); }
+  .more { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(28px, 5vw, 80px); border-top: 1px solid var(--line); padding-top: clamp(36px, 5vw, 56px); }
+  .facts { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px clamp(20px, 3vw, 40px); }
+  .facts div { border-top: 1px solid var(--ink-2); padding-top: 12px; }
+  .facts dt { color: var(--trail); }
+  .facts dd { margin: 6px 0 0; font-size: 15px; color: var(--body); }
+  .recent { display: flex; flex-direction: column; gap: 4px; }
+  .recent > .lab { margin-bottom: 8px; }
+  .recent a { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .recent b { font-weight: 500; font-size: 16.5px; line-height: 1.55; transition: color .15s; }
+  .recent a:hover b { color: var(--trail); }
+  @media (max-width: 860px) { .more { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .facts { grid-template-columns: 1fr; } }
+</style>

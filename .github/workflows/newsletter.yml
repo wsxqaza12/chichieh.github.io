@@ -1,0 +1,100 @@
+name: Newsletter
+
+# 新文章上站後寄電子報：
+#   plan：找出 RSS 裡還沒寄過的文章，寄預覽給自己（NEWSLETTER_PREVIEW_TO）
+#   send：在 GitHub 按核准（environment「newsletter」設了必要審核者）後，寄給訂閱者
+# 不想寄就按 Reject：那幾篇會留在 pending，之後的部署不會再提出來（要補寄就手動執行、勾 retry_pending）。
+# 名單與寄送紀錄在 Cloudflare D1（newsletter/ 的 Worker），寄信走 Amazon SES。腳本：scripts/newsletter.mjs
+# 需要 secrets：NEWSLETTER_ADMIN_TOKEN、NEWSLETTER_AWS_ACCESS_KEY_ID、NEWSLETTER_AWS_SECRET_ACCESS_KEY、NEWSLETTER_PREVIEW_TO
+
+on:
+  workflow_run:
+    workflows: [Build and Deploy]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      retry_pending:
+        description: '也重新提出之前沒寄的（pending）文章'
+        type: boolean
+        default: false
+
+concurrency:
+  group: newsletter
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      count: ${{ steps.plan.outputs.count }}
+    env:
+      HAS_SECRETS: ${{ secrets.NEWSLETTER_ADMIN_TOKEN != '' && secrets.NEWSLETTER_AWS_ACCESS_KEY_ID != '' }}
+    steps:
+      - name: Secrets not configured
+        if: env.HAS_SECRETS != 'true'
+        run: echo "電子報的 secrets 未設定，跳過。"
+
+      - uses: actions/checkout@v4
+        if: env.HAS_SECRETS == 'true'
+
+      # 剛部署出去的網站（RSS 以這份為準）
+      - name: Checkout the deployed site
+        if: env.HAS_SECRETS == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: site
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_SECRETS == 'true'
+        with:
+          node-version: 22
+
+      - name: Find new essays
+        id: plan
+        if: env.HAS_SECRETS == 'true'
+        env:
+          NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
+        run: node scripts/newsletter.mjs plan --site site --out plan.json ${{ inputs.retry_pending && '--retry-pending' || '' }}
+
+      - name: Send previews
+        if: steps.plan.outputs.count > 0
+        env:
+          NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
+          NEWSLETTER_AWS_ACCESS_KEY_ID: ${{ secrets.NEWSLETTER_AWS_ACCESS_KEY_ID }}
+          NEWSLETTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.NEWSLETTER_AWS_SECRET_ACCESS_KEY }}
+          NEWSLETTER_PREVIEW_TO: ${{ secrets.NEWSLETTER_PREVIEW_TO }}
+        run: node scripts/newsletter.mjs preview plan.json
+
+      - uses: actions/upload-artifact@v4
+        if: steps.plan.outputs.count > 0
+        with:
+          name: plan
+          path: plan.json
+          retention-days: 30
+
+  send:
+    needs: plan
+    if: needs.plan.outputs.count > 0
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: newsletter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: plan
+      - name: Send to subscribers
+        env:
+          NEWSLETTER_ADMIN_TOKEN: ${{ secrets.NEWSLETTER_ADMIN_TOKEN }}
+          NEWSLETTER_AWS_ACCESS_KEY_ID: ${{ secrets.NEWSLETTER_AWS_ACCESS_KEY_ID }}
+          NEWSLETTER_AWS_SECRET_ACCESS_KEY: ${{ secrets.NEWSLETTER_AWS_SECRET_ACCESS_KEY }}
+        run: node scripts/newsletter.mjs send plan.json
