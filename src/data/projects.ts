@@ -72,12 +72,12 @@ export const projects: Project[] = [
     en: { name: 'GraphRAG Visualization Tutorial', summary: 'A hands-on guide to Microsoft GraphRAG with visualizations and a prebuilt index, so you can explore it without paying for indexing.' },
   },
   {
-    name: 'agent-broker',
-    summary: 'Discord ↔ ACP coding CLI 橋接器，讓 Claude Code、Codex、Gemini 等 coding agent 直接在 Discord 收發任務。',
-    stack: ['TypeScript', 'ACP', 'Discord'],
-    link: 'https://github.com/wsxqaza12/agent-broker',
+    name: 'cairn-memory',
+    summary: 'Cairn 的開源記憶層：讓 AI Agent 跨 session 記住事情，每條記憶都附上「收據」，也就是它從哪段原文學來的。可以查看、修正，忘掉的就真的不會再回來。',
+    stack: ['JavaScript', 'SQLite', 'MCP', 'Claude Code plugin'],
+    link: 'https://github.com/Cairn-ink/cairn-memory',
     year: '2026',
-    en: { summary: 'A bridge between Discord and ACP coding CLIs, so agents like Claude Code, Codex and Gemini can take tasks straight from Discord.' },
+    en: { summary: 'The open-source memory layer behind Cairn: cross-session memory for AI agents where every memory carries a receipt, the exact source text it came from. Inspect it, correct it, or forget it for good.' },
   },
   {
     name: 'RAG_LangChain_streamlit',
