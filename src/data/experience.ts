@@ -129,7 +129,14 @@ export const talks: Talk[] = [
     en: { event: 'Agile Taiwan', topic: 'From OpenClaw to Cairn: When Agents Join the Team, How Should Memory Be Shared?' },
   },
   { date: '2026-08-04', event: 'AIA 小聚', en: { event: 'AIA Meetup' } },
-  { date: '2026-08-18', event: '2026 台灣人工智慧年會', major: true, en: { event: 'Taiwan AI Annual Conference 2026' } },
+  {
+    date: '2026-08-18',
+    event: '2026 台灣人工智慧年會',
+    topic: '從 AI Session 到團隊記憶：Cairn 的設計與實作',
+    major: true,
+    photo: '/assets/img/speaking/aia-conference-2026.webp',
+    en: { event: 'Taiwan AI Annual Conference 2026', topic: 'From AI Sessions to Team Memory: Designing and Building Cairn' },
+  },
   { date: '2026-10-18', event: '桂格 企業內訓', en: { event: 'Corporate training' } },
   { date: '2026-12-18', event: '新創企業發展協會 演講', en: { event: 'Talk for a startup development association' } },
 ];

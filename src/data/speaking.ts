@@ -18,13 +18,13 @@ export const topics: Topic[] = [
       title: '從 AI Session 到 Shared Memory：Agent 的記憶怎麼共享',
       pitch: '大家都在講 Agent Memory，但個人 Agent 的記憶解決的是連續性；一旦落到團隊，要面對的是來源、範圍、審核與修正。這場整理我研究 Agent Memory 的心得，以及 Cairn 想解的問題：人跟 Agent 怎麼共享團隊記憶。',
       for: '研討會、工程與產品團隊',
-      given: ['AWS Summit Taipei 2026', 'Agile Taiwan'],
+      given: ['2026 臺灣人工智慧年會', 'AWS Summit Taipei 2026', 'Agile Taiwan'],
     },
     en: {
       title: 'From AI Sessions to Shared Memory: How Agents Should Share What They Know',
       pitch: 'Everyone talks about agent memory, but personal memory mostly buys continuity. Once memory belongs to a team, you have to deal with sources, scope, review and correction. This talk distills my research on agent memory and the problem Cairn is built to solve: how people and agents share what a team knows.',
       for: 'Conferences, engineering and product teams',
-      given: ['AWS Summit Taipei 2026', 'Agile Taiwan'],
+      given: ['Taiwan AI Annual Conference 2026', 'AWS Summit Taipei 2026', 'Agile Taiwan'],
     },
   },
   {
