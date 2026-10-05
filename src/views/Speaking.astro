@@ -65,8 +65,8 @@ const photos = [
         </div>
       </div>
       <figure class="photo">
-        <div class="frame"><img src="/assets/img/speaking/stage.webp" alt={L('黃琪婕在 WiDS Taiwan 2026 台上演講', 'ChiChieh Huang speaking at WiDS Taiwan 2026')} width="680" height="850" /></div>
-        <figcaption class="lab">{L('WiDS Taiwan 2026 · 台大集思會議中心 蘇格拉底廳', 'WiDS Taiwan 2026 · Socrates Hall, NTU')}</figcaption>
+        <div class="frame"><img src="/assets/img/speaking/aia-conference-2026.webp" alt={L('黃琪婕在 2026 臺灣人工智慧年會分享 Agent Memory', 'ChiChieh Huang speaking about agent memory at the Taiwan AI Annual Conference 2026')} width="1248" height="780" /></div>
+        <figcaption class="lab">{L('2026 臺灣人工智慧年會 · 中央研究院', 'Taiwan AI Annual Conference 2026 · Academia Sinica')}</figcaption>
       </figure>
     </section>
 
@@ -191,7 +191,7 @@ const photos = [
   .frame::before, .frame::after { content: ""; position: absolute; width: 16px; height: 16px; border: 1px solid var(--ink-3); }
   .frame::before { left: -9px; top: -9px; border-right: 0; border-bottom: 0; }
   .frame::after { right: -9px; bottom: -9px; border-left: 0; border-top: 0; }
-  .frame img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(.55) contrast(1.05); transition: filter .4s; }
+  .frame img { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; filter: grayscale(.55) contrast(1.05); transition: filter .4s; }
   .photo:hover img { filter: none; }
   .photo figcaption { margin-top: 12px; }
 
