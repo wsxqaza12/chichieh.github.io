@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="zh-Hant"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>不可不知的 6 類 Clustering Algorithms | 黃琪婕 ChiChieh Huang</title><meta name="description" content="Clustering Algorithms | 聚類演算法 | K-means | Affinity Propagation | GMM | DBSCAN | BIRCH"><link rel="canonical" href="https://chichieh-huang.com/posts/673d3cc64dad/"><link rel="alternate" hreflang="zh-Hant" href="https://chichieh-huang.com/posts/673d3cc64dad/"><link rel="alternate" hreflang="en" href="https://chichieh-huang.com/en/writing/six-clustering-algorithms/"><link rel="alternate" hreflang="x-default" href="https://chichieh-huang.com/posts/673d3cc64dad/"><link rel="icon" href="/favicon.ico" sizes="32x32"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-96x96.png" sizes="96x96" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest"><link rel="alternate" type="application/rss+xml" title="黃琪婕 ChiChieh Huang" href="/rss.xml"><meta property="og:title" content="不可不知的 6 類 Clustering Algorithms | 黃琪婕 ChiChieh Huang"><meta property="og:description" content="Clustering Algorithms | 聚類演算法 | K-means | Affinity Propagation | GMM | DBSCAN | BIRCH"><meta property="og:type" content="article"><meta property="og:url" content="https://chichieh-huang.com/posts/673d3cc64dad/"><meta property="og:image" content="https://chichieh-huang.com/og/673d3cc64dad.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="不可不知的 6 類 Clustering Algorithms：在黃琪婕寫作地形圖上的位置"><meta property="og:site_name" content="黃琪婕 ChiChieh Huang"><meta property="og:locale" content="zh_TW"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://chichieh-huang.com/og/673d3cc64dad.jpg"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0E1613"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#EDEEE6"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap"><script>
+      document.documentElement.classList.add('js');
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') document.documentElement.dataset.theme = saved;
+      } catch (e) {}
+    </script><link rel="stylesheet" href="/_astro/index.Cw49qxIC.css">
+<style>.sub[data-astro-cid-47vq4obb].band{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:20px clamp(24px,4vw,64px);align-items:end;padding-block:clamp(36px,5vw,64px);border-bottom:1px solid var(--line)}.copy[data-astro-cid-47vq4obb] h2[data-astro-cid-47vq4obb]{margin:6px 0 10px;font-weight:300;font-size:clamp(24px,2.6vw,36px);line-height:1.3}.copy[data-astro-cid-47vq4obb] h2[data-astro-cid-47vq4obb] b[data-astro-cid-47vq4obb]{font-weight:500;color:var(--trail)}.copy[data-astro-cid-47vq4obb] p[data-astro-cid-47vq4obb]{margin:0;color:var(--ink-2);font-size:15px;max-width:34em;word-break:keep-all;overflow-wrap:anywhere}form[data-astro-cid-47vq4obb]{min-width:0}.row[data-astro-cid-47vq4obb]{display:flex;border:1px solid var(--ink-3);transition:border-color .15s}.row[data-astro-cid-47vq4obb]:focus-within{border-color:var(--trail)}input[data-astro-cid-47vq4obb][type=email]{flex:1;min-width:0;background:transparent;border:0;color:var(--ink);font:inherit;font-size:16px;padding:13px 14px;outline:none}input[data-astro-cid-47vq4obb][type=email]::placeholder{color:var(--ink-3)}.go[data-astro-cid-47vq4obb]{border:0;border-left:1px solid var(--ink-3);padding-inline:18px;color:var(--ink)}.row[data-astro-cid-47vq4obb]:focus-within .go[data-astro-cid-47vq4obb]{border-left-color:var(--trail)}.go[data-astro-cid-47vq4obb]:hover,.go[data-astro-cid-47vq4obb]:focus-visible{background:var(--trail);color:var(--ground);outline:none}.msg[data-astro-cid-47vq4obb]{margin:10px 0 0;min-height:1.6em;font-size:14px;color:var(--ink-2)}.msg[data-astro-cid-47vq4obb][data-state=check]{color:var(--trail)}.msg[data-astro-cid-47vq4obb][data-state=invalid],.msg[data-astro-cid-47vq4obb][data-state=slow],.msg[data-astro-cid-47vq4obb][data-state=error]{color:var(--ink)}[data-astro-cid-47vq4obb][data-sub][data-busy] .go[data-astro-cid-47vq4obb]{opacity:.5;pointer-events:none}.hp[data-astro-cid-47vq4obb]{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.vh[data-astro-cid-47vq4obb]{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:760px){.sub[data-astro-cid-47vq4obb].band{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.Cg3SnJ0A.css"></head> <body> <header class="top" data-astro-cid-3ef6ksr2> <div class="bar wrap" data-astro-cid-3ef6ksr2> <a class="id" href="/" aria-label="黃琪婕 首頁" data-astro-cid-3ef6ksr2> <span class="pin" aria-hidden="true" data-astro-cid-3ef6ksr2></span> <span data-astro-cid-3ef6ksr2><b data-astro-cid-3ef6ksr2>黃琪婕</b><span class="sub" data-astro-cid-3ef6ksr2>CHICHIEH HUANG · GEN AI</span></span> </a> <button class="menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="main-nav" data-astro-cid-3ef6ksr2>選單</button> <nav id="main-nav" aria-label="主選單" data-astro-cid-3ef6ksr2> <a href="/" data-astro-cid-3ef6ksr2> 地圖 </a><a href="/posts/" class="on" aria-current="page" data-astro-cid-3ef6ksr2> 文章 </a><a href="/speaking/" class="long" data-astro-cid-3ef6ksr2> 演講 </a><a href="/projects/" class="long" data-astro-cid-3ef6ksr2> 作品 </a><a href="/about/" data-astro-cid-3ef6ksr2> 關於 </a> <a class="invite" href="/speaking/#book" data-astro-cid-3ef6ksr2>邀請合作</a> <a class="lang" href="/en/writing/six-clustering-algorithms/" data-setlang="en" hreflang="en" lang="en" aria-label="English version" data-astro-cid-3ef6ksr2>EN</a> <button class="tgl" id="theme-toggle" type="button" aria-label="切換日間與夜間" data-day="日間" data-night="夜間" data-astro-cid-3ef6ksr2>日間</button> </nav> </div> </header>  <script type="module">const a=document.documentElement,n=document.getElementById("theme-toggle"),o=()=>a.dataset.theme?a.dataset.theme==="light":matchMedia("(prefers-color-scheme: light)").matches,c=()=>{n.textContent=o()?n.dataset.night:n.dataset.day};c();n.addEventListener("click",()=>{a.dataset.theme=o()?"dark":"light";try{localStorage.setItem("theme",a.dataset.theme)}catch{}c(),window.dispatchEvent(new Event("themechange"))});document.querySelectorAll("[data-setlang]").forEach(e=>e.addEventListener("click",()=>{try{localStorage.setItem("lang",e.dataset.setlang)}catch{}}));const d=document.getElementById("menu-btn"),t=document.getElementById("main-nav"),s=e=>{t.classList.toggle("open",e),d.setAttribute("aria-expanded",String(e))};d.addEventListener("click",()=>s(!t.classList.contains("open")));t.addEventListener("click",e=>{e.target.closest("a")&&s(!1)});document.addEventListener("keydown",e=>{e.key==="Escape"&&t.classList.contains("open")&&(s(!1),d.focus())});document.addEventListener("click",e=>{t.classList.contains("open")&&!e.target.closest("header")&&s(!1)});matchMedia("(prefers-color-scheme: light)").addEventListener("change",()=>{c(),window.dispatchEvent(new Event("themechange"))});</script>  <div class="prog" id="prog" aria-hidden="true" data-astro-cid-ojofui7m></div> <main class="wrap" data-astro-cid-ojofui7m> <section class="hero" data-astro-cid-ojofui7m> <div data-astro-cid-ojofui7m> <div class="crumbs lab" data-astro-cid-ojofui7m> <a href="/posts/" data-astro-cid-ojofui7m>文章</a><i data-astro-cid-ojofui7m></i> <a href="/posts/category/技術/" data-astro-cid-ojofui7m>技術</a><i data-astro-cid-ojofui7m></i> <a href="/posts/?r=%E8%B3%87%E6%96%99%E5%B7%A5%E7%A8%8B" data-astro-cid-ojofui7m>資料工程低地 · LOWLANDS</a>   </div> <h1 class="keep" data-astro-cid-ojofui7m>不可不知的 6 類 Clustering Algorithms</h1> <div class="meta" data-astro-cid-ojofui7m> <div data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>日期</span><b data-astro-cid-ojofui7m>2024.01.10</b></div> <div data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>字數</span><b data-astro-cid-ojofui7m>2,678</b></div> <div data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>閱讀</span><b data-astro-cid-ojofui7m>約 8 分鐘</b></div>  <div data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>圖表</span><b data-astro-cid-ojofui7m>8 圖</b></div> </div> <div class="byrow" data-astro-cid-ojofui7m> <img src="/assets/img/avatar-640.webp" alt="" width="40" height="40" data-astro-cid-ojofui7m> <span class="who" data-astro-cid-ojofui7m><b data-astro-cid-ojofui7m>黃琪婕</b><span class="lab" data-astro-cid-ojofui7m>Generative AI 產品開發 · 技術寫作</span></span> <button class="btn" type="button" data-copy="https://chichieh-huang.com/posts/673d3cc64dad/" data-done="已複製連結" data-astro-cid-ojofui7m>複製連結</button> </div>  </div> <div class="locator" id="loc" data-id="673d3cc64dad" data-lang="zh" data-s="{&#34;here&#34;:&#34;本篇&#34;,&#34;reading&#34;:&#34;閱讀中&#34;,&#34;start&#34;:&#34;開始閱讀&#34;,&#34;done&#34;:&#34;走完了&#34;,&#34;left&#34;:&#34;剩約 {n} 分鐘&#34;}" data-series="[]" data-astro-cid-ojofui7m> <canvas id="lcv" role="img" aria-label="位置圖：這篇在寫作地形圖的資料工程低地一帶。" data-astro-cid-ojofui7m></canvas> <div class="ttl lab" data-astro-cid-ojofui7m>位置圖<b data-astro-cid-ojofui7m>資料工程低地一帶</b></div> <div id="lov" data-astro-cid-ojofui7m></div> <div class="mtip" id="mtip" data-astro-cid-ojofui7m></div> <div class="lscale" data-astro-cid-ojofui7m><i id="lsc" style="width:50px" data-astro-cid-ojofui7m></i><span data-astro-cid-ojofui7m>2 週</span></div> <div class="inset" data-astro-cid-ojofui7m><span data-astro-cid-ojofui7m>全圖</span><canvas id="icv" aria-hidden="true" data-astro-cid-ojofui7m></canvas></div> </div> </section> <div class="desk" data-astro-cid-ojofui7m> <aside class="route" aria-label="本篇路線" data-astro-cid-ojofui7m> <div class="head" data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>本篇路線</span><b id="pct" data-astro-cid-ojofui7m>0%</b><span class="lab" id="left" data-mins="8" data-astro-cid-ojofui7m>約 8 分鐘</span></div> <div class="path" id="path" data-astro-cid-ojofui7m><div class="base" data-astro-cid-ojofui7m></div><div class="fill" id="fill" data-astro-cid-ojofui7m></div><div class="me" id="me" data-astro-cid-ojofui7m></div></div> <div class="foot lab" data-astro-cid-ojofui7m>終點 · 支持鼓勵</div> </aside> <div class="mbar" id="mbar" data-astro-cid-ojofui7m> <button type="button" id="mbtn" aria-expanded="false" data-astro-cid-ojofui7m><span id="mcur" data-astro-cid-ojofui7m>開始閱讀</span><span class="pct" id="mpct" data-astro-cid-ojofui7m>0%</span></button> <ol id="mlist" hidden data-astro-cid-ojofui7m> <li data-astro-cid-ojofui7m><a href="#1-基於-質心-的聚類模型" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m>01</em><span data-astro-cid-ojofui7m>基於 “質心” 的聚類模型</span></a></li><li data-astro-cid-ojofui7m><a href="#成員" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>成員</span></a></li><li data-astro-cid-ojofui7m><a href="#應用場景" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>應用場景：</span></a></li><li data-astro-cid-ojofui7m><a href="#優點" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>優點：</span></a></li><li data-astro-cid-ojofui7m><a href="#缺點" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>缺點：</span></a></li><li data-astro-cid-ojofui7m><a href="#2-基於-連通性-的聚類模型" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m>02</em><span data-astro-cid-ojofui7m>基於 “連通性” 的聚類模型</span></a></li><li data-astro-cid-ojofui7m><a href="#成員-1" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>成員</span></a></li><li data-astro-cid-ojofui7m><a href="#3-基於-密度-的聚類模型" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m>03</em><span data-astro-cid-ojofui7m>基於 “密度” 的聚類模型</span></a></li><li data-astro-cid-ojofui7m><a href="#成員-2" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>成員</span></a></li><li data-astro-cid-ojofui7m><a href="#應用場景-1" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>應用場景：</span></a></li><li data-astro-cid-ojofui7m><a href="#優點-1" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>優點：</span></a></li><li data-astro-cid-ojofui7m><a href="#缺點-1" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>缺點：</span></a></li><li data-astro-cid-ojofui7m><a href="#4-基於-圖-的聚類模型" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m>04</em><span data-astro-cid-ojofui7m>基於 “圖” 的聚類模型</span></a></li><li data-astro-cid-ojofui7m><a href="#成員-3" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>成員</span></a></li><li data-astro-cid-ojofui7m><a href="#應用場景-2" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>應用場景：</span></a></li><li data-astro-cid-ojofui7m><a href="#優點-2" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>優點：</span></a></li><li data-astro-cid-ojofui7m><a href="#缺點-2" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>缺點：</span></a></li><li data-astro-cid-ojofui7m><a href="#5-基於-分布-的聚類模型" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m>05</em><span data-astro-cid-ojofui7m>基於 “分布” 的聚類模型</span></a></li><li data-astro-cid-ojofui7m><a href="#成員-4" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>成員</span></a></li><li data-astro-cid-ojofui7m><a href="#應用場景-3" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>應用場景：</span></a></li><li data-astro-cid-ojofui7m><a href="#優點-3" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>優點：</span></a></li><li data-astro-cid-ojofui7m><a href="#缺點-3" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>缺點：</span></a></li><li data-astro-cid-ojofui7m><a href="#6-基於-壓縮-的聚類模型" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m>06</em><span data-astro-cid-ojofui7m>基於 “壓縮” 的聚類模型</span></a></li><li data-astro-cid-ojofui7m><a href="#成員-5" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>成員</span></a></li><li data-astro-cid-ojofui7m><a href="#應用場景-4" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>應用場景：</span></a></li><li data-astro-cid-ojofui7m><a href="#優點-4" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>優點：</span></a></li><li data-astro-cid-ojofui7m><a href="#缺點-4" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>缺點：</span></a></li><li data-astro-cid-ojofui7m><a href="#支持鼓勵" data-astro-cid-ojofui7m><em data-astro-cid-ojofui7m></em><span data-astro-cid-ojofui7m>支持鼓勵</span></a></li> </ol> <div class="pbar" id="mpbar" data-astro-cid-ojofui7m></div> </div> <div class="paper" data-astro-cid-ojofui7m> <article class="prose" id="prose" data-astro-cid-ojofui7m> <figure class="plate"><button type="button" class="zoom" aria-label="放大圖 1"><img src="/assets/673d3cc64dad/1*lIZN6syEUs2GRstYUCXqnA.png" alt="" width="1098" height="471"></button></figure>
+<p>在機器學習領域，Clustering Algorithms 因其在無監督學習場景中的實用性而廣受歡迎。 這些演算法旨在基於不同的相似性定義和方法學將資料點歸類為群集。 在我學習過程中做了一些筆記，主要將 Clustering Algorithms 分為六大類，以下跟大家介紹各類的概述及其細微差別。</p>
+<h3 id="1-基於-質心-的聚類模型">1. 基於 “質心” 的聚類模型</h3>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 2"><img src="/assets/673d3cc64dad/1*R4q4oLy344DdNwIVSA7jhQ.png" alt="k-means" width="617" height="367" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 2</span><span class="ct">k-means</span></figcaption></figure>
+
+<p>基於質心的聚類的核心概念是圍繞著質心進行聚類 ，也就是一個中心資料點（不一定來自輸入資料集）進行聚類。 演算法如 KMeans、KMeans+ + 和KMedoids 以資料點與這些質心的接近程度為軸心，迭代調整群集以最小化群集內的方差，並最大化群集之間的方差，非常適合球狀或團狀的資料分佈。</p>
+<h3 id="成員">成員</h3>
+<ul>
+<li><strong>KMeans</strong> ： 透過最小化資料點與其各自群集質心之間的平方距離總和，將資料劃分為K個群集。
+<strong>KMeans+ +</strong> ： 在KMeans上的改進，它改進了質心初始化以獲得更好的收斂性。
+<strong>KMedoids</strong> ： 類似於KMeans，但使用實際資料點作為中心，使其對雜訊和異常值更加穩健。</li>
+</ul>
+<h3 id="應用場景">應用場景：</h3>
+<ul>
+<li><strong>市場區隔</strong> ： 基於顧客的購買歷史與行為數據，將顧客分為不同的市場區隔。</li>
+<li><strong>文件分類</strong> ： 將文件集合依文字內容的相似性分組。</li>
+</ul>
+<h3 id="優點">優點：</h3>
+<ul>
+<li><strong>易於實作</strong> ： KMeans 及其變種演算法邏輯簡單，容易理解與實作。</li>
+<li><strong>計算效率高</strong> ： 對於中等規模的資料集，這類演算法通常運作迅速，能夠在可接受的時間內得到結果。</li>
+</ul>
+<h3 id="缺點">缺點：</h3>
+<ul>
+<li><strong>選擇K值</strong> ： KMeans 演算法需要預先指定K值（即聚類的數量），而在實際應用中，這個最佳 K 值往往是未知的，可能需要透過多次嘗試和評估來確定。</li>
+<li><strong>對初始質心敏感</strong> ： 尤其是 KMeans，演算法的結果可能對初始質心的選擇非常敏感，可能導致局部最佳解。</li>
+</ul>
+<h3 id="2-基於-連通性-的聚類模型">2. 基於 “連通性” 的聚類模型</h3>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 3"><img src="/assets/673d3cc64dad/1*UHCBt0zsoCsv-nAtiOF9bw.png" alt="層次聚類" width="823" height="359" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 3</span><span class="ct">層次聚類</span></figcaption></figure>
+
+<p>這種聚類類型，以層次聚類為例，基於資料點的距離連通性建立模型。 層次方法建構了樹狀圖，這是表示模式嵌套分組和相似性水準的樹狀結構。</p>
+<h3 id="成員-1">成員</h3>
+<ul>
+<li><strong>層次聚類</strong> ： 使用聚合（自下而上）或分裂（由上而下）方法，透過建立群集的層次結構來建立群集。</li>
+</ul>
+<h3 id="3-基於-密度-的聚類模型">3. 基於 “密度” 的聚類模型</h3>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 4"><img src="/assets/673d3cc64dad/1*eTx-91BCCRAH0nmT_D9o9A.png" alt="DBSCAN" width="558" height="405" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 4</span><span class="ct">DBSCAN</span></figcaption></figure>
+
+<p>與基於質心的方法相反，基於密度的聚類尋找被低密度區域分隔的高密度區域，將高密度區域連接成群集。 它能夠處理任意形狀的聚類，並且擅長排除噪聲點和識別異常值。</p>
+<h3 id="成員-2">成員</h3>
+<ul>
+<li><strong>DBSCAN</strong> ： 這是一種經典的密度聚類算法，將群集定義為高密度區域，由低密度區域分隔，並且能找到任意形狀的群集。</li>
+<li><strong>OPTICS</strong> ： DBSCAN 的擴展，能夠處理不同密度的資料，提供了一個聚類排序，從而在不同的尺度上展示數據的聚類結構。</li>
+<li><strong>HDBSCAN</strong> ： 一種較新的演算法，透過將 DBSCAN 單一距離測量轉化為層次聚類演算法，使其更適應不同密度的數據。</li>
+</ul>
+<h3 id="應用場景-1">應用場景：</h3>
+<ul>
+<li><strong>地理空間數據分析</strong> ： 能夠根據地理位置數據點的密集程度來識別人口密集區或者地貌特徵。</li>
+<li><strong>異常檢測</strong> ： 在各種應用場景中，如信用卡欺詐檢測或網絡安全中，用於識別不符合正常行為模式的異常點。</li>
+</ul>
+<h3 id="優點-1">優點：</h3>
+<ul>
+<li><strong>不需假設聚類形狀</strong> ： 能夠識別任意形狀的聚類，不像基於距離的算法那樣受限於球狀聚類。</li>
+<li><strong>免疫噪聲和異常值</strong> ： 相對於其他聚類方法，基於密度的算法能夠很好地識別並忽略噪聲和異常值。</li>
+</ul>
+<h3 id="缺點-1">缺點：</h3>
+<ul>
+<li><strong>參數選擇</strong> ： DBSCAN和其變種算法對參數的設定非常敏感，如鄰域的大小和密度閾值，這可能影響聚類質量。</li>
+<li><strong>處理大規模數據集的計算復雜性</strong> ： 對於大型數據集，這些算法可能需要較長的計算時間，特別是在計算密度達到要求的區域時。</li>
+</ul>
+<h3 id="4-基於-圖-的聚類模型">4. 基於 “圖” 的聚類模型</h3>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 5"><img src="/assets/673d3cc64dad/1*3lwh9l4pZsnAxH1TNkaXPA.png" alt="親和力傳播" width="485" height="360" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 5</span><span class="ct">親和力傳播</span></figcaption></figure>
+
+<p>這種演算法將數據點視為圖中的節點，通過節點間的相似度或距離來構建邊，進而在這個圖中識別出聚類結構。這類算法特別適合於揭示數據中的非線性結構，並能夠有效地處理高維數據。</p>
+<h3 id="成員-3">成員</h3>
+<ul>
+<li><strong>親和力傳播</strong> ： 這個算法通過在數據點之間傳遞信息來識別聚類中心，因此不需要確定或估計聚類的數量。</li>
+<li><strong>譜聚類</strong> ： 通過數據的相似度矩陣來進行維度降低，然後在降維後的空間進行聚類，這樣做對於識別複雜結構的聚類特別有效。</li>
+</ul>
+<h3 id="應用場景-2">應用場景：</h3>
+<ul>
+<li><strong>社交網絡分析</strong> ： 在社交網絡中，基於圖的聚類方法可以識別出社群結構或者潛在的利益小組。</li>
+<li><strong>生物信息學</strong> ： 在蛋白質互動網絡中，可以用來發現功能相關的蛋白質群組。</li>
+</ul>
+<h3 id="優點-2">優點：</h3>
+<ul>
+<li><strong>靈活性</strong> ： 基於圖的方法在處理任意形狀的聚類時非常有彈性，可以揭示數據中隱藏的非線性結構。</li>
+<li>適應性： 對於不同尺度和密度的數據，這些方法能夠通過調整相似度函數來適應。</li>
+</ul>
+<h3 id="缺點-2">缺點：</h3>
+<ul>
+<li><strong>計算複雜度</strong> ： 對於大規模數據集，基於圖的聚類方法可能需要大量的計算資源，特別是在構建和處理圖時。</li>
+<li><strong>參數選擇</strong> ： 這些方法對參數的選擇很敏感，例如選擇合適的相似度閾值或鄰域大小對於最終的聚類結果有很大的影響。</li>
+</ul>
+<h3 id="5-基於-分布-的聚類模型">5. 基於 “分布” 的聚類模型</h3>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 6"><img src="/assets/673d3cc64dad/1*uTEsD-MvgKu-i2Cla8TMWg.png" alt="GMM" width="500" height="289" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 6</span><span class="ct">GMM</span></figcaption></figure>
+
+<p>有別於其他基於距離或密度的聚類方法，基於分佈的聚類方法採用機率模型來描述資料分佈。 這種方法假設資料點是由多個機率分佈產生的，每個分佈對應一個群集。 透過估計這些分佈的參數，演算法能夠確定資料點屬於哪個分佈，從而實現聚類。 這種模型的優勢在於能夠處理不同形狀和大小的群集，並且能夠給出資料點屬於每個群集的機率，這對於某些應用來說非常有用。</p>
+<h3 id="成員-4">成員</h3>
+<ul>
+<li><strong>高斯混合模型（GMMs）</strong> ： 聚類中最常見的演算法。 它假設所有的數據點都是由有限數量的高斯分佈混合產生的。 每個高斯分佈對應一個群集，並由其平均值和協方差定義。 透過使用最大似然估計或期望最大化（EM）演算法，可以估計出這些分佈的參數。 GMM不僅可以辨識出群集的中心，還能夠評估每個點屬於各個群集的不確定性，這是GMM的一個重要特性。</li>
+</ul>
+<h3 id="應用場景-3">應用場景：</h3>
+<ul>
+<li><strong>影像處理</strong> ： 在影像分割中，可以將像素點分配到不同的顏色組成的群集中。</li>
+<li><strong>生物資訊</strong> ： 在基因表現資料分析中，能夠幫助辨識出有相似表現模式的基因群集。</li>
+<li><strong>財務分析</strong> ： 在風險管理和市場區隔中，可以用來識別不同的客戶行為模式或投資組合的風險分佈。</li>
+</ul>
+<h3 id="優點-3"><strong>優點：</strong></h3>
+<ul>
+<li><strong>彈性</strong> ： 能夠表示出群集的橢圓形狀，相較於 KMeans 這種核心聚類只能找出球形群集的演算法更有彈性。</li>
+<li><strong>軟聚類</strong> ： 提供的是每個資料點屬於每個群集的機率，這種「軟聚類」方法允許資料點被分配到多個群集中，這在許多現實世界的應用中是有意義的 。</li>
+</ul>
+<h3 id="缺點-3">缺點：</h3>
+<ul>
+<li><strong>計算成本</strong> ： 由於需要估計每個組分的協方差矩陣，GMM在高維度資料上的計算成本可能非常高。</li>
+<li><strong>選擇組分數量</strong> ： 在實際應用中，如何確定混合組分的數量往往是一個挑戰，通常需要依賴模型選擇準則，如貝葉斯資訊準則（BIC）。</li>
+</ul>
+<h3 id="6-基於-壓縮-的聚類模型">6. 基於 “壓縮” 的聚類模型</h3>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 7"><img src="/assets/673d3cc64dad/1*_sYJuWt0mxhW-lll9FegJQ.png" alt="BIRCH" width="332" height="319" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 7</span><span class="ct">BIRCH</span></figcaption></figure>
+
+<p>這類型的聚類模型關注於資料的降維和空間壓縮。 主要的核心思想是：高維度資料可以在低維度空間中以更簡潔的形式表示，而這個過程可以揭示資料的內在結構。 聚類過程在降維後的空間中進行，這有助於提高計算效率，同時可能發現在原始高維空間中不明顯的資料聚類結構。</p>
+<h3 id="成員-5">成員</h3>
+<ul>
+<li><strong>BIRCH</strong> ： 這種方法是為大規模資料集設計的一種聚類演算法，並能有效處理雜訊和異常值。。它以增量和動態的方式聚類輸入的多維度度量資料點，嘗試在可用資源（即記憶體和時間限制）條件下產生最佳品質的聚類結果。</li>
+</ul>
+<h3 id="應用場景-4">應用場景：</h3>
+<ul>
+<li><strong>大數據分析</strong> ： 在處理包含數百萬甚至數十億個資料點的資料集時，BIRCH 演算法能夠快速有效地辨識出資料的聚類結構。</li>
+<li><strong>影像壓縮</strong> ： 在影像處理中，可以使用 BIRCH 演算法對像素進行聚類，以實現影像的壓縮和簡化。</li>
+</ul>
+<h3 id="優點-4">優點：</h3>
+<ul>
+<li><strong>擴展性</strong> ： BIRCH 能夠處理非常大的資料集，同時保持較低的記憶體消耗。</li>
+<li><strong>可處理雜訊</strong> ： 由於其預處理步驟，BIRCH 能夠在最終聚類前識別並處理雜訊和異常值。</li>
+</ul>
+<h3 id="缺點-4">缺點：</h3>
+<ul>
+<li><strong>對參數敏感</strong> ： BIRCH 中的閾值參數對最終的聚類結果有重要影響，不恰當的參數設定可能導致聚類效果不佳。</li>
+<li><strong>高維度資料的限制</strong> ： 雖然可以處理大規模數據，但其效果在高維度資料上可能會降低，因為高維空間中的距離度量變得不那麼可靠。</li>
+</ul>
+<h3 id="支持鼓勵">支持鼓勵</h3>
+<p>如果文章對你有幫助，或願意鼓勵我持續創作，可以幫文章拍手，或點擊下方連結請我喝一杯咖啡，感謝支持!</p>
+<figure class="plate"><button type="button" class="zoom" aria-label="放大圖 8"><img src="/assets/673d3cc64dad/1*QCQqlZr6doDP-cszzpaSpw.png" alt="" width="1090" height="306" loading="lazy" decoding="async"></button><figcaption><span class="fn">圖 8</span><span class="ct"><a href="https://medium.com/@cch.chichieh/%E4%B8%8D%E5%8F%AF%E4%B8%8D%E7%9F%A5%E7%9A%84-6-%E9%A1%9E-clustering-algorithms-673d3cc64dad" target="_blank" rel="noopener">Post</a> converted from Medium by <a href="https://github.com/ZhgChgLi/ZMediumToMarkdown" target="_blank" rel="noopener">ZMediumToMarkdown</a>.</span></figcaption></figure>
+ </article> <p class="tags lab" data-astro-cid-ojofui7m><span data-astro-cid-ojofui7m>#clustering</span><span data-astro-cid-ojofui7m>#machine-learning</span><span data-astro-cid-ojofui7m>#data-science</span><span data-astro-cid-ojofui7m>#k-means</span><span data-astro-cid-ojofui7m>#中文</span><span data-astro-cid-ojofui7m>#Clustering</span></p> <div class="end" data-astro-cid-ojofui7m> <div class="fin" data-astro-cid-ojofui7m> <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true" data-astro-cid-ojofui7m><g fill="var(--trail)" stroke="var(--ground)" stroke-width="2" data-astro-cid-ojofui7m><ellipse cx="32" cy="55" rx="24" ry="7" data-astro-cid-ojofui7m></ellipse><ellipse cx="33" cy="42" rx="18" ry="6.2" data-astro-cid-ojofui7m></ellipse><ellipse cx="31" cy="30.5" rx="13" ry="5.2" data-astro-cid-ojofui7m></ellipse><ellipse cx="32.5" cy="21" rx="8.5" ry="4.2" data-astro-cid-ojofui7m></ellipse></g></svg> <div data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>本段終點</span><p class="fint" data-astro-cid-ojofui7m>這段路 <b data-astro-cid-ojofui7m>2,678</b> 字，走完了。</p></div> <div class="acts" data-astro-cid-ojofui7m> <button class="btn" type="button" data-copy="https://chichieh-huang.com/posts/673d3cc64dad/" data-done="已複製連結" data-astro-cid-ojofui7m>複製連結</button> <a class="btn" href="/rss.xml" data-astro-cid-ojofui7m>RSS 訂閱</a> <a class="btn" href="/" data-astro-cid-ojofui7m>回到地圖</a> </div> </div> <section class="sub band" data-sub data-msgs="{&#34;sending&#34;:&#34;送出中…&#34;,&#34;check&#34;:&#34;差一步：到信箱點確認連結就完成了。（沒看到的話，看一下垃圾信匣。）&#34;,&#34;invalid&#34;:&#34;這個 Email 看起來收不到信，檢查一下有沒有打錯？&#34;,&#34;slow&#34;:&#34;嘗試太多次了，等一下再試。&#34;,&#34;error&#34;:&#34;出了點問題，請稍後再試。&#34;}" data-astro-cid-47vq4obb> <div class="copy" data-astro-cid-47vq4obb> <span class="lab" data-astro-cid-47vq4obb>電子報</span> <h2 class="keep" data-astro-cid-47vq4obb>下一篇寫好時，<b data-astro-cid-47vq4obb>寄給你。</b></h2> <p data-astro-cid-47vq4obb>新文章上站時寄一封信，不寄別的。隨時一鍵退訂。</p> </div> <form method="post" action="/api/newsletter/subscribe" novalidate data-astro-cid-47vq4obb> <input type="hidden" name="lang" value="zh" data-astro-cid-47vq4obb> <input type="hidden" name="source" value="/posts/673d3cc64dad/" data-astro-cid-47vq4obb> <label class="hp" aria-hidden="true" data-astro-cid-47vq4obb>Website<input type="text" name="website" tabindex="-1" autocomplete="off" data-astro-cid-47vq4obb></label> <div class="row" data-astro-cid-47vq4obb> <label class="vh" for="sub-band" data-astro-cid-47vq4obb>你的 Email</label> <input id="sub-band" type="email" name="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" spellcheck="false" data-astro-cid-47vq4obb> <button class="btn go" type="submit" data-astro-cid-47vq4obb>訂閱<span aria-hidden="true" data-astro-cid-47vq4obb>→</span></button> </div> <p class="msg" role="status" aria-live="polite" data-astro-cid-47vq4obb></p> </form> </section>  <script type="module">for(const t of document.querySelectorAll("[data-sub]")){const e=t.querySelector("form"),o=t.querySelector(".msg"),r=JSON.parse(t.dataset.msgs),s=a=>{o.dataset.state=a,o.textContent=r[a]??r.error};e.addEventListener("submit",async a=>{a.preventDefault();const n=Object.fromEntries(new FormData(e));if(!/^\S+@\S+\.\S+$/.test(String(n.email??"").trim()))return s("invalid");t.dataset.busy="",s("sending");try{const c=await fetch(e.action,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(n)}),i=await c.json().catch(()=>({}));s(i.state??(c.ok?"check":"error")),i.state==="check"&&e.reset()}catch{s("error")}finally{delete t.dataset.busy}})}</script> <div class="legs pager" data-astro-cid-ojofui7m> <a class="pg" href="/posts/974e58b1b984/" data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>← 上一篇 · 2024.01.08</span><b class="keep" data-astro-cid-ojofui7m>必須知道的 6 種流行 API 架構風格</b></a> <a class="pg nx" href="/posts/2bfcc3ad8b54/" data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>下一篇 · 2024.01.12 →</span><b class="keep" data-astro-cid-ojofui7m>一起為開源貢獻! 提交第一個PR | 新手向</b></a> </div> <div class="nb" data-astro-cid-ojofui7m> <span class="lab" data-astro-cid-ojofui7m>附近的石堆 · 地圖上離這篇最近的文章</span> <div class="cards" data-astro-cid-ojofui7m> <a class="nbc" href="/posts/974e58b1b984/" data-astro-cid-ojofui7m> <span class="lab" data-astro-cid-ojofui7m><span data-astro-cid-ojofui7m>資料工程低地</span><span data-astro-cid-ojofui7m>相距 2 天</span></span> <b class="keep" data-astro-cid-ojofui7m>必須知道的 6 種流行 API 架構風格</b> <span class="x" data-astro-cid-ojofui7m>六種流行的API架構風格：Restful, gRPC, SOAP, GraphQL, WebSocke, Webhook</span> </a><a class="nbc" href="/posts/8eabac894a59/" data-astro-cid-ojofui7m> <span class="lab" data-astro-cid-ojofui7m><span data-astro-cid-ojofui7m>資料工程低地</span><span data-astro-cid-ojofui7m>相距 12 天</span></span> <b class="keep" data-astro-cid-ojofui7m>加速 Pandas | WSL2 安裝 cuDF</b> <span class="x" data-astro-cid-ojofui7m>前言</span> </a><a class="nbc" href="/posts/1c7b2f538c8f/" data-astro-cid-ojofui7m> <span class="lab" data-astro-cid-ojofui7m><span data-astro-cid-ojofui7m>資料工程低地</span><span data-astro-cid-ojofui7m>相距 13 天</span></span> <b class="keep" data-astro-cid-ojofui7m>WSL2 安裝 conda</b> <span class="x" data-astro-cid-ojofui7m>使用 wins 享受 linux 的 python</span> </a> </div> </div> <div class="author" data-astro-cid-ojofui7m> <img src="/assets/img/avatar-640.webp" alt="黃琪婕" width="84" height="84" loading="lazy" data-astro-cid-ojofui7m> <div data-astro-cid-ojofui7m><span class="lab" data-astro-cid-ojofui7m>測繪者</span><h2 data-astro-cid-ojofui7m>黃琪婕</h2><p data-astro-cid-ojofui7m>做 Generative AI 產品，也把它寫成中文。最近在研究 Agent Memory，並放回 Cairn 裡實作對照。</p></div> <div class="acts" data-astro-cid-ojofui7m> <a class="btn" href="/about/" data-astro-cid-ojofui7m>關於我</a> <button class="btn" type="button" data-copy="cch.chichieh@gmail.com" data-done="已複製 cch.chichieh@gmail.com" data-astro-cid-ojofui7m>邀請演講 · 複製 Email</button> </div> </div> </div> </div> </div> </main> <dialog class="lb" id="lb" aria-label="放大圖片" data-astro-cid-ojofui7m> <div class="in" data-astro-cid-ojofui7m><img id="lbImg" alt="" data-astro-cid-ojofui7m></div> <div class="lbbar" data-astro-cid-ojofui7m><span id="lbCap" data-astro-cid-ojofui7m></span><button class="btn" type="button" id="lbClose" data-astro-cid-ojofui7m>關閉 ✕</button></div> </dialog>  <footer class="wrap" data-astro-cid-sz7xmlte> <span class="lab" data-astro-cid-sz7xmlte>© 2026 黃琪婕 · 由文字與一隻龍蝦驅動</span> <span class="links lab" data-astro-cid-sz7xmlte> <a href="https://github.com/wsxqaza12" data-astro-cid-sz7xmlte>GitHub</a> <a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/" data-astro-cid-sz7xmlte>LinkedIn</a> <a href="/newsletter/" data-astro-cid-sz7xmlte>電子報</a> <a href="/rss.xml" data-astro-cid-sz7xmlte>RSS</a> <a href="/en/" data-setlang="en" hreflang="en" data-astro-cid-sz7xmlte>English</a> </span> <span class="lab" data-astro-cid-sz7xmlte>N 25°02′ E 121°33′ · 比例尺 1 : 147,593 字</span> </footer>  <div class="enhint" id="enhint" lang="en" hidden> <span>This page is also available in English.</span> <a href="/en/writing/six-clustering-algorithms/" hreflang="en">Read in English →</a> <button type="button" id="enhint-x" aria-label="Dismiss">✕</button> </div>
+      <script>
+        // 中文頁、但瀏覽器語言沒有中文：右下角提示有英文版（深層連結不自動轉址，交給讀者選）
+        (function () {
+          try {
+            var pref = localStorage.getItem('lang');
+            var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ''];
+            if (pref || langs.some(function (l) { return /^zh\b/i.test(l); })) return;
+            var box = document.getElementById('enhint');
+            box.hidden = false;
+            box.querySelector('a').addEventListener('click', function () { try { localStorage.setItem('lang', 'en'); } catch (e) {} });
+            document.getElementById('enhint-x').addEventListener('click', function () { box.hidden = true; try { localStorage.setItem('lang', 'zh'); } catch (e) {} });
+          } catch (e) {}
+        })();
+      </script> </body> </html>  <script type="module" src="/_astro/Post.astro_astro_type_script_index_0_lang.D33dPUKf.js"></script>
