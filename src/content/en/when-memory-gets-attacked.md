@@ -6,10 +6,8 @@ description: >-
   case shows how a claim becomes "policy," and how to separate notes from rules,
   gate actions, clean up and test.
 tags: []
-sourceHash: '72686b075eca'
+sourceHash: 'b98985d197b5'
 ---
-
-When memory gets attacked
 
 Lately I've been going through security research on agent memory, and the more I read, the more of a headache it becomes. Once AI gets a better memory, you also have to guard against people slipping their own demands into the working notes it will keep coming back to. Last time, we talked about how an AI might record "not yet confirmed" as "settled," which is why we keep the source of each memory, so it can be checked and corrected later. But what if someone deliberately exploits that process?
 
