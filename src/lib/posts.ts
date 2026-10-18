@@ -101,7 +101,7 @@ export function titleIn(post: Post, lang: 'zh' | 'en'): string {
 }
 
 export function regionOfPost(post: Post): string {
-  return regionOf(post.id, post.data.title, (post.data as { region?: string }).region);
+  return regionOf(post.id, post.data.title, post.data.region, post.data.category);
 }
 
 /** 地圖與文章列表共用的精簡資料（順序 = 日期新到舊，地圖的隨機位移也依這個順序） */

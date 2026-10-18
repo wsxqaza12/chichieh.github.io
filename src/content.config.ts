@@ -10,7 +10,7 @@ const postSchema = z.object({
   draft: z.boolean().default(false),
   hero: z.string().optional(),
   source: z.string().optional(),
-  /** 地形圖上的區域（資料工程、LLM、RAG、語音・Avatar、Vibe Coding、Agent、龍蝦、MCP、記憶），不填就自動判斷 */
+  /** 地形圖上的區域（雜談、資料工程、LLM、RAG、語音・Avatar、Vibe Coding、Agent、龍蝦、MCP、記憶），不填就自動判斷 */
   region: z.string().optional(),
   /** 這篇本身是另一篇中文文章的英文版（Medium 時期的英文翻譯）：英文網站改用 src/content/en/ 的版本，不重複列出 */
   translationOf: z.string().optional(),

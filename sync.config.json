@@ -28,6 +28,22 @@
       ]
     },
     {
+      "dir": "寫過的文章/雜談",
+      "category": "雜談",
+      "excludeFiles": [
+        "CTO職缺分享.md",
+        "Cursor 收購 Graphite.md",
+        "GitHub回顧.md",
+        "The Man Who Can't Be Moved.md",
+        "創業擴容.md",
+        "從知道要做什麼到知道為什麼而做.md",
+        "把時間買回來與龍蝦.md",
+        "當你學會擁抱失敗，機會就在下個轉角等你.md",
+        "繼續當個Giver.md",
+        "這不是一門 Web Programming 課，而是時代交界點.md"
+      ]
+    },
+    {
       "dir": "待發表的文章",
       "category": "趨勢談",
       "draft": true
