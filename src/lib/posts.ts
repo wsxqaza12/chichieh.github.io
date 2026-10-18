@@ -46,6 +46,12 @@ export function formatDate(d: Date): string {
 /** 2026.09.22 */
 export const dotDate = (d: Date) => formatDate(d).replaceAll('/', '.');
 
+/** 舊文的收錄日要明確標示，不能當成原發表日。 */
+export function postDate(post: Post, lang: 'zh' | 'en' = 'zh'): string {
+  const date = dotDate(post.data.date);
+  return post.data.dateKind === 'archived' ? `${date} ${lang === 'en' ? '(archived)' : '補登'}` : date;
+}
+
 const CJK = /[一-鿿㐀-䶿]/g;
 function plain(body: string): string {
   return body
@@ -109,6 +115,7 @@ export interface PostSummary {
   id: string;
   t: string;
   d: string; // YYYY-MM-DD
+  archived?: boolean; // d 是舊文補登日，非原發表日
   n: number; // 字數
   topic: string; // 區域
   x: string; // 摘要
@@ -129,6 +136,7 @@ export function summarize(post: Post): PostSummary {
     id: post.id,
     t: displayTitle(post),
     d: post.data.date.toISOString().slice(0, 10),
+    ...(post.data.dateKind === 'archived' ? { archived: true } : {}),
     n: charCount(post.body ?? ''),
     topic: regionOfPost(post),
     x: post.data.description ?? '',

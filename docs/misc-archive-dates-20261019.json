@@ -1,0 +1,78 @@
+{
+  "articles": [
+    {
+      "file": "CTO職缺分享.md",
+      "originalDate": null,
+      "knownBy": "2026-02-23",
+      "evidence": "首次批次匯入；原文已標示已徵到"
+    },
+    {
+      "file": "Cursor 收購 Graphite.md",
+      "originalDate": null,
+      "possibleRange": [
+        "2025-12-19",
+        "2026-02-23"
+      ],
+      "evidence": "Cursor官方公告2025-12-19；文章於2026-02-23已匯入",
+      "source": "https://cursor.com/blog/graphite"
+    },
+    {
+      "file": "GitHub回顧.md",
+      "originalDate": "2026-01-03",
+      "evidence": "LinkedIn 原始貼文的 SocialMediaPosting.datePublished；核對作者 ChiChieh Huang 與內文，日期轉為台北時間。",
+      "originalTimestamp": "2026-01-03T01:30:04.064Z",
+      "source": "https://cn.linkedin.com/posts/chichieh-huang-5322881ba_github%E5%9B%9E%E9%A1%A7-activity-7413028845110521856-VpCG"
+    },
+    {
+      "file": "The Man Who Can't Be Moved.md",
+      "originalDate": null,
+      "publishRecommendation": "hold",
+      "evidence": "全文是Saanya Ojha同名文章中的兩句摘錄，沒有作者自己的評論",
+      "source": "https://saanyaojha.substack.com/p/the-man-who-cant-be-moved"
+    },
+    {
+      "file": "創業擴容.md",
+      "originalDate": null,
+      "knownBy": "2026-02-23",
+      "evidence": "首次批次匯入，缺原發表日期"
+    },
+    {
+      "file": "從知道要做什麼到知道為什麼而做.md",
+      "originalDate": null,
+      "estimate": "約2025年11月",
+      "evidence": "2026年新文章回指去年十一月YO策略工作坊及當時心得；舊文說上週參加，屬推論"
+    },
+    {
+      "file": "把時間買回來與龍蝦.md",
+      "originalDate": "2026-04-09",
+      "draftTrackedAt": "2026-03-30",
+      "movedToPublishedAt": "2026-04-14",
+      "evidence": "LinkedIn 原始貼文的 SocialMediaPosting.datePublished；核對作者 ChiChieh Huang 與內文，日期轉為台北時間。",
+      "originalTimestamp": "2026-04-09T08:32:59.673Z",
+      "source": "https://cn.linkedin.com/posts/chichieh-huang-5322881ba_%E7%94%A8%E9%BE%8D%E8%9D%A6%E6%8A%8A%E6%99%82%E9%96%93%E8%B2%B7%E5%9B%9E%E4%BE%86-activity-7447924513184575488-ufTK"
+    },
+    {
+      "file": "當你學會擁抱失敗，機會就在下個轉角等你.md",
+      "originalDate": null,
+      "knownBy": "2026-02-23",
+      "evidence": "首次批次匯入，缺原發表日期"
+    },
+    {
+      "file": "繼續當個Giver.md",
+      "originalDate": null,
+      "knownBy": "2026-02-23",
+      "evidence": "首次批次匯入，缺原發表日期"
+    },
+    {
+      "file": "這不是一門 Web Programming 課，而是時代交界點.md",
+      "originalDate": "2026-01-13",
+      "evidence": "LinkedIn 原始貼文的 SocialMediaPosting.datePublished；核對作者 ChiChieh Huang 與內文，日期轉為台北時間。",
+      "originalTimestamp": "2026-01-13T11:39:52.021Z",
+      "source": "https://cn.linkedin.com/posts/chichieh-huang-5322881ba_%E9%80%99%E4%B8%8D%E6%98%AF%E4%B8%80%E9%96%80-web-programming-%E8%AA%B2%E8%80%8C%E6%98%AF%E6%99%82%E4%BB%A3%E4%BA%A4%E7%95%8C%E9%BB%9E-%E9%80%99%E6%96%87%E7%AB%A0%E5%BF%AB%E4%B8%80%E5%80%8B%E6%9C%88%E4%BA%86-activity-7416806184734703616-9rn1"
+    }
+  ],
+  "count": 10,
+  "status": "Date evidence for nine approved archive essays; one external excerpt remains excluded.",
+  "auditedAt": "2026-10-19",
+  "timezone": "Asia/Taipei"
+}

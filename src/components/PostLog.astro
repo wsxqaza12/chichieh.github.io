@@ -1,6 +1,6 @@
 ---
 // 野外紀錄：文章清單，可依地圖區域篩選。首頁、文章列表、分類頁共用。
-import { postUrl, dotDate, titleIn, lengthOf, regionOfPost, type Post } from '../lib/posts';
+import { postUrl, postDate, titleIn, lengthOf, regionOfPost, type Post } from '../lib/posts';
 import { REGIONS } from '../lib/regions';
 import { ui, type Lang } from '../i18n';
 
@@ -36,7 +36,7 @@ const order = REGIONS.map((_, k) => k).reverse().filter((k) => counts[k] > 0);
     {rows.map(({ p, k }, i) => {
       return (
         <a class="lr" href={postUrl(p, lang)} data-k={k} hidden={limit > 0 && i >= limit ? true : undefined}>
-          <span class="d">{dotDate(p.data.date)}</span>
+          <span class="d">{postDate(p, lang)}</span>
           <span class="r">{rname(k)}</span>
           <span class="t">
             <span>{titleIn(p, lang)}</span>
@@ -61,10 +61,11 @@ const order = REGIONS.map((_, k) => k).reverse().filter((k) => counts[k] > 0);
   .f[aria-pressed='true'] { color: var(--ground); background: var(--trail); border-color: var(--trail); }
   .f[aria-pressed='true'] i { color: var(--ground); }
   .log { border-top: 1px solid var(--ink-2); }
-  .lr { display: grid; grid-template-columns: 96px 150px minmax(0, 1fr) 84px; gap: 16px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); transition: background .15s; }
+  .lr { display: grid; grid-template-columns: 128px 150px minmax(0, 1fr) 84px; gap: 16px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--line); transition: background .15s; }
   .lr[hidden] { display: none; }
   a.lr:hover { background: linear-gradient(90deg, var(--trail-soft), transparent 70%); }
   .d, .n { font-family: var(--mono); font-stretch: 80%; font-size: 11.5px; color: var(--ink-2); letter-spacing: .04em; }
+  .d { white-space: nowrap; }
   .n { text-align: right; }
   .r { font-size: 12.5px; letter-spacing: .2em; color: var(--ink-3); }
   .t { font-size: 16px; line-height: 1.6; min-width: 0; }

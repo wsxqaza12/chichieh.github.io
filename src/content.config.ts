@@ -4,6 +4,10 @@ import { glob } from 'astro/loaders';
 const postSchema = z.object({
   title: z.string(),
   date: z.coerce.date(),
+  /** archived 表示本站舊文補登日，原發表日期尚未確認。 */
+  dateKind: z.enum(['original', 'archived']).default('original'),
+  dateNote: z.string().optional(),
+  dateSource: z.string().url().optional(),
   description: z.string().optional(),
   category: z.string().default('技術'),
   tags: z.array(z.string()).default([]),

@@ -3,7 +3,7 @@
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import {
-  getAllPosts, getSummaries, postUrl, dotDate, readingTime, lengthOf, displayTitle, titleIn, regionOfPost, englishOf, type Post,
+  getAllPosts, getSummaries, postUrl, postDate, readingTime, lengthOf, displayTitle, titleIn, regionOfPost, englishOf, type Post,
 } from '../lib/posts';
 import { REGIONS, regionName } from '../lib/regions';
 import { seriesOf, resolveSeries } from '../data/series';
@@ -109,12 +109,20 @@ const num = (n: number) => n.toLocaleString('en-US');
         </div>
         <h1 class="keep">{title}</h1>
         <div class="meta">
-          <div><span class="lab">{T.date}</span><b>{dotDate(post.data.date)}</b></div>
+          <div><span class="lab">{T.date}</span><b>{postDate(post, lang)}</b></div>
           <div><span class="lab">{T.length}</span><b>{num(size)}{en && ' words'}</b></div>
           <div><span class="lab">{T.read}</span><b>{T.mins(minutes)}</b></div>
           {refs > 0 && <div><span class="lab">{T.cites}</span><b>{T.citesV(refs)}</b></div>}
           {(figs > 0 || tables > 0) && <div><span class="lab">{T.figs}</span><b>{[figs && T.figV(figs), tables && T.tabV(tables)].filter(Boolean).join(' · ')}</b></div>}
         </div>
+        {post.data.dateNote && (
+          <p class="date-note">
+            {en
+              ? (post.data.dateKind === 'archived' ? 'Added to this archive on the date above; the original publication date is unconfirmed.' : 'Date verified against the original LinkedIn post, in Taipei time.')
+              : post.data.dateNote}
+            {post.data.dateSource && <> <a href={post.data.dateSource}>{en ? 'Original post' : '查看原始貼文'}</a></>}
+          </p>
+        )}
         <div class="byrow">
           <img src="/assets/img/avatar-640.webp" alt="" width="40" height="40" />
           <span class="who"><b>{T.name}</b><span class="lab">{T.role}</span></span>
@@ -184,9 +192,9 @@ const num = (n: number) => n.toLocaleString('en-US');
                       if (!p) return null;
                       const k = epLabel(id);
                       return id === post.id ? (
-                        <div class="leg cur"><span class="k">{k} · {dotDate(p.data.date)} · {T.youAreHere}</span><b class="keep">{titleIn(p, lang)}</b></div>
+                        <div class="leg cur"><span class="k">{k} · {postDate(p, lang)} · {T.youAreHere}</span><b class="keep">{titleIn(p, lang)}</b></div>
                       ) : (
-                        <a class="leg" href={postUrl(p, lang)}><span class="k">{k} · {dotDate(p.data.date)} · {num(lengthOf(p, lang))} {T.unit}</span><b class="keep">{titleIn(p, lang)}</b></a>
+                        <a class="leg" href={postUrl(p, lang)}><span class="k">{k} · {postDate(p, lang)} · {num(lengthOf(p, lang))} {T.unit}</span><b class="keep">{titleIn(p, lang)}</b></a>
                       );
                     })}
                     {s.upcoming && s.next && <div class="leg next"><span class="k">S{s.n}·{s.next.n - s.from + 1} · {T.upcoming}</span><b>{en ? s.upcomingEn : s.upcoming}</b></div>}
@@ -197,10 +205,10 @@ const num = (n: number) => n.toLocaleString('en-US');
           ) : (
             <div class="legs pager">
               {older ? (
-                <a class="pg" href={postUrl(older, lang)}><span class="lab">{T.prev} · {dotDate(older.data.date)}</span><b class="keep">{titleIn(older, lang)}</b></a>
+                <a class="pg" href={postUrl(older, lang)}><span class="lab">{T.prev} · {postDate(older, lang)}</span><b class="keep">{titleIn(older, lang)}</b></a>
               ) : <span />}
               {newer ? (
-                <a class="pg nx" href={postUrl(newer, lang)}><span class="lab">{T.next} · {dotDate(newer.data.date)} →</span><b class="keep">{titleIn(newer, lang)}</b></a>
+                <a class="pg nx" href={postUrl(newer, lang)}><span class="lab">{T.next} · {postDate(newer, lang)} →</span><b class="keep">{titleIn(newer, lang)}</b></a>
               ) : <span />}
             </div>
           )}
@@ -211,7 +219,7 @@ const num = (n: number) => n.toLocaleString('en-US');
               <div class="cards">
                 {near.map(({ post: q, days }) => (
                   <a class="nbc" href={en ? `/en/writing/${q.es}/` : `/posts/${q.id}/`}>
-                    <span class="lab"><span>{regionName(q.topic, lang)}</span><span>{days === 0 ? T.sameDay : T.apart(days)}</span></span>
+                    <span class="lab"><span>{regionName(q.topic, lang)}</span><span>{q.archived || post.data.dateKind === 'archived' ? (en ? 'Archive' : '舊文收錄') : days === 0 ? T.sameDay : T.apart(days)}</span></span>
                     <b class="keep">{en ? q.te : q.t}</b>
                     {(en ? q.xe : q.x) && <span class="x">{en ? q.xe : q.x}</span>}
                   </a>
@@ -253,6 +261,8 @@ const num = (n: number) => n.toLocaleString('en-US');
   h1 { margin: 22px 0 0; font-weight: 300; font-size: clamp(38px, 5.2vw, 76px); line-height: 1.14; letter-spacing: .01em; }
   h1.keep { word-break: normal; line-break: strict; }
   .meta { display: flex; flex-wrap: wrap; gap: 10px 26px; margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .date-note { color: var(--ink-2); font-size: 13px; line-height: 1.8; margin: 14px 0 0; }
+  .date-note a { text-decoration: underline; text-underline-offset: 3px; }
   .meta div { display: flex; flex-direction: column; gap: 2px; }
   .meta b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 16px; color: var(--ink); letter-spacing: .02em; }
   .byrow { display: flex; align-items: center; gap: 14px; margin-top: 26px; flex-wrap: wrap; }
@@ -510,7 +520,7 @@ const num = (n: number) => n.toLocaleString('en-US');
     if (best !== hov) { hov = best; drawMap(); }
     if (best >= 0) {
       const q = DP[best].q, lab = seriesMeta.find((s) => s.id === q.p.id)?.label;
-      mtip.innerHTML = `<span class="lab">${lab ? lab + ' · ' : ''}${q.p.d.replaceAll('-', '.')}</span>${esc(title(q.p))}`;
+      mtip.innerHTML = `<span class="lab">${lab ? lab + ' · ' : ''}${q.p.d.replaceAll('-', '.')}${q.p.archived ? (EN ? ' (archived)' : ' 補登') : ''}</span>${esc(title(q.p))}`;
       let x = DP[best].x + 14, y = DP[best].y - 50;
       if (x + 240 > LW) x = DP[best].x - 254;
       if (y < 8) y = 8;

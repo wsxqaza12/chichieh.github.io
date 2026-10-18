@@ -230,6 +230,10 @@ for (const source of config.sources) {
       tags: parsed.data.tags ?? tagResult.tags,
       draft: parsed.data.draft ?? source.draft ?? false,
       source: 'content-dna',
+      ...(config.dateInfoOverrides?.[file] ?? {}),
+      ...(parsed.data.dateKind ? { dateKind: parsed.data.dateKind } : {}),
+      ...(parsed.data.dateNote ? { dateNote: parsed.data.dateNote } : {}),
+      ...(parsed.data.dateSource ? { dateSource: parsed.data.dateSource } : {}),
       ...(parsed.data.hero ?? firstImage ? { hero: parsed.data.hero ?? firstImage } : {}),
     };
 

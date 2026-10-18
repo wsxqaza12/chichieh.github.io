@@ -10,7 +10,7 @@ export async function GET(context) {
     items: posts.map((post) => ({
       title: displayTitle(post),
       pubDate: post.data.date,
-      description: post.data.description ?? '',
+      description: [post.data.dateKind === 'archived' ? post.data.dateNote : '', post.data.description].filter(Boolean).join(' '),
       link: postUrl(post),
       categories: [post.data.category, ...post.data.tags],
     })),
