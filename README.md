@@ -13,7 +13,7 @@
 │ (my_content_style)       │ ──────► │  src/content/synced/  ←自動同步（gitignored）
 │  寫過的文章/技術          │          │  src/content/blog/    ←Medium 舊文（已遷移，進版控）
 │  寫過的文章/趨勢談        │          │  src/data/projects.ts ←專案卡片
-│                          │          │  src/data/series.ts   ←連載（季、段）
+│  寫過的文章/雜談          │          │  src/data/series.ts   ←連載（季、段）
 │                          │          │  src/data/experience.ts ←演講、獎項、報導
 │  待發表的文章 → 草稿      │          └──────────────────────────┘
 └─────────────────────────┘                      │ push to main
@@ -27,13 +27,17 @@
 ## 日常寫作流程
 
 1. 在 `my_content_style` 寫文章（純 markdown，不用 frontmatter），一樣寫中文就好
-2. 放到 `寫過的文章/技術` 或 `寫過的文章/趨勢談`，push → 幾分鐘內中文版上站
+2. 放到 `寫過的文章/技術`、`寫過的文章/趨勢談` 或 `寫過的文章/雜談`，推送到 content-dna → 觸發建置後中文版上站
 3. 接著自動翻譯成英文，檢查通過後英文版跟著上站（見下方「英文版」），不用另外做什麼
 4. `待發表的文章` 內的檔案會被視為草稿（`npm run dev` 看得到、正式站看不到，也不會翻譯）
 5. 要下架某篇：把檔名加進 `sync.config.json` 的 `excludeFiles`
 
 frontmatter 全自動生成：標題取第一個標題行、日期取 git 首次 commit、分類取資料夾名。
 想覆寫任何欄位，直接在文章開頭加 YAML frontmatter 即可（手寫的優先）。
+
+「雜談」於 2026-10-19 接入，先上〈去年學會抬頭看願景，今年學會低頭看腳下〉。
+其他 10 篇既有雜談先保留在該來源的 `excludeFiles`，待作者挑選後移除對應檔名即可上站；
+之後新增的雜談不在排除名單內，會自動同步。全域 `excludeFiles` 與草稿、社群版排除規則仍適用。
 
 ### 寫作格式約定（對網站最友善的寫法）
 
@@ -53,7 +57,7 @@ frontmatter 全自動生成：標題取第一個標題行、日期取 git 首次
 ### 地圖上的區域
 
 每篇文章會依標題自動歸到一個區域（資料工程、LLM、RAG、語音・Avatar、Vibe Coding、
-Agent、龍蝦、MCP、記憶），規則在 `src/lib/regions.ts`。猜錯的話在文章開頭加：
+Agent、龍蝦、MCP、記憶），規則在 `src/lib/regions.ts`。雜談分類固定放在「雜談草原」。猜錯的話在文章開頭加：
 
 ```yaml
 ---

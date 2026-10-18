@@ -10,6 +10,7 @@ export interface Region {
 }
 
 export const REGIONS: Region[] = [
+  { key: '雜談', suffix: '草原', en: 'MEADOW', name: 'Reflections Meadow', id: 'reflections' },
   { key: '資料工程', suffix: '低地', en: 'LOWLANDS', name: 'Data Lowlands', id: 'data' },
   { key: 'LLM', suffix: '高原', en: 'PLATEAU', name: 'LLM Plateau', id: 'llm' },
   { key: 'RAG', suffix: '盆地', en: 'BASIN', name: 'RAG Basin', id: 'rag' },
@@ -45,8 +46,9 @@ const OVERRIDES: Record<string, string> = {
   '42628a4362f7': 'LLM', // LLM 評估教學 | EleutherAI LM Evaluation Harness
 };
 
-export function regionOf(id: string, title: string, override?: string): string {
+export function regionOf(id: string, title: string, override?: string, category?: string): string {
   if (override && REGIONS.some((r) => r.key === override)) return override;
+  if (category === '雜談') return '雜談';
   if (OVERRIDES[id]) return OVERRIDES[id];
   const key = `${id} ${title}`;
   return (RULES.find(([, re]) => re.test(key)) ?? ['LLM'])[0];
