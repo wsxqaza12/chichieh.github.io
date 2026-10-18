@@ -5,7 +5,7 @@ import HomeMap from '../components/HomeMap.astro';
 import PostLog from '../components/PostLog.astro';
 import TalkProfile from '../components/TalkProfile.astro';
 import Summit from '../components/Summit.astro';
-import { getAllPosts, getEnglishPosts, postUrl, dotDate, titleIn, lengthOf, englishOf, type Post } from '../lib/posts';
+import { getAllPosts, getEnglishPosts, postUrl, postDate, titleIn, lengthOf, englishOf, type Post } from '../lib/posts';
 import { series, seriesOf, resolveSeries } from '../data/series';
 import { projects, projectText } from '../data/projects';
 import { talks, media } from '../data/experience';
@@ -77,7 +77,7 @@ const leadT = projectText(lead, lang);
                       <h3 class="keep">{titleIn(p, lang)}</h3>
                       {(en ? englishOf(p)?.data.description : p.data.description) && <p>{en ? englishOf(p)?.data.description : p.data.description}</p>}
                     </span>
-                    <span class="d"><b>{chars(p)} {L('字', 'words')}</b>{dotDate(p.data.date)}</span>
+                    <span class="d"><b>{chars(p)} {L('字', 'words')}</b>{postDate(p, lang)}</span>
                   </a>
                 );
               })}

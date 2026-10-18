@@ -2,7 +2,7 @@
 // 電子報頁（中、英共用）：訂閱說明與表單，也是確認信、退訂連結導回來的地方（?s=check|confirmed|unsubscribe|unsubscribed|expired|invalid|slow|error）
 import Base from '../layouts/Base.astro';
 import Subscribe from '../components/Subscribe.astro';
-import { getAllPosts, getEnglishPosts, postUrl, titleIn } from '../lib/posts';
+import { getAllPosts, getEnglishPosts, postUrl, postDate, titleIn } from '../lib/posts';
 import type { Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -11,7 +11,6 @@ const en = lang === 'en';
 const L = (zh: string, e: string) => (en ? e : zh);
 
 const recent = (en ? await getEnglishPosts() : (await getAllPosts()).filter((p) => !p.data.draft)).slice(0, 3);
-const dotDate = (d: Date) => d.toISOString().slice(0, 10).replaceAll('-', '.');
 
 const states: Record<string, { h: string; p: string }> = en
   ? {
@@ -81,7 +80,7 @@ const facts = en
       <div class="recent">
         <span class="lab">{L('最近寫的', 'Recent essays')}</span>
         {recent.map((p) => (
-          <a href={postUrl(p, lang)}><span class="lab">{dotDate(p.data.date)}</span><b class="keep">{titleIn(p, lang)}</b></a>
+          <a href={postUrl(p, lang)}><span class="lab">{postDate(p, lang)}</span><b class="keep">{titleIn(p, lang)}</b></a>
         ))}
       </div>
     </section>

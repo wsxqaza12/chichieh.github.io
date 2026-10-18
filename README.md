@@ -36,7 +36,9 @@ frontmatter 全自動生成：標題取第一個標題行、日期取 git 首次
 想覆寫任何欄位，直接在文章開頭加 YAML frontmatter 即可（手寫的優先）。
 
 「雜談」於 2026-10-19 接入，先上〈去年學會抬頭看願景，今年學會低頭看腳下〉。
-其他 10 篇既有雜談先保留在該來源的 `excludeFiles`，待作者挑選後移除對應檔名即可上站；
+同日再收錄 9 篇舊文；3 篇以 LinkedIn 原始貼文核對日期，6 篇原日期未確認，明確標示舊文補登日。
+`dateOverrides` 保存採用日期，`dateInfoOverrides` 保存日期性質、說明與來源；查核依據見 `docs/misc-archive-dates-20261019.json`。
+〈The Man Who Can't Be Moved〉僅是 Saanya Ojha 文章的兩句摘錄，保留在該來源的 `excludeFiles`，不當成作者原創文章。
 之後新增的雜談不在排除名單內，會自動同步。全域 `excludeFiles` 與草稿、社群版排除規則仍適用。
 
 ### 寫作格式約定（對網站最友善的寫法）

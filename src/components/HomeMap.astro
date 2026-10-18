@@ -264,7 +264,7 @@ const strings = { you: t.you, read: t.read, chars: t.chars };
     if (i < 0) { tip.classList.remove('show'); tip.tabIndex = -1; return; }
     const q = M.pts[i], r = REGIONS[q.k];
     $('tipR').textContent = LANG === 'en' ? r.name : r.key + r.suffix;
-    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')} · ${(LANG === 'en' ? q.p.ne ?? 0 : q.p.n).toLocaleString('en-US')} ${T.chars}`;
+    $('tipD').textContent = `${q.p.d.replaceAll('-', '.')}${q.p.archived ? (LANG === 'en' ? ' (archived)' : ' 補登') : ''} · ${(LANG === 'en' ? q.p.ne ?? 0 : q.p.n).toLocaleString('en-US')} ${T.chars}`;
     $('tipT').textContent = tt(q.p);
     $('tipX').textContent = LANG === 'en' ? q.p.xe ?? '' : q.p.x;
     tip.href = urlOf(q.p);

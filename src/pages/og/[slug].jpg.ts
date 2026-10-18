@@ -1,6 +1,6 @@
 // 每篇文章的分享卡片：/og/<slug>.jpg
 import type { APIRoute } from 'astro';
-import { getAllPosts, displayTitle, dotDate, charCount, readingTime, type Post } from '../../lib/posts';
+import { getAllPosts, displayTitle, postDate, charCount, readingTime, type Post } from '../../lib/posts';
 import { postCard } from '../../lib/og';
 
 export async function getStaticPaths() {
@@ -12,7 +12,7 @@ export const GET: APIRoute = async ({ props }) => {
   const body = post.body ?? '';
   const jpg = await postCard(post.id, {
     title: displayTitle(post),
-    date: dotDate(post.data.date),
+    date: postDate(post, 'zh'),
     chars: charCount(body),
     minutes: readingTime(body),
   });
