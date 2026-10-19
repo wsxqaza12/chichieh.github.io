@@ -135,14 +135,14 @@
     "Agent框架比較_員工助理還是工具人.md": "2026-06-09",
     "MCP.md": "2026-07-05",
     "AWS 跟 Agile 演講.md": "2026-07-21",
-    "CTO職缺分享.md": "2026-10-19",
-    "Cursor 收購 Graphite.md": "2026-10-19",
+    "CTO職缺分享.md": "2025-08-12",
+    "Cursor 收購 Graphite.md": "2025-12-01",
     "GitHub回顧.md": "2026-01-03",
-    "創業擴容.md": "2026-10-19",
-    "從知道要做什麼到知道為什麼而做.md": "2026-10-19",
+    "創業擴容.md": "2025-07-01",
+    "從知道要做什麼到知道為什麼而做.md": "2025-11-01",
     "把時間買回來與龍蝦.md": "2026-04-09",
-    "當你學會擁抱失敗，機會就在下個轉角等你.md": "2026-10-19",
-    "繼續當個Giver.md": "2026-10-19",
+    "當你學會擁抱失敗，機會就在下個轉角等你.md": "2025-07-01",
+    "繼續當個Giver.md": "2026-01-01",
     "這不是一門 Web Programming 課，而是時代交界點.md": "2026-01-13"
   },
   "excludeFiles": [
@@ -165,12 +165,14 @@
   ],
   "dateInfoOverrides": {
     "CTO職缺分享.md": {
-      "dateKind": "archived",
-      "dateNote": "2026/10/19 收錄至本站；原發表日期尚未確認。這篇在 2026/2/23 已有存檔。"
+      "dateKind": "original"
     },
     "Cursor 收購 Graphite.md": {
-      "dateKind": "archived",
-      "dateNote": "2026/10/19 收錄至本站；原發表日期尚未確認。內容介於 2025/12/19 收購公告與 2026/2/23 文章匯入紀錄之間。"
+      "dateKind": "original",
+      "datePrecision": "month",
+      "dateEstimated": true,
+      "dateNote": "依 2025/12/19 的收購公告推估文章月份。",
+      "dateSource": "https://cursor.com/blog/graphite"
     },
     "GitHub回顧.md": {
       "dateKind": "original",
@@ -178,12 +180,12 @@
       "dateSource": "https://cn.linkedin.com/posts/chichieh-huang-5322881ba_github%E5%9B%9E%E9%A1%A7-activity-7413028845110521856-VpCG"
     },
     "創業擴容.md": {
-      "dateKind": "archived",
-      "dateNote": "2026/10/19 收錄至本站；原發表日期尚未確認。這篇在 2026/2/23 已有存檔。"
+      "dateKind": "original",
+      "datePrecision": "month"
     },
     "從知道要做什麼到知道為什麼而做.md": {
-      "dateKind": "archived",
-      "dateNote": "2026/10/19 收錄至本站；原發表日期尚未確認。依後續文章回顧與本文「上週」的敘述，推測寫於 2025 年 11 月前後。"
+      "dateKind": "original",
+      "datePrecision": "month"
     },
     "把時間買回來與龍蝦.md": {
       "dateKind": "original",
@@ -191,12 +193,13 @@
       "dateSource": "https://cn.linkedin.com/posts/chichieh-huang-5322881ba_%E7%94%A8%E9%BE%8D%E8%9D%A6%E6%8A%8A%E6%99%82%E9%96%93%E8%B2%B7%E5%9B%9E%E4%BE%86-activity-7447924513184575488-ufTK"
     },
     "當你學會擁抱失敗，機會就在下個轉角等你.md": {
-      "dateKind": "archived",
-      "dateNote": "2026/10/19 收錄至本站；原發表日期尚未確認。這篇在 2026/2/23 已有存檔。"
+      "dateKind": "original",
+      "datePrecision": "month"
     },
     "繼續當個Giver.md": {
-      "dateKind": "archived",
-      "dateNote": "2026/10/19 收錄至本站；原發表日期尚未確認。這篇在 2026/2/23 已有存檔。"
+      "dateKind": "original",
+      "datePrecision": "month",
+      "dateEstimated": true
     },
     "這不是一門 Web Programming 課，而是時代交界點.md": {
       "dateKind": "original",

@@ -118,9 +118,9 @@ const num = (n: number) => n.toLocaleString('en-US');
         {post.data.dateNote && (
           <p class="date-note">
             {en
-              ? (post.data.dateKind === 'archived' ? 'Added to this archive on the date above; the original publication date is unconfirmed.' : 'Date verified against the original LinkedIn post, in Taipei time.')
+              ? (post.data.dateKind === 'archived' ? 'Added to this archive on the date above; the original publication date is unconfirmed.' : post.data.dateEstimated ? 'Month estimated from the announcement linked below.' : 'Date verified against the original LinkedIn post, in Taipei time.')
               : post.data.dateNote}
-            {post.data.dateSource && <> <a href={post.data.dateSource}>{en ? 'Original post' : '查看原始貼文'}</a></>}
+            {post.data.dateSource && <> <a href={post.data.dateSource}>{en ? 'Date source' : '日期來源'}</a></>}
           </p>
         )}
         <div class="byrow">
@@ -219,7 +219,7 @@ const num = (n: number) => n.toLocaleString('en-US');
               <div class="cards">
                 {near.map(({ post: q, days }) => (
                   <a class="nbc" href={en ? `/en/writing/${q.es}/` : `/posts/${q.id}/`}>
-                    <span class="lab"><span>{regionName(q.topic, lang)}</span><span>{q.archived || post.data.dateKind === 'archived' ? (en ? 'Archive' : '舊文收錄') : days === 0 ? T.sameDay : T.apart(days)}</span></span>
+                    <span class="lab"><span>{regionName(q.topic, lang)}</span><span>{q.dateLabel || post.data.datePrecision === 'month' ? '' : q.archived || post.data.dateKind === 'archived' ? (en ? 'Archive' : '舊文收錄') : days === 0 ? T.sameDay : T.apart(days)}</span></span>
                     <b class="keep">{en ? q.te : q.t}</b>
                     {(en ? q.xe : q.x) && <span class="x">{en ? q.xe : q.x}</span>}
                   </a>
@@ -520,7 +520,7 @@ const num = (n: number) => n.toLocaleString('en-US');
     if (best !== hov) { hov = best; drawMap(); }
     if (best >= 0) {
       const q = DP[best].q, lab = seriesMeta.find((s) => s.id === q.p.id)?.label;
-      mtip.innerHTML = `<span class="lab">${lab ? lab + ' · ' : ''}${q.p.d.replaceAll('-', '.')}${q.p.archived ? (EN ? ' (archived)' : ' 補登') : ''}</span>${esc(title(q.p))}`;
+      mtip.innerHTML = `<span class="lab">${lab ? lab + ' · ' : ''}${esc((EN ? q.p.dateLabelEn : q.p.dateLabel) ?? q.p.d.replaceAll('-', '.'))}${q.p.archived ? (EN ? ' (archived)' : ' 補登') : ''}</span>${esc(title(q.p))}`;
       let x = DP[best].x + 14, y = DP[best].y - 50;
       if (x + 240 > LW) x = DP[best].x - 254;
       if (y < 8) y = 8;

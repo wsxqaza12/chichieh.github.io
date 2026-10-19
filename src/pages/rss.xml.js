@@ -9,7 +9,7 @@ export async function GET(context) {
     site: context.site,
     items: posts.map((post) => ({
       title: displayTitle(post),
-      pubDate: post.data.date,
+      ...(post.data.datePrecision === 'month' || post.data.dateEstimated ? {} : { pubDate: post.data.date }),
       description: [post.data.dateKind === 'archived' ? post.data.dateNote : '', post.data.description].filter(Boolean).join(' '),
       link: postUrl(post),
       categories: [post.data.category, ...post.data.tags],

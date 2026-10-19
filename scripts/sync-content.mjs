@@ -232,6 +232,8 @@ for (const source of config.sources) {
       source: 'content-dna',
       ...(config.dateInfoOverrides?.[file] ?? {}),
       ...(parsed.data.dateKind ? { dateKind: parsed.data.dateKind } : {}),
+      ...(parsed.data.datePrecision ? { datePrecision: parsed.data.datePrecision } : {}),
+      ...(typeof parsed.data.dateEstimated === 'boolean' ? { dateEstimated: parsed.data.dateEstimated } : {}),
       ...(parsed.data.dateNote ? { dateNote: parsed.data.dateNote } : {}),
       ...(parsed.data.dateSource ? { dateSource: parsed.data.dateSource } : {}),
       ...(parsed.data.hero ?? firstImage ? { hero: parsed.data.hero ?? firstImage } : {}),
