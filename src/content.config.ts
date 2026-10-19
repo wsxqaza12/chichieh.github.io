@@ -6,6 +6,9 @@ const postSchema = z.object({
   date: z.coerce.date(),
   /** archived 表示本站舊文補登日，原發表日期尚未確認。 */
   dateKind: z.enum(['original', 'archived']).default('original'),
+  /** 只知道月份時，date 的日只用於排序，對外只顯示年月。 */
+  datePrecision: z.enum(['day', 'month']).default('day'),
+  dateEstimated: z.boolean().default(false),
   dateNote: z.string().optional(),
   dateSource: z.string().url().optional(),
   description: z.string().optional(),

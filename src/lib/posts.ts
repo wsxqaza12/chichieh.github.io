@@ -46,9 +46,10 @@ export function formatDate(d: Date): string {
 /** 2026.09.22 */
 export const dotDate = (d: Date) => formatDate(d).replaceAll('/', '.');
 
-/** 舊文的收錄日要明確標示，不能當成原發表日。 */
+/** 保留已知日期的精度；估計月份不補出不存在的發表日。 */
 export function postDate(post: Post, lang: 'zh' | 'en' = 'zh'): string {
-  const date = dotDate(post.data.date);
+  const label = post.data.datePrecision === 'month' ? formatMonth(post.data.date).replaceAll('/', '.') : dotDate(post.data.date);
+  const date = post.data.dateEstimated ? `${lang === 'en' ? 'c. ' : '約 '}${label}` : label;
   return post.data.dateKind === 'archived' ? `${date} ${lang === 'en' ? '(archived)' : '補登'}` : date;
 }
 
@@ -116,6 +117,8 @@ export interface PostSummary {
   t: string;
   d: string; // YYYY-MM-DD
   archived?: boolean; // d 是舊文補登日，非原發表日
+  dateLabel?: string; // 月份或約略日期，地圖上不可直接顯示排序用的 d
+  dateLabelEn?: string;
   n: number; // 字數
   topic: string; // 區域
   x: string; // 摘要
@@ -137,6 +140,7 @@ export function summarize(post: Post): PostSummary {
     t: displayTitle(post),
     d: post.data.date.toISOString().slice(0, 10),
     ...(post.data.dateKind === 'archived' ? { archived: true } : {}),
+    ...(post.data.datePrecision === 'month' || post.data.dateEstimated ? { dateLabel: postDate(post), dateLabelEn: postDate(post, 'en') } : {}),
     n: charCount(post.body ?? ''),
     topic: regionOfPost(post),
     x: post.data.description ?? '',

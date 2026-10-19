@@ -2,19 +2,21 @@
   "articles": [
     {
       "file": "CTO職缺分享.md",
-      "originalDate": null,
+      "originalDate": "2025-08-12",
       "knownBy": "2026-02-23",
-      "evidence": "首次批次匯入；原文已標示已徵到"
+      "evidence": "使用者於 2026-10-19 確認原文時間：2025-08-12。",
+      "datePrecision": "day",
+      "estimated": false
     },
     {
       "file": "Cursor 收購 Graphite.md",
       "originalDate": null,
-      "possibleRange": [
-        "2025-12-19",
-        "2026-02-23"
-      ],
-      "evidence": "Cursor官方公告2025-12-19；文章於2026-02-23已匯入",
-      "source": "https://cursor.com/blog/graphite"
+      "evidence": "Cursor 官方公告日期為 2025-12-19；依使用者要求查核收購消息，文章月份暫估 2025-12，不宣稱已確認原發表日。",
+      "source": "https://cursor.com/blog/graphite",
+      "datePrecision": "month",
+      "originalMonth": "2025-12",
+      "estimated": true,
+      "eventDate": "2025-12-19"
     },
     {
       "file": "GitHub回顧.md",
@@ -34,13 +36,18 @@
       "file": "創業擴容.md",
       "originalDate": null,
       "knownBy": "2026-02-23",
-      "evidence": "首次批次匯入，缺原發表日期"
+      "evidence": "使用者於 2026-10-19 確認原文時間：2025-07。",
+      "datePrecision": "month",
+      "originalMonth": "2025-07",
+      "estimated": false
     },
     {
       "file": "從知道要做什麼到知道為什麼而做.md",
       "originalDate": null,
-      "estimate": "約2025年11月",
-      "evidence": "2026年新文章回指去年十一月YO策略工作坊及當時心得；舊文說上週參加，屬推論"
+      "evidence": "使用者於 2026-10-19 確認原文時間：2025-11。",
+      "datePrecision": "month",
+      "originalMonth": "2025-11",
+      "estimated": false
     },
     {
       "file": "把時間買回來與龍蝦.md",
@@ -55,13 +62,19 @@
       "file": "當你學會擁抱失敗，機會就在下個轉角等你.md",
       "originalDate": null,
       "knownBy": "2026-02-23",
-      "evidence": "首次批次匯入，缺原發表日期"
+      "evidence": "使用者於 2026-10-19 確認原文時間：2025-07。",
+      "datePrecision": "month",
+      "originalMonth": "2025-07",
+      "estimated": false
     },
     {
       "file": "繼續當個Giver.md",
       "originalDate": null,
       "knownBy": "2026-02-23",
-      "evidence": "首次批次匯入，缺原發表日期"
+      "evidence": "使用者於 2026-10-19 指定「9 個月前」，換算約 2026-01，未指定日。",
+      "datePrecision": "month",
+      "originalMonth": "2026-01",
+      "estimated": true
     },
     {
       "file": "這不是一門 Web Programming 課，而是時代交界點.md",
@@ -72,7 +85,8 @@
     }
   ],
   "count": 10,
-  "status": "Date evidence for nine approved archive essays; one external excerpt remains excluded.",
+  "status": "Author-provided original dates replace all six archive-addition dates; month-only dates retain month precision. Cursor month is inferred from its official acquisition announcement. One external excerpt remains excluded.",
   "auditedAt": "2026-10-19",
-  "timezone": "Asia/Taipei"
+  "timezone": "Asia/Taipei",
+  "storageNote": "Month-only dates use day 01 as an internal sorting anchor; presentation and RSS must not claim an exact publication day."
 }
