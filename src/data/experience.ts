@@ -144,6 +144,13 @@ export const talks: Talk[] = [
     photo: '/assets/img/speaking/aia-conference-2026.webp',
     en: { event: 'Taiwan AI Annual Conference 2026', topic: 'From AI Sessions to Team Memory: Designing and Building Cairn' },
   },
+  {
+    date: '2026-10-08',
+    event: 'AI Tinkerers Taipei — Kickoff: Technical Show-and-Tell',
+    topic: 'Cairn: Building Reliable Memory for Humans and AI',
+    detail: '在 AI Tinkerers 台北首場聚會分享 Cairn，以及人與 AI Agent 的可靠記憶設計。',
+    en: { event: 'AI Tinkerers Taipei — Kickoff: Technical Show-and-Tell', topic: 'Cairn: Building Reliable Memory for Humans and AI', detail: 'Presented Cairn at the Taipei chapter’s inaugural technical show-and-tell, sharing how people and AI agents can build reliable memory.' },
+  },
   { date: '2026-10-18', event: '桂格 企業內訓', en: { event: 'Corporate training' } },
   { date: '2026-12-18', event: '新創企業發展協會 演講', en: { event: 'Talk for a startup development association' } },
 ];
