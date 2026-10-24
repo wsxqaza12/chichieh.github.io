@@ -24,7 +24,7 @@ const ev = (t: Talk) => (en && t.en ? t.en.event : t.event);
 // 講過的場子：依活動名稱分成研討會、社群、校園、企業
 const kindOf = (t: Talk) => {
   const s = t.event;
-  if (/Summit|WiDS|年會|Agile/.test(s)) return 0;
+  if (/Summit|WiDS|年會|Agile|COMPUTEX|InnoVEX/i.test(s)) return 0;
   if (/大學|政大|校園/.test(s)) return 2;
   if (/內訓|內部|企業|協會|Workshop/.test(s)) return 3;
   return 1;
