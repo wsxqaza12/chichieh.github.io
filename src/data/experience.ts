@@ -110,6 +110,13 @@ export const talks: Talk[] = [
     en: { event: 'WiDS Taiwan (Women in Data Science)', topic: 'Five AIs on My Team: Building Your Agent Team', detail: 'Speaker at a 200-person hybrid forum, on five months of testing what an agent team can and cannot do.' },
   },
   {
+    date: '2026-06-04',
+    event: 'COMPUTEX / InnoVEX 2026：Open Source Team Taiwan 開源臺灣館',
+    detail: '與 Twinkle AI 夥伴共同參展並分享 Cairn；開源臺灣館由 IMA 籌辦、數位產業署支持。',
+    major: true,
+    en: { event: 'COMPUTEX / InnoVEX 2026: Open Source Team Taiwan Pavilion', detail: 'Presented Cairn with the Twinkle AI community at the pavilion organized by the Information Management Association (IMA), with support from the Administration for Digital Industries.' },
+  },
+  {
     date: '2026-07-16',
     event: 'AWS Summit Taipei 2026',
     topic: '從 AI Session 到 Shared Memory：打造 AI Native 的知識基礎建設',
