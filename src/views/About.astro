@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import Summit from '../components/Summit.astro';
 import { getSummaries } from '../lib/posts';
 import { achievements, media, talks } from '../data/experience';
+import about from '../data/about.json';
 import type { Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -13,9 +14,33 @@ const L = (zh: string, e: string) => (en ? e : zh);
 const n = (await getSummaries()).filter((p) => lang === 'zh' || p.es).length;
 const year = new Date().getFullYear();
 const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t) => s + (t.count ?? 1), 0);
+// 更新自介時，同步 src/data/about.json，讓頁面、結構化資料與 sitemap 使用同一個日期。
+const updatedAt = about.updatedAt;
+const description = L('關於黃琪婕 ChiChieh Huang：Cairn 與 AILogora 創辦人、AI 工程師，專注人與 AI Agent 的共享記憶。', 'About ChiChieh Huang, a founder and AI engineer in Taipei building shared memory for people and AI agents.');
+const pageUrl = new URL(en ? '/en/about/' : '/about/', Astro.site).href;
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  '@id': `${pageUrl}#webpage`,
+  url: pageUrl,
+  name: L('關於黃琪婕 ChiChieh Huang', 'About ChiChieh Huang'),
+  description,
+  inLanguage: en ? 'en' : 'zh-Hant',
+  dateModified: updatedAt,
+  mainEntity: {
+    '@type': 'Person',
+    '@id': new URL('/#person', Astro.site).href,
+    name: L('黃琪婕', 'ChiChieh Huang'),
+    alternateName: L('ChiChieh Huang', '黃琪婕'),
+    url: new URL('/', Astro.site).href,
+    jobTitle: L('創辦人與 AI 工程師', 'Founder and AI engineer'),
+    sameAs: ['https://github.com/wsxqaza12', 'https://www.linkedin.com/in/chichieh-huang-5322881ba/'],
+  },
+};
 ---
 
-<Base lang={lang} title={L('關於', 'About')} description={L('關於黃琪婕 ChiChieh Huang：Generative AI 產品開發者、技術寫作者與講者。', 'About ChiChieh Huang, a founder and AI engineer in Taipei building shared memory for people and AI agents.')}>
+<Base lang={lang} title={L('關於', 'About')} description={description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <main class="wrap">
     <section class="s first about">
       <Summit lang={lang} />
@@ -33,13 +58,14 @@ const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t)
           </>
         ) : (
           <>
-            <h1>我是黃琪婕，做 Generative AI 產品，也把它寫成中文。</h1>
+            <h1>我是黃琪婕，創辦人，也是 AI 工程師。</h1>
             <div class="bio">
-              <p>我是一名熱愛技術的自由接案開發者，也是位創業家。2023 年底注意到生成式 AI 的中文技術文章非常少，覺得可惜，於是開始以此為方向寫作，希望用淺顯易懂的語言，把 AI 的知識帶給中文社群。</p>
-              <p>後來做了 AILogora，入選 AppWorks Accelerator #31；2026 年以 Cairn 入選 Anthropic 全球 Hackathon。現在主要在研究 Agent Memory，也常在社群、校園和企業分享 AI Agent 的實戰經驗。</p>
+              <p>我創辦了 Cairn 與 AILogora，主要在研究 Agent Memory，開發讓人與 AI Agent 共享團隊記憶的產品。Cairn 起於 2026 年 Anthropic 全球 Hackathon，我入選後用六天獨立做出第一個原型。</p>
+              <p>在 Cairn 之前，我做了 AI 技術社群平台 AILogora，入選 AppWorks Accelerator #31。2023 年底開始寫生成式 AI 的中文技術文章，也持續在社群、校園與企業分享 AI Agent 的實作經驗。</p>
             </div>
           </>
         )}
+        <p class="updated lab">{L('內容更新', 'Updated')} · <time datetime={updatedAt}>{updatedAt.replaceAll('-', '.')}</time></p>
         <dl class="kv">
           <dt>{L('正在做', 'Building')}</dt>
           <dd><ul>
@@ -80,6 +106,7 @@ const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t)
   .about > :global(.summit) { position: sticky; top: 40px; }
   h1 { margin: 14px 0 22px; font-weight: 300; font-size: clamp(32px, 3.8vw, 52px); line-height: 1.22; }
   .bio p { margin: 0 0 14px; font-size: 17px; font-weight: 300; max-width: 36em; line-height: 1.95; }
+  .updated { margin: 20px 0 0; }
   .kv { display: grid; grid-template-columns: 130px minmax(0, 1fr); border-top: 1px solid var(--line); margin-top: 28px; }
   .kv dt, .kv dd { margin: 0; padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 15px; line-height: 1.8; }
   .kv dt { font-family: var(--mono); font-stretch: 80%; font-size: 10.5px; letter-spacing: .16em; color: var(--ink-3); padding-top: 18px; text-transform: uppercase; }
