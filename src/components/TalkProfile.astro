@@ -17,6 +17,7 @@ const list = talks
 let c = 0;
 const pts = list.map((t) => ({ ...t, c: (c += t.n) }));
 const total = c;
+const done = list.filter((p) => p.date <= today).reduce((n, p) => n + p.n, 0);
 const A = Date.parse(`${year}-01-01`), B = Date.parse(`${year}-12-31`), now = Date.parse(today);
 const esc = (s: string) => s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]!);
 
@@ -33,7 +34,8 @@ function svg(W: number, H: number, narrow: boolean) {
     s += `<text x="${x(ts) + 4}" y="${H - 14}">${m}</text><line x1="${x(ts)}" x2="${x(ts)}" y1="${H - b}" y2="${H - b + 5}"/>`;
   });
   s += '</g>';
-  const past = pts.filter((p) => p.t <= now), fut = pts.filter((p) => p.t > now);
+  // 月份不精確的紀錄沿用資料清單的狀態；15 日只作為圖上的位置。
+  const past = pts.filter((p) => p.date <= today), fut = pts.filter((p) => p.date > today);
   let d = `M${x(A)},${y(0)}`, prev = 0;
   past.forEach((p) => { d += ` L${x(p.t)},${y(prev)} L${x(p.t)},${y(p.c)}`; prev = p.c; });
   const nowX = x(Math.min(Math.max(now, A), B));
@@ -51,7 +53,7 @@ function svg(W: number, H: number, narrow: boolean) {
   pts.forEach((p) => {
     const X = x(p.t), Y = y(p.c);
     if (p.major) {
-      const name = ev(p).replace(` ${year}`, '').replace(`${year} `, '').replace(/[（(][^）)]*[）)]/g, '').trim();
+      const name = (p.chartLabel ?? ev(p)).replace(` ${year}`, '').replace(`${year} `, '').replace(/[（(][^）)]*[）)]/g, '').trim();
       const fs = narrow ? 19 : 13, step = narrow ? 27 : 20;
       const w = [...name].reduce((a, ch) => a + (ch.charCodeAt(0) > 255 ? fs : fs * 0.57), 0);
       const flip = X - w - 6 < l;
@@ -74,8 +76,8 @@ const wide = svg(1200, 320, false), small = svg(600, 360, true);
 ---
 
 <div class="tprof">
-  <svg class="w" viewBox={wide.view} role="img" aria-label={t.talksAria(year, total)} set:html={wide.body} />
-  <svg class="s" viewBox={small.view} role="img" aria-label={t.talksAria(year, total)} set:html={small.body} />
+  <svg class="w" viewBox={wide.view} role="img" aria-label={t.talksAria(year, done, total - done)} set:html={wide.body} />
+  <svg class="s" viewBox={small.view} role="img" aria-label={t.talksAria(year, done, total - done)} set:html={small.body} />
 </div>
 
 <style>

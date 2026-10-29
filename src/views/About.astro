@@ -3,7 +3,7 @@
 import Base from '../layouts/Base.astro';
 import Summit from '../components/Summit.astro';
 import { getSummaries } from '../lib/posts';
-import { achievements, media, talks } from '../data/experience';
+import { achievements, media, talkStats } from '../data/experience';
 import about from '../data/about.json';
 import type { Lang } from '../i18n';
 
@@ -12,8 +12,7 @@ const { lang } = Astro.props;
 const en = lang === 'en';
 const L = (zh: string, e: string) => (en ? e : zh);
 const n = (await getSummaries()).filter((p) => lang === 'zh' || p.es).length;
-const year = new Date().getFullYear();
-const total = talks.filter((t) => t.date.startsWith(String(year))).reduce((s, t) => s + (t.count ?? 1), 0);
+const { year, done: total } = talkStats();
 // 更新自介時，同步 src/data/about.json，讓頁面、結構化資料與 sitemap 使用同一個日期。
 const updatedAt = about.updatedAt;
 const description = L('關於黃琪婕 ChiChieh Huang：Cairn 與 AILogora 創辦人、AI 工程師，專注人與 AI Agent 的共享記憶。', 'About ChiChieh Huang, a founder and AI engineer in Taipei building shared memory for people and AI agents.');
@@ -82,8 +81,8 @@ const structuredData = {
           <dd><ul>{achievements.map((a) => <li>{a.year && <span class="y">{a.year}</span>}{en && a.en ? a.en.title : a.title}</li>)}</ul></dd>
           <dt>{L('演講與媒體', 'Talks & press')}</dt>
           <dd>{en
-            ? <>{total} talks in {year}, including AWS Summit Taipei, WiDS Taiwan and the Taiwan AI Annual Conference. Featured in {media.map((m) => m.en?.outlet ?? m.outlet).join(', ')}. <a href="/en/speaking/">Topics and booking →</a></>
-            : <>{year} 年 {total} 場演講與工作坊，包含 WiDS Taiwan、AWS Summit Taipei、台灣人工智慧年會；接受過《商業周刊》、非凡新聞與公視採訪。<a href="/speaking/">講題與邀請方式 →</a></>}
+            ? <>{total} talks given in {year}, including AWS Summit Taipei, WiDS Taiwan and the Taiwan AI Annual Conference. Featured in {media.map((m) => m.en?.outlet ?? m.outlet).join(', ')}. <a href="/en/speaking/">Topics and booking →</a></>
+            : <>{year} 年已完成 {total} 場演講與工作坊，包含 WiDS Taiwan、AWS Summit Taipei、台灣人工智慧年會；接受過《商業周刊》、非凡新聞與公視採訪。<a href="/speaking/">講題與邀請方式 →</a></>}
           </dd>
           <dt>{L('寫作', 'Writing')}</dt>
           <dd>{en ? <>{n} essays on generative AI, written in Traditional Chinese and translated into English. <a href="/en/writing/">Read them in English →</a></> : <>{n} 篇生成式 AI 的中文技術文章。<a href="/posts/">全部文章 →</a></>}</dd>
@@ -92,7 +91,7 @@ const structuredData = {
           <dt>{L('聯絡', 'Contact')}</dt>
           <dd><span id="mail">cch.chichieh@gmail.com</span><button class="btn copy" type="button" data-copy="cch.chichieh@gmail.com" data-done={L('已複製', 'Copied')}>{L('複製', 'Copy')}</button></dd>
           <dt>{L('別處', 'Elsewhere')}</dt>
-          <dd class="links"><a href="https://github.com/wsxqaza12">GitHub</a><a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a><a href="https://ailogora.com">AILogora</a><a href="/rss.xml">RSS</a></dd>
+          <dd class="links"><a href="https://github.com/wsxqaza12">GitHub</a><a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a><a href="https://ailogora.com">AILogora</a><a href={en ? '/en/rss.xml' : '/rss.xml'}>RSS</a></dd>
         </dl>
         <blockquote>You can overcome anything, if and only if you love something enough.</blockquote>
       </div>

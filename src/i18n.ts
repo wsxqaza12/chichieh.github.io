@@ -51,7 +51,7 @@ export const nav = {
 export const ui = {
   zh: {
     siteName: '黃琪婕 ChiChieh Huang',
-    defaultDescription: '黃琪婕 ChiChieh Huang：做 Generative AI 產品，也把它寫成中文。LLM、Agent、RAG、Agent Memory 的技術文章與演講。',
+    defaultDescription: '黃琪婕 ChiChieh Huang：Cairn 與 AILogora 創辦人、AI 工程師，專注人與 AI Agent 的共享記憶。分享 LLM、Agent、RAG 與 Agent Memory 的技術文章與演講。',
     sub: 'CHICHIEH HUANG · GEN AI',
     homeLabel: '黃琪婕 首頁',
     day: '日間', night: '夜間', themeLabel: '切換日間與夜間',
@@ -68,7 +68,7 @@ export const ui = {
     more: (n: number) => `展開其餘 ${n} 篇 ↓`, empty: '這個區域還沒有文章。', draft: '草稿', filterLabel: '依區域篩選',
     // 演講剖面
     months: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'].map((m) => m + '月'),
-    today: '今天', talksAria: (y: number, n: number) => `${y} 年演講累積場次，共 ${n} 場`, cumulative: '累積',
+    today: '今天', talksAria: (y: number, done: number, upcoming: number) => `${y} 年演講累積場次，已完成 ${done} 場、預定 ${upcoming} 場`, cumulative: '累積',
     surveyor: '▲ 測繪者',
   },
   en: {
@@ -87,7 +87,7 @@ export const ui = {
     all: 'All', date: 'Date', region: 'Region', title: 'Title', length: 'Length',
     more: (n: number) => `Show ${n} more ↓`, empty: 'Nothing in this region yet.', draft: 'Draft', filterLabel: 'Filter by region',
     months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    today: 'Today', talksAria: (y: number, n: number) => `Talks given in ${y}, cumulative: ${n}`, cumulative: 'Total',
+    today: 'Today', talksAria: (y: number, done: number, upcoming: number) => `Talks in ${y}: ${done} given, ${upcoming} upcoming`, cumulative: 'Total',
     surveyor: '▲ SURVEYOR',
   },
 };

@@ -1,19 +1,17 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TalkProfile from '../../components/TalkProfile.astro';
-import { achievements, talks, media } from '../../data/experience';
+import { achievements, talks, media, talkStats } from '../../data/experience';
 import { getAllPosts, postUrl } from '../../lib/posts';
 
 const posts = (await getAllPosts()).filter((p) => !p.data.draft);
 const findPost = (id?: string) => (id ? posts.find((p) => p.id === id) : undefined);
 
 // 每日排程會重建網站，「即將登場」會隨建置日期自動輪替到「已完成」
-const today = new Date().toISOString().slice(0, 10);
-const year = +today.slice(0, 4);
+const { today, year, done, scheduled } = talkStats();
 const upcoming = talks.filter((t) => t.date > today).sort((a, b) => a.date.localeCompare(b.date));
 const past = talks.filter((t) => t.date <= today).sort((a, b) => b.date.localeCompare(a.date));
-const total = talks.reduce((n, t) => n + (t.count ?? 1), 0);
-const done = past.reduce((n, t) => n + (t.count ?? 1), 0);
+const pastTotal = past.reduce((n, t) => n + (t.count ?? 1), 0);
 const dd = (d: string) => d.replaceAll('-', '.');
 ---
 
@@ -22,8 +20,8 @@ const dd = (d: string) => d.replaceAll('-', '.');
     <section class="s first">
       <div class="sh">
         <div class="lab">足跡 · 演講、紀錄與報導</div>
-        <h1>{year} 年，<b>{total}</b> 場演講與工作坊</h1>
-        <p>講過的、得過的、被報導過的。有寫心得的都附上文章。已完成 {done} 場，還有 {total - done} 場即將登場。</p>
+        <h1>{year} 年，已完成 <b>{done}</b> 場演講與工作坊</h1>
+        <p>講過的、得過的、被報導過的。有寫心得的都附上文章。{scheduled > 0 && <>今年還有 {scheduled} 場預定。</>}</p>
       </div>
       <TalkProfile talks={talks} year={year} today={today} />
     </section>
@@ -43,7 +41,7 @@ const dd = (d: string) => d.replaceAll('-', '.');
     )}
 
     <section class="s">
-      <div class="sh"><div class="lab">演講與工作坊 · {done} 場</div><h2>走過的講台</h2></div>
+      <div class="sh"><div class="lab">演講與工作坊 · {pastTotal} 場</div><h2>走過的講台</h2></div>
       <div class="rows">
         {past.map((t) => {
           const post = findPost(t.postId);
