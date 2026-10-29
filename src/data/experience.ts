@@ -149,6 +149,31 @@ export const talks: Talk[] = [
     en: { event: 'AI Tinkerers Taipei — Kickoff: Technical Show-and-Tell', topic: 'Cairn: Building Reliable Memory for Humans and AI', detail: 'Presented Cairn at the Taipei chapter’s inaugural technical show-and-tell, sharing how people and AI agents can build reliable memory.' },
   },
   { date: '2026-10-18', event: '桂格 企業內訓', en: { event: 'Corporate training' } },
+  {
+    date: '2026-11-01',
+    event: '數據早餐桌 × 好事加碼場（數聚村莊）',
+    topic: '為什麼我的 AI 每次都像第一天上班？',
+    detail: '聊聊如何讓 AI 從一次性工具，成為理解組織脈絡的協作者。',
+    en: { event: 'Data Breakfast × Social Good Special (Data Village)', topic: 'Why Does My AI Act Like It’s Always Its First Day at Work?', detail: 'How AI can move from a one-off tool to a collaborator that understands an organization’s context.' },
+  },
+  {
+    date: '2026-11-05',
+    event: 'AppWorks 分享',
+    detail: '分享 Agent Memory，著重架構設計。',
+    en: { event: 'AppWorks talk', detail: 'A talk on agent memory, with a focus on architecture.' },
+  },
+  {
+    date: '2026-11-11',
+    event: 'Generative AI 年會小聚 2026',
+    en: { event: 'Generative AI Conference Meetup 2026' },
+  },
+  {
+    date: '2026-11-15',
+    event: '台灣 AEC（建築 × 工程 × 營造）產業技能開源知識庫小聚 #4',
+    topic: 'AI Agent 的記憶與知識應用',
+    detail: '台中實體場，線上同步進行。',
+    en: { event: 'Taiwan AEC Open-Source Skills Knowledge Base Meetup #4', topic: 'AI Agent Memory and Knowledge Applications', detail: 'An in-person meetup in Taichung, with simultaneous online participation.' },
+  },
   { date: '2026-12-18', event: '新創企業發展協會 演講', en: { event: 'Talk for a startup development association' } },
 ];
 

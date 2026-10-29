@@ -114,11 +114,12 @@ const leadT = projectText(lead, lang);
           const p = find(t.postId);
           const up = t.date > today;
           const topic = en ? t.en?.topic : t.topic;
+          const detail = en ? t.en?.detail : t.detail;
           return (
             <div class="tm">
               <span class="lab">{t.date.replaceAll('-', '.')}{up ? L(' · 即將登場', ' · Upcoming') : ''}</span>
               <h3>{en && t.en ? t.en.event : t.event}</h3>
-              <p>{topic ?? (up ? L('敬請期待', 'Details soon') : '')}</p>
+              <p>{topic ?? (up ? detail ?? L('敬請期待', 'Details soon') : '')}</p>
               {p && <a class="go" href={postUrl(p, lang)}>{L('現場心得 →', 'Recap →')}</a>}
             </div>
           );
