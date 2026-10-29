@@ -18,6 +18,8 @@ export interface Talk {
   postId?: string;
   /** 大型場次，名稱以強調色顯示 */
   major?: boolean;
+  /** 剖面圖的短標籤；完整名稱仍保留在清單與提示中 */
+  chartLabel?: string;
   /** 同一系列的實際場次數（預設 1），總場數會加總 */
   count?: number;
   /** 現場側拍（只給大場配，避免頁面變相簿） */
@@ -56,16 +58,10 @@ export const achievements: Achievement[] = [
     en: { title: 'AppWorks Accelerator #31', detail: 'Selected with AILogora, alongside more than a hundred founders.' },
   },
   {
-    title: '2019 AI 新銳領航者競賽（長榮航空組）第一名',
+    title: 'AI 新銳領航者競賽（長榮航空組）第一名',
     detail: 'SAS 競賽長榮航空組冠軍。',
     year: '2019',
-    en: { title: '1st place, 2019 AI Rising Star Competition (EVA Air track)', detail: 'A data science competition hosted by SAS.' },
-  },
-  {
-    title: '2026 年 25+ 場演講、工作坊與企業內訓',
-    detail: '從 AWS Summit、台灣人工智慧年會到社群讀書會與企業內訓，持續分享 AI Agent 第一手實戰。',
-    year: '2026',
-    en: { title: '25+ talks, workshops and corporate trainings in 2026', detail: 'From AWS Summit Taipei and the Taiwan AI Annual Conference to community meetups and in-house trainings, sharing first-hand experience with AI agents.' },
+    en: { title: '1st place, AI Rising Star Competition (EVA Air track)', detail: 'A data science competition hosted by SAS.' },
   },
 ];
 
@@ -112,6 +108,7 @@ export const talks: Talk[] = [
   {
     date: '2026-06-04',
     event: 'COMPUTEX / InnoVEX 2026：Open Source Team Taiwan 開源臺灣館',
+    chartLabel: 'COMPUTEX / InnoVEX',
     detail: '與 Twinkle AI 夥伴共同參展並分享 Cairn；開源臺灣館由 IMA 籌辦、數位產業署支持。',
     major: true,
     en: { event: 'COMPUTEX / InnoVEX 2026: Open Source Team Taiwan Pavilion', detail: 'Presented Cairn with the Twinkle AI community at the pavilion organized by the Information Management Association (IMA), with support from the Administration for Digital Industries.' },
@@ -154,6 +151,16 @@ export const talks: Talk[] = [
   { date: '2026-10-18', event: '桂格 企業內訓', en: { event: 'Corporate training' } },
   { date: '2026-12-18', event: '新創企業發展協會 演講', en: { event: 'Talk for a startup development association' } },
 ];
+
+/** 全站共用台北日期與年度統計，預定場次不算進已完成。 */
+export function talkStats(today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date())) {
+  const year = Number(today.slice(0, 4));
+  const yearTalks = talks.filter((t) => t.date.startsWith(`${year}-`));
+  const completed = yearTalks.filter((t) => t.date <= today);
+  const upcoming = yearTalks.filter((t) => t.date > today).sort((a, b) => a.date.localeCompare(b.date));
+  const count = (items: Talk[]) => items.reduce((n, t) => n + (t.count ?? 1), 0);
+  return { today, year, yearTalks, completed, upcoming, done: count(completed), scheduled: count(upcoming), total: count(yearTalks) };
+}
 
 export const media: Media[] = [
   {

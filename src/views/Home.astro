@@ -8,7 +8,7 @@ import Summit from '../components/Summit.astro';
 import { getAllPosts, getEnglishPosts, postUrl, postDate, titleIn, lengthOf, englishOf, type Post } from '../lib/posts';
 import { series, seriesOf, resolveSeries } from '../data/series';
 import { projects, projectText } from '../data/projects';
-import { talks, media } from '../data/experience';
+import { talks, media, talkStats } from '../data/experience';
 import type { Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -42,10 +42,7 @@ svg += `<polyline points="${prof.map((q, i) => `${X(i)},${Y(q.c)}`).join(' ')}" 
 prof.forEach((q, i) => (svg += `<circle cx="${X(i)}" cy="${Y(q.c)}" r="5" class="dot"><title>S${q.s.n}·${q.ep} ${titleIn(q.post, lang).replace(/[<&]/g, '')} · ${q.c.toLocaleString('en-US')} ${L('字', 'words')}</title></circle>`));
 
 // 演講
-const today = new Date().toISOString().slice(0, 10);
-const year = +today.slice(0, 4);
-const yearTalks = talks.filter((t) => t.date.startsWith(String(year)));
-const talkTotal = yearTalks.reduce((n, t) => n + (t.count ?? 1), 0);
+const { today, year, yearTalks, done: talkTotal, scheduled } = talkStats();
 const marks = yearTalks.filter((t) => t.major || t.date > today);
 
 const hackathon = find('antropic-hackathon');
@@ -107,7 +104,8 @@ const leadT = projectText(lead, lang);
     <section class="s" id="talks">
       <div class="sh">
         <div class="lab">{L(`足跡 · ${year} 演講`, `Footprints · Talks in ${year}`)}</div>
-        <h2>{en ? <><b>{talkTotal}</b> talks on this year’s trail</> : <>今年爬升了 <b>{talkTotal}</b> 場</>}</h2>
+        <h2>{en ? <><b>{talkTotal}</b> talks given this year</> : <>今年已完成 <b>{talkTotal}</b> 場</>}</h2>
+        {scheduled > 0 && <p>{L(`另有 ${scheduled} 場預定。`, `${scheduled} more scheduled.`)}</p>}
         <p>{L('累積場次的爬升剖面。標記點是大型場次，虛線是還沒走到的路。', 'An ascent profile of talks given this year. Marked points are major events; the dashed line is still ahead.')}</p>
       </div>
       <TalkProfile talks={talks} year={year} today={today} lang={lang} />
@@ -207,7 +205,7 @@ const leadT = projectText(lead, lang);
             </>
           ) : (
             <>
-              <h2>我是黃琪婕，做 Generative AI 產品，也把它寫成中文。</h2>
+              <h2>我是黃琪婕，創辦人，也是 AI 工程師。</h2>
               <p>2023 年底，我發現生成式 AI 的中文技術文章少得可惜，於是開始寫。後來做了 AILogora、做了 Cairn，也在 {year} 年站上 {talkTotal} 個講台，聊 Agent 和它的記憶。</p>
             </>
           )}
@@ -215,7 +213,7 @@ const leadT = projectText(lead, lang);
             <dt>{L('專長', 'Focus')}</dt><dd>{L('LLM 應用、RAG、AI Agent、Agent Memory、語音技術、2D/3D Avatar', 'LLM applications, RAG, AI agents, agent memory, speech, 2D/3D avatars')}</dd>
             <dt>{L('合作', 'Work with me')}</dt><dd><a href={en ? '/en/speaking/' : '/speaking/'}>{L('演講、工作坊、企業內訓、AI 顧問', 'Talks, workshops, corporate training, advisory')}</a></dd>
             <dt>{L('聯絡', 'Contact')}</dt><dd><span>cch.chichieh@gmail.com</span><button class="btn copy" type="button" data-copy="cch.chichieh@gmail.com" data-done={L('已複製', 'Copied')}>{L('複製', 'Copy')}</button></dd>
-            <dt>{L('更多', 'More')}</dt><dd><a href={en ? '/en/about/' : '/about/'}>{L('完整介紹', 'Full bio')}</a>　<a href="https://github.com/wsxqaza12">GitHub</a>　<a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>　<a href="/rss.xml">RSS</a></dd>
+            <dt>{L('更多', 'More')}</dt><dd><a href={en ? '/en/about/' : '/about/'}>{L('完整介紹', 'Full bio')}</a>　<a href="https://github.com/wsxqaza12">GitHub</a>　<a href="https://www.linkedin.com/in/chichieh-huang-5322881ba/">LinkedIn</a>　<a href={en ? '/en/rss.xml' : '/rss.xml'}>RSS</a></dd>
           </dl>
         </div>
       </div>

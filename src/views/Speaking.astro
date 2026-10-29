@@ -5,7 +5,7 @@ import TalkProfile from '../components/TalkProfile.astro';
 import { getAllPosts, postUrl } from '../lib/posts';
 import { REGIONS } from '../lib/regions';
 import { topics, formats } from '../data/speaking';
-import { talks, media, type Talk } from '../data/experience';
+import { talks, media, talkStats, type Talk } from '../data/experience';
 import type { Lang } from '../i18n';
 
 interface Props { lang: Lang }
@@ -15,10 +15,7 @@ const L = (zh: string, e: string) => (en ? e : zh);
 
 const posts = (await getAllPosts()).filter((p) => !p.data.draft);
 const find = (id?: string) => (id ? posts.find((p) => p.id === id) : undefined);
-const today = new Date().toISOString().slice(0, 10);
-const year = +today.slice(0, 4);
-const yearTalks = talks.filter((t) => t.date.startsWith(String(year)));
-const total = yearTalks.reduce((n, t) => n + (t.count ?? 1), 0);
+const { today, year, completed, upcoming, done: total, scheduled } = talkStats();
 const ev = (t: Talk) => (en && t.en ? t.en.event : t.event);
 
 // 講過的場子：依活動名稱分成研討會、社群、校園、企業
@@ -32,9 +29,8 @@ const kindOf = (t: Talk) => {
 const kinds = en ? ['Conferences', 'Communities', 'Campuses', 'Companies'] : ['研討會', '社群', '校園', '企業'];
 const groups = kinds.map((name, k) => ({
   name,
-  items: [...new Set(talks.filter((t) => kindOf(t) === k).map((t) => ev(t).replace(/（[^）]*）|\([^)]*\)/g, '').replace(/ 2026$/, '').trim()))],
+  items: [...new Set(completed.filter((t) => kindOf(t) === k).map((t) => ev(t).replace(/（[^）]*）|\([^)]*\)/g, '').replace(new RegExp(` ${year}$`), '').trim()))],
 }));
-const upcoming = talks.filter((t) => t.date > today).sort((a, b) => a.date.localeCompare(b.date));
 const region = (key?: string) => REGIONS.find((r) => r.key === key);
 const photos = [
   { src: '/assets/img/speaking/wids-crowd.webp', zh: 'WiDS Taiwan 2026', en: 'WiDS Taiwan 2026' },
@@ -43,7 +39,7 @@ const photos = [
 ];
 ---
 
-<Base lang={lang} title={L('邀請演講與合作', 'Speaking & workshops')} description={L(`邀請黃琪婕演講、工作坊、企業內訓與 AI 顧問。${year} 年 ${total} 場演講，講 AI Agent、Agent Memory 與 OpenClaw。`, `Invite ChiChieh Huang for talks, workshops, corporate training and advisory on AI agents and agent memory. ${total} talks in ${year}.`)}>
+<Base lang={lang} title={L('邀請演講與合作', 'Speaking & workshops')} description={L(`邀請黃琪婕演講、工作坊、企業內訓與 AI 顧問。${year} 年已完成 ${total} 場演講，講 AI Agent、Agent Memory 與 OpenClaw。`, `Invite ChiChieh Huang for talks, workshops, corporate training and advisory on AI agents and agent memory. ${total} talks given in ${year}.`)}>
   <main class="wrap">
     <section class="hero">
       <div class="ht">
@@ -55,7 +51,7 @@ const photos = [
             : `${year} 年我站上 ${total} 個講台，從 AWS Summit Taipei、WiDS Taiwan、台灣人工智慧年會，到社群小聚、校園與企業內訓。我講的，都是自己實際做過、跑過、踩過坑的東西。`}
         </p>
         <div class="facts">
-          <div><b>{total}</b><span>{L(`${year} 年場次`, `talks in ${year}`)}</span></div>
+          <div><b>{total}</b><span>{L(`${year} 年已完成場次`, `talks given in ${year}`)}</span></div>
           <div><b>{media.length}</b><span>{L('家媒體採訪', 'media features')}</span></div>
           <div><b>{posts.length}</b><span>{L('篇技術文章', 'essays')}</span></div>
         </div>
@@ -125,7 +121,8 @@ const photos = [
     <section class="s" id="record">
       <div class="sh">
         <div class="lab">{L(`講過的場子 · ${year}`, `Where I’ve spoken · ${year}`)}</div>
-        <h2>{en ? <><b>{total}</b> talks this year</> : <>今年 <b>{total}</b> 場</>}</h2>
+        <h2>{en ? <><b>{total}</b> talks given this year</> : <>今年已完成 <b>{total}</b> 場</>}</h2>
+        {scheduled > 0 && <p>{L(`另有 ${scheduled} 場預定。`, `${scheduled} more scheduled.`)}</p>}
         <p>{L('研討會、社群、校園與企業都有。下面是今年累積場次的爬升剖面。', 'Conferences, communities, campuses and companies. Below is the year’s cumulative ascent.')}</p>
       </div>
       <div class="photos">

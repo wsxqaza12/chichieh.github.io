@@ -22,7 +22,7 @@ export interface Project {
 export const projects: Project[] = [
   {
     name: 'Cairn',
-    summary: '自己會長大的社群 wiki——人留下真實經驗，custodian agent「Moss」負責整理、連結與維護。Anthropic 全球 Hackathon 作品（錄取率 2.4%）。',
+    summary: '人與 AI Agent 共享的記憶。人留下真實經驗，custodian agent「Moss」負責整理、連結與維護。第一個原型是在 Anthropic 全球 Hackathon 中，用六天獨立開發完成。',
     stack: ['Next.js', 'Supabase', 'Claude Managed Agents', 'MCP'],
     link: 'https://youtu.be/n_OpVfxD7EA',
     linkLabel: '看 Demo 影片',
