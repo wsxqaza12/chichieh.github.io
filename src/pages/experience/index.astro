@@ -33,7 +33,7 @@ const dd = (d: string) => d.replaceAll('-', '.');
           {upcoming.map((t) => (
             <div class="nx">
               <span class="date">{dd(t.date).slice(5)}</span>
-              <div><span class="lab">{dd(t.date)}</span><h3>{t.event}</h3>{t.topic && <p>{t.topic}</p>}</div>
+              <div><span class="lab">{dd(t.date)}</span><h3>{t.event}</h3>{t.topic && <p>{t.topic}</p>}{t.detail && <p>{t.detail}</p>}</div>
             </div>
           ))}
         </div>
