@@ -31,6 +31,7 @@ const pageTitle = title ? `${title} | ${t.siteName}` : lang === 'en' ? 'ChiChieh
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pair: [string, string] | null = alternate ? [alternate.zh, alternate.en] : pairOf(Astro.url.pathname);
 const isZhHome = Astro.url.pathname === '/';
+const fontStylesheet = `https://fonts.googleapis.com/css2?${lang === 'en' ? 'family=Hanken+Grotesk:wght@200;300;400;500;700&' : ''}family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap`;
 ---
 
 <!doctype html>
@@ -72,8 +73,11 @@ const isZhHome = Astro.url.pathname === '/';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href={`https://fonts.googleapis.com/css2?${lang === 'en' ? 'family=Hanken+Grotesk:wght@200;300;400;500;700&' : ''}family=Noto+Sans+TC:wght@200;300;400;500;700&family=Martian+Mono:wdth,wght@75..112.5,300..600&display=swap`}
+      href={fontStylesheet}
+      media="print"
+      onload="this.onload=null;this.media='all'"
     />
+    <noscript><link rel="stylesheet" href={fontStylesheet} /></noscript>
     {isZhHome && (
       <script is:inline>
         // 第一次直接打開中文首頁、瀏覽器語言裡沒有中文的人 → 帶到英文版。
