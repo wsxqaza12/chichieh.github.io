@@ -305,9 +305,11 @@ const strings = { you: t.you, read: t.read, chars: t.chars };
   addEventListener('resize', () => { clearTimeout(rT); rT = window.setTimeout(() => { if ((innerWidth <= 900) !== vertical || Math.abs(box.getBoundingClientRect().width - W) > 2) build(); }, 150); });
   addEventListener('themechange', () => build());
 
-  fetch('/map-data.json').then((r) => r.json()).then(async (d: PostSummary[]) => {
+  // 先用系統字型畫地圖；網頁字型到齊後再更新文字與標籤位置。
+  document.fonts?.addEventListener('loadingdone', () => { if (terrain) build(); });
+
+  fetch('/map-data.json').then((r) => r.json()).then((d: PostSummary[]) => {
     data = LANG === 'en' ? d.filter((p) => p.es) : d;
-    await document.fonts?.ready;
     build();
     if (prog < 1) run();
   }).catch(() => {});

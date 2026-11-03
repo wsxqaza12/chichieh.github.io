@@ -20,6 +20,8 @@ const nestedNotFound = {
 
 export default defineConfig({
   site: 'https://chichieh-huang.com',
+  // 樣式隨 HTML 送出，避免 CDN 上的小型 CSS 請求延遲造成白畫面。
+  build: { inlineStylesheets: 'always' },
   integrations: [sitemap({
     filter: (page) => !/\/404\/?$/.test(page),
     serialize: (item) => {
