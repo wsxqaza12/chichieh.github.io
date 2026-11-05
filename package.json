@@ -9,6 +9,9 @@
     "build:nosync": "astro build",
     "preview": "astro preview",
     "sync": "node scripts/sync-content.mjs",
+    "dates:audit": "node scripts/content-dates.mjs",
+    "dates:write": "node scripts/content-dates.mjs --write",
+    "dates:install": "node scripts/install-content-date-hook.mjs",
     "migrate:medium": "node scripts/migrate-medium.mjs",
     "i18n": "node scripts/i18n-status.mjs",
     "translate": "npm run sync && node scripts/translate.mjs"

@@ -26,14 +26,42 @@
 
 ## 日常寫作流程
 
-1. 在 `my_content_style` 寫文章（純 markdown，不用 frontmatter），一樣寫中文就好
+1. 在 `my_content_style` 寫文章（純 markdown，不用手填 frontmatter），一樣寫中文就好
 2. 放到 `寫過的文章/技術`、`寫過的文章/趨勢談` 或 `寫過的文章/雜談`，推送到 content-dna → 觸發建置後中文版上站
 3. 接著自動翻譯成英文，檢查通過後英文版跟著上站（見下方「英文版」），不用另外做什麼
 4. `待發表的文章` 內的檔案會被視為草稿（`npm run dev` 看得到、正式站看不到，也不會翻譯）
 5. 要下架某篇：把檔名加進 `sync.config.json` 的 `excludeFiles`
 
-frontmatter 全自動生成：標題取第一個標題行、日期取 git 首次 commit、分類取資料夾名。
+標題取第一個標題行、分類取資料夾名；日期優先讀原文的 `date`，其次是已核對的 `dateOverrides`。
+兩者都沒有才沿用 Git 新增日期與檔案修改時間的舊備援。
 想覆寫任何欄位，直接在文章開頭加 YAML frontmatter 即可（手寫的優先）。
+
+### 保存文章建立日期
+
+原始寫作電腦可安裝提交前的日期工具。新文章在提交時會把本機檔案建立日（台北時區）
+寫入原文一次，例如 `date: '2026-09-30'`。之後移動文章、晚幾天 push、重新部署都沿用這個日期。
+中文版、英文版、列表、地圖與 RSS 共用原文日期；只新增日期不會改變翻譯所比對的內文指紋。
+
+```bash
+# 只在原始寫作目錄安裝；不要對新 clone、CI 或暫存 worktree 執行。
+npm run dates:install -- --content-dir /path/to/my_content_style
+# WSL 且也使用 Windows Git 時，加上實際的 WSL 發行版名稱：
+npm run dates:install -- --content-dir /mnt/v/Github_repo/my_content_style --wsl-distro Ubuntu-20.04
+
+npm run dates:audit -- --report /tmp/article-dates.json  # 只比對，不寫檔
+npm run dates:write                                    # 補入通過比對的日期
+```
+
+工具遵守網站的文章收錄與排除規則，包含草稿；已指定日期的文章不覆寫。
+若建立時間晚於首次 Git 提交（追蹤改名）或最後修改時間，會列為待查，保留原日期。
+Git 不會保存作業系統的建立時間，因此 CI 只讀已提交的 `date`，不把 checkout 時間當成原始日期。
+來源不明或從別處複製的新文章，請直接手填原始日期。
+
+hook 只安裝於本機，不改遠端 Git 設定、不自動 push；安裝器遇到既有 hook 會停止，避免覆蓋。
+它會分別補上工作目錄與暫存區的日期，保留未暫存的內文。
+若用 `git commit --only` 提交還沒日期的文章，先執行 `dates:write` 並暫存日期，再提交。
+本機 hook 依賴安裝時的網站工具路徑與 Node；搬移工具或換電腦時，需從新的工具位置重新安裝。
+檢查：`node --test tests/content-dates.test.mjs`。
 
 「雜談」於 2026-10-19 接入，先上〈去年學會抬頭看願景，今年學會低頭看腳下〉。
 同日再收錄 9 篇舊文；3 篇以 LinkedIn 原始貼文核對日期，其餘採作者提供的原文時間，Cursor 收購文依官方公告推估月份。
