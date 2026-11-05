@@ -9,7 +9,7 @@ tags:
   - llm
   - research
   - fine-tuning
-sourceHash: 'd42d0b2043a1'
+sourceHash: '662937dfe497'
 ---
 
 ### RAG (retrieval-augmented generation): a new chapter for natural language processing
@@ -22,7 +22,7 @@ In cases like these, there are three main ways to make an LLM fit your needs bet
 Give prompts that guide the LLM to produce the response you want. A common example is in-context learning, which shapes how the model answers by providing context or examples in the prompt. For instance, giving examples of a particular answering style or including relevant situational information can guide the model to more suitable answers.
 2. **Fine-tuning:**
 This means training the LLM on a specific dataset so its responses better fit particular needs. A company might fine-tune ChatGPT on its internal documents, for example, so it can answer questions about internal rules more accurately. But fine-tuning needs a representative dataset of a certain size, and it isn't well suited to adding entirely new knowledge to the model or to situations that need fast iteration on new scenarios.
-3. **RAG (retrieval-augmented generation)**:
+3. **[RAG (retrieval-augmented generation)](https://arxiv.org/abs/2312.10997 "Retrieval-Augmented Generation for Large Language Models: A Survey")**:
 Combines a neural language model with a retrieval system. The retrieval system pulls relevant information from a database or a set of documents, and the language model then uses that information to generate a response. You can think of RAG as handing the model a textbook and letting it look up information for a specific question. This approach is very useful when the model needs to incorporate real-time, up-to-date or very specific information. But RAG isn't suited to teaching a model to understand a broad domain or to learn a new language, format or style.
 
 
@@ -88,7 +88,7 @@ We also need to fine-tune the embedding model to make sure it understands user q
 1. **Fine-tuning on domain knowledge:**
 Fine-tuning an embedding model differs from fine-tuning an LLM, mainly in that the embedding model's dataset includes queries, a corpus and relevant documents. Collecting such a dataset is very tedious, so LlamaIndex introduced a set of key classes and functions specifically to simplify the workflow.
 2. **Fine-tuning for downstream tasks:**
-Some research now uses LLMs to fine-tune embedding models, like PROMPTAGATOR (Dai _et al._, 2022), which can solve problems where fine-tuning is hard because of insufficient data.
+Some research now uses LLMs to fine-tune embedding models, like [PROMPTAGATOR](https://arxiv.org/abs/2209.11755 "Promptagator: Few-shot Dense Retrieval From 8 Examples") (Dai _et al._, 2022), which can solve problems where fine-tuning is hard because of insufficient data.
 
 ### b.) How to align the semantic spaces of queries and documents
 
@@ -96,7 +96,7 @@ In RAG applications, some retrievers process queries and documents with the same
 1. **Query rewriting**
 
 
-Methods like Query2Doc and ITER-RETGEN use LLMs to create a pseudo-document by combining the original query with additional guidance (Wang _et al._, 2023; Shao _et al._, 2023). Others include HyDE (Gao _et al._, 2022), RRR (Ma _et al._, 2023) and STEP-BACK PROMPTING (Zheng _et al._, 2022).
+Methods like [Query2Doc](https://arxiv.org/abs/2303.07678 "Query2doc: Query Expansion with Large Language Models") and [ITER-RETGEN](https://arxiv.org/abs/2305.15294 "Enhancing Retrieval-Augmented Large Language Models with Iterative Retrieval-Generation Synergy") use LLMs to create a pseudo-document by combining the original query with additional guidance (Wang _et al._, 2023; Shao _et al._, 2023). Others include [HyDE](https://arxiv.org/abs/2212.10496 "Precise Zero-Shot Dense Retrieval without Relevance Labels") (Gao _et al._, 2022), RRR (Ma _et al._, 2023) and STEP-BACK PROMPTING (Zheng _et al._, 2022).
 
 2. **Embedding transformation**
 
@@ -164,7 +164,7 @@ Meanwhile, newer tech stacks are developing as well. Flowise AI, for example, pr
 Besides AI-focused providers, traditional software and cloud service providers are also expanding their offerings to include RAG-centered services. Verba, from vector database company Weaviate, focuses on personal assistant applications, while Amazon's Kendra provides intelligent enterprise search, letting users navigate various content repositories with built-in connectors.
 ### References
 
-Gao, Yunfan et al. "Retrieval-Augmented Generation for Large Language Models: A Survey." (2023).
+- [Gao, Yunfan et al. "Retrieval-Augmented Generation for Large Language Models: A Survey." (2023).](https://arxiv.org/abs/2312.10997)
 ### Support
 
 If this article helped you, or you'd like to encourage me to keep writing, you can clap for it or buy me a coffee through the link below. Thank you for your support!
