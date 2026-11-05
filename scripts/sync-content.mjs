@@ -1,6 +1,6 @@
 // 從 content-dna（my_content_style）同步文章 → src/content/synced/
 // 設計原則：文章庫是 source of truth，檔案不需要 frontmatter，
-// 這裡自動補上（title 取第一個標題、date 取 git 首次 commit、分類取資料夾）。
+// 這裡自動補上（title 取第一個標題、date 優先用原文保存的日期、分類取資料夾）。
 // 排除規則寫在 sync.config.json，要下架/上架文章改那個檔就好。
 import fs from 'node:fs';
 import path from 'node:path';
@@ -30,7 +30,8 @@ const firstCommitDate = new Map();
 try {
   // core.quotepath=false：不設的話中文路徑會輸出成 "\345..." 跳脫字串，比對永遠失敗（CI 的預設值）
   // --no-renames：文章常從 raw/ 用 git mv 搬進「寫過的文章」，預設的改名偵測會把它記成 R 而不是 A，
-  // 新路徑就查不到日期、退回檔案 mtime（CI 上等於建置時間）。關掉後，搬進來的那一刻就是上站日期。
+  // 新路徑就查不到日期、退回檔案 mtime（CI 上等於建置時間）。此歷史日期只作為沒有明確日期時的備援；
+  // 原始建立日期由本機 content-dates.mjs 在提交前寫入原文，CI 不讀 checkout 的建立時間。
   const log = execFileSync(
     'git',
     ['-c', 'core.quotepath=false', 'log', '--no-renames', '--diff-filter=A', '--name-only', '--format=@%aI', '--reverse'],
