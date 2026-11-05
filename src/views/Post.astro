@@ -51,7 +51,7 @@ const JS = en
 const all = await getAllPosts();
 const tr = en ? englishOf(post)! : null;
 const entry = tr ?? post;
-const { Content, headings } = await render(entry);
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 const body = entry.body ?? '';
 const title = titleIn(post, lang);
 const description = tr ? tr.data.description ?? title : post.data.description ?? title;
@@ -64,11 +64,10 @@ const place = seriesOf(post.id);
 const home = en ? '/en/' : '/';
 const zhUrl = postUrl(post), enUrl = englishOf(post) ? postUrl(post, 'en') : null;
 
-// 圖表與引用數量（從 markdown 直接數）
+// 圖表從 markdown 計算；引用數量由排版外掛提供，包含自動整理的論文連結。
 const figs = (body.match(/!\[[^\]]*\]\([^)]+\)/g) ?? []).length;
 const tables = (body.match(/^\s*\|?\s*:?-{3,}:?\s*\|/gm) ?? []).length;
-const refSection = body.split(/^##\s*(?:參考資料|參考文獻|資料來源|References)\s*$/m)[1] ?? '';
-const refs = (refSection.match(/^\s*(?:[-*]|\d+\.)\s.*\][([]/gm) ?? []).length;
+const refs = Number(remarkPluginFrontmatter.fieldReferenceCount ?? 0);
 
 const byId = new Map(all.map((p) => [p.id, p]));
 // 英文版地圖只畫有英文版的文章（跟英文首頁同一張圖）
@@ -81,8 +80,9 @@ const exclude = new Set(seasons.flatMap((s) => s.posts));
 const near = nearest(model, post.id, 3, exclude);
 
 // 段落：以 h2 為主；舊的 Medium 文章用 h3 分段，h2 不足兩個時改用 h3
-const h2s = headings.filter((h) => h.depth === 2);
-const sections = h2s.length >= 2 ? h2s : headings.filter((h) => h.depth === 3);
+const isReferences = (text: string) => /^(參考資料|參考文獻|資料來源|References)$/i.test(text.trim());
+const sectionDepth = headings.filter((h) => h.depth === 2 && !isReferences(h.text)).length >= 2 ? 2 : 3;
+const sections = headings.filter((h) => h.depth === sectionDepth || (h.depth <= 3 && isReferences(h.text)));
 const seriesIds = seasons.flatMap((s) => s.posts.map((id) => ({ id, label: epLabel(id) })));
 const pageUrl = new URL(postUrl(post, lang), Astro.site).toString();
 const num = (n: number) => n.toLocaleString('en-US');
@@ -140,7 +140,7 @@ const num = (n: number) => n.toLocaleString('en-US');
       </div>
     </section>
 
-    <div class="desk">
+    <div class:list={['desk', { 'has-notes': remarkPluginFrontmatter.fieldSidenoteCount > 0 }]}>
       <aside class="route" aria-label={T.route}>
         <div class="head"><span class="lab">{T.route}</span><b id="pct">0%</b><span class="lab" id="left" data-mins={minutes}>{T.mins(minutes)}</span></div>
         <div class="path" id="path"><div class="base"></div><div class="fill" id="fill"></div><div class="me" id="me"></div></div>
@@ -293,7 +293,12 @@ const num = (n: number) => n.toLocaleString('en-US');
   .mtip:global(.show) { opacity: 1; }
   .mtip :global(.lab) { color: var(--trail); display: block; font-size: 10px; }
 
-  .desk { display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 56px; border-top: 1px solid var(--line); padding-top: clamp(40px, 5vw, 72px); }
+  .desk {
+    --reading-width: 720px;
+    display: grid; grid-template-columns: 208px minmax(0, 1fr); gap: 40px;
+    max-width: calc(208px + 40px + var(--reading-width)); margin-inline: auto;
+    border-top: 1px solid var(--line); padding-top: clamp(40px, 5vw, 72px);
+  }
   .route { position: sticky; top: 28px; align-self: start; height: calc(100vh - 56px); display: flex; flex-direction: column; gap: 14px; }
   .route .head { display: flex; flex-direction: column; gap: 4px; }
   .route .head b { font-family: var(--mono); font-stretch: 80%; font-weight: 500; font-size: 22px; color: var(--ink); line-height: 1.1; }
@@ -312,12 +317,16 @@ const num = (n: number) => n.toLocaleString('en-US');
   .path :global(.wp:hover) { color: var(--trail); }
   .route .foot { color: var(--ink-3); }
 
-  .paper { position: relative; max-width: calc(660px + 56px + 236px); min-width: 0; }
-  @media (min-width: 1200px) {
-    :global(.js) .prose :global(aside.sn) { position: absolute; left: calc(660px + 56px); width: 236px; margin: 0; }
-    .prose :global(figure.plate) { width: calc(100% + 56px + 236px); }
+  .paper { position: relative; min-width: 0; }
+  .prose { max-width: var(--reading-width); }
+  .prose :global(figure.plate), .prose :global(.plate figcaption) { width: 100%; max-width: 100%; }
+  .prose :global(aside.sn) { overflow-wrap: anywhere; }
+  /* 只有實際有註記、且三欄都放得下時才留右欄；圖片始終跟正文同寬。 */
+  @media (min-width: 1360px) {
+    :global(.js) .desk.has-notes { max-width: calc(208px + 40px + var(--reading-width) + 32px + 224px); }
+    :global(.js) .prose :global(aside.sn) { position: absolute; left: calc(var(--reading-width) + 32px); width: 224px; margin: 0; }
   }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 2em 0 0; max-width: 660px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 2em 0 0; max-width: var(--reading-width); }
 
   .end { margin-top: clamp(56px, 7vw, 96px); border-top: 1px solid var(--line); }
   .fin { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 20px 28px; align-items: center; padding-block: 36px; border-bottom: 1px solid var(--line); }
@@ -367,6 +376,7 @@ const num = (n: number) => n.toLocaleString('en-US');
 
   @media (prefers-reduced-motion: reduce) { .prog { display: none; } }
   @media (max-width: 980px) {
+    .desk { --reading-width: 660px; }
     .hero { grid-template-columns: 1fr; }
     .locator { aspect-ratio: 4 / 3; }
     .desk { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -533,10 +543,12 @@ const num = (n: number) => n.toLocaleString('en-US');
 
   /* ── 閱讀路線 ── */
   const prose = $('prose'), path = $('path'), fill = $('fill'), meDot = $('me');
-  const h2s = [...prose.querySelectorAll<HTMLElement>(':scope > h2')];
-  const heads = h2s.length >= 2 ? h2s : [...prose.querySelectorAll<HTMLElement>(':scope > h3')];
   const label = (h: HTMLElement) => h.querySelector('.hn')?.textContent ?? '';
   const textOfH = (h: HTMLElement) => (h.querySelector('.ht') ?? h).textContent ?? '';
+  const isRef = (h: HTMLElement) => /^(參考資料|參考文獻|資料來源|References)$/i.test(textOfH(h).trim());
+  const allHeads = [...prose.querySelectorAll<HTMLElement>(':scope > h2, :scope > h3')];
+  const depth = allHeads.filter((h) => h.tagName === 'H2' && !isRef(h)).length >= 2 ? 'H2' : 'H3';
+  const heads = allHeads.filter((h) => h.tagName === depth || isRef(h));
   const wps = heads.map((h) => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'wp';
@@ -556,19 +568,19 @@ const num = (n: number) => n.toLocaleString('en-US');
     for (let i = ys.length - 1; i >= 0; i--) ys[i] = Math.min(ys[i], i === ys.length - 1 ? ph - hs[i] : ys[i + 1] - hs[i] - gap);
     ys.forEach((y, i) => (wps[i].style.top = Math.max(0, y) - 6 + 'px'));
   }
-  // 引用註記移到右側邊欄，避開跨進邊欄的圖版
+  // 依實際 CSS 版型放置註記，避免寬度斷點與樣式不同步。
   function placeNotes() {
-    const wide = innerWidth >= 1200;
-    const plates = [...prose.querySelectorAll<HTMLElement>('figure.plate')].map((f) => ({ t: f.offsetTop - 12, b: f.offsetTop + f.offsetHeight + 12 }));
     let floor = 0;
+    const paperTop = prose.parentElement!.getBoundingClientRect().top;
     prose.querySelectorAll<HTMLElement>('aside.sn').forEach((n) => {
-      if (!wide) { n.style.top = ''; return; }
-      const prev = n.previousElementSibling as HTMLElement | null, h = n.offsetHeight;
-      let y = Math.max(prev ? prev.offsetTop : 0, floor);
-      for (const p of plates) if (y < p.b && y + h > p.t) { const up = p.t - h - 6; y = up >= floor && up >= y - 160 ? up : p.b + 6; }
+      if (getComputedStyle(n).position !== 'absolute') { n.style.top = ''; return; }
+      const anchor = document.getElementById(n.dataset.anchor ?? ''), h = n.offsetHeight;
+      const y = Math.max(anchor ? anchor.getBoundingClientRect().top - paperTop : 0, floor);
       n.style.top = y + 'px';
       floor = y + h + 18;
     });
+    // 多篇論文集中在文末時，讓右欄仍在文章範圍內，避免壓到下一區。
+    prose.style.minHeight = floor ? `${Math.max(0, floor - (prose.getBoundingClientRect().top - paperTop))}px` : '';
   }
   const prog = $('prog'), pct = $('pct'), left = $('left'), mpct = $('mpct'), mpbar = $('mpbar'), mcur = $('mcur');
   const MINS = +(left.dataset.mins || 1);
@@ -598,7 +610,12 @@ const num = (n: number) => n.toLocaleString('en-US');
     const a = (e.target as HTMLElement).closest('sup.ref a');
     if (!a) return;
     const n = document.querySelector<HTMLElement>(a.getAttribute('href')!);
-    if (n && innerWidth >= 1200) { e.preventDefault(); n.classList.remove('flash'); void n.offsetWidth; n.classList.add('flash'); }
+    if (n && getComputedStyle(n).position === 'absolute') {
+      e.preventDefault();
+      const r = n.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > innerHeight) n.scrollIntoView({ block: 'center', behavior: 'instant' });
+      n.classList.remove('flash'); void n.offsetWidth; n.classList.add('flash');
+    }
   });
 
   /* 圖片放大 */
@@ -625,11 +642,11 @@ const num = (n: number) => n.toLocaleString('en-US');
   });
 
   /* 開機 */
-  function relayout() { drawMap(); layoutRoute(); placeNotes(); onScroll(); }
+  function relayout() { drawMap(); placeNotes(); layoutRoute(); onScroll(); }
   let rt: number;
   addEventListener('resize', () => { clearTimeout(rt); rt = window.setTimeout(relayout, 120); });
   addEventListener('themechange', drawMap);
-  prose.querySelectorAll('img').forEach((i) => i.addEventListener('load', () => { layoutRoute(); placeNotes(); }));
+  prose.querySelectorAll('img').forEach((i) => i.addEventListener('load', () => { placeNotes(); layoutRoute(); }));
   relayout();
   document.fonts?.ready.then(relayout);
   fetch('/map-data.json').then((r) => r.json()).then((data: PostSummary[]) => { M = makeModel(EN ? data.filter((p) => p.es) : data, 'h'); drawMap(); }).catch(() => {});

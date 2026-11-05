@@ -24,7 +24,7 @@ hero: /assets/fced76fdb8b9/0*tSPdWAgLKlOIgTPB.png
 輸入提示來指導 LLM 產生所需回應。例如常見的 In\-context Learning，透過在提示中提供上下文或範例，來形塑模型的回答方式。例如，提供特定回答風格的範例或包含相關的情境資訊，可以引導模型產生更合適的答案。
 2. **Fine tuning：** 
 這個過程包括在特定數據集上訓練 LLM，使其回應更符合特定需求。例如，一家公司可能會使用其內部文件 Fine tuning ChatGPT ，使其能夠更準確地回答關於企業內部規章條款等問題。然而，Fine tuning 需要代表性的數據集且量也有一定要求，且 Fine tuning 並不適合於在模型中增加全新的知識，或應對那些需要快速迭代新場景的情況。
-3. **RAG \(Retrieval Augmented Generation\)** ：
+3. **[RAG \(Retrieval Augmented Generation\)](https://arxiv.org/abs/2312.10997 "Retrieval-Augmented Generation for Large Language Models: A Survey")** ：
 結合了神經語言模型和擷取系統。擷取系統從資料庫或一組文件中提取相關信息，然後由語言模型使用這些信息來生成回應。可以把 RAG 想像成給模型提供一本教科書，讓它根據特定的問題去找資訊。此方法適用於模型需要整合即時、最新或非常特定的信息非常有用。但RAG 並不適合教會模型理解廣泛的領域或學習新的語言、格式或風格。
 
 
@@ -90,7 +90,7 @@ OpenAI 提出的新嵌入模型，適合處理包含256 或 512 Token 的文字�
 1. **領域知識 Fine tuning：** 
 嵌入模型的 Fine tuning 與 LLM 的 Fine tuning 不一樣，主要差別在嵌入模型的資料集包括查詢（Queries）、語料庫（Corpus）和相關文件（Relevant Docs）。資料集收集的過程非常繁雜，因此 LlamaIndex 專門為此引入了一系列關鍵的類別和函數，旨在簡化工作流程。
 2. **針對下游任務 Fine tuning：** 
-目前有研究使用 LLM 來 Fine tuning 嵌入模型。例如，PROMPTAGATOR \(Dai _et al\._ , 2022\)，如此可以解決一些由於數據不足而難以 Fine tuning 的問題。
+目前有研究使用 LLM 來 Fine tuning 嵌入模型。例如，[PROMPTAGATOR](https://arxiv.org/abs/2209.11755 "Promptagator: Few-shot Dense Retrieval From 8 Examples") \(Dai _et al\._ , 2022\)，如此可以解決一些由於數據不足而難以 Fine tuning 的問題。
 
 ### b\. \) 如何協調查詢和文件的語意空間?
 
@@ -98,7 +98,7 @@ OpenAI 提出的新嵌入模型，適合處理包含256 或 512 Token 的文字�
 1. **Query Rewriting**
 
 
-方法如 Query2Doc 和 ITER\-RETGEN 利用 LLMs，通過將原始查詢與額外的指導信息相結合，創建一個虛擬文檔\(Wang _et al\. ,_ 2023；Shao _et al\. ,_ 2023\)。其他還有如 HyDE \(Gao _et al\. ,_ 2022\)、RRR \(Ma _et al\. ,_ 2023\)、STEP\-BACKPROMPTING \(Zheng _et al\. ,_ 2022\)等。
+方法如 [Query2Doc](https://arxiv.org/abs/2303.07678 "Query2doc: Query Expansion with Large Language Models") 和 [ITER\-RETGEN](https://arxiv.org/abs/2305.15294 "Enhancing Retrieval-Augmented Large Language Models with Iterative Retrieval-Generation Synergy") 利用 LLMs，通過將原始查詢與額外的指導信息相結合，創建一個虛擬文檔\(Wang _et al\. ,_ 2023；Shao _et al\. ,_ 2023\)。其他還有如 [HyDE](https://arxiv.org/abs/2212.10496 "Precise Zero-Shot Dense Retrieval without Relevance Labels") \(Gao _et al\. ,_ 2022\)、RRR \(Ma _et al\. ,_ 2023\)、STEP\-BACKPROMPTING \(Zheng _et al\. ,_ 2022\)等。
 
 2\. **Embedding Transformation**
 
@@ -166,7 +166,7 @@ RAG 的生態系蓬勃發展，在水平領域，從最初的文本問答領域�
 除了專注於 AI 的提供者之外，傳統軟件和雲服務提供者也在擴大其服務範圍，包括以 RAG 為中心的服務。如向量資料庫公司 Weaviate 推出的 Verba7 專注於個人助理應用，而亞馬遜 的 Kendra 提供智能企業搜索服務，允許用戶使用內置連接器在各種內容存儲庫中導航。
 ### 參考資料
 
-Gao, Yunfan et al\. “Retrieval\-Augmented Generation for Large Language Models: A Survey\.” \(2023\) \.
+- [Gao, Yunfan et al\. “Retrieval\-Augmented Generation for Large Language Models: A Survey\.” \(2023\) \.](https://arxiv.org/abs/2312.10997)
 ### 支持鼓勵
 
 如果文章對你有幫助，或願意鼓勵我持續創作，可以幫文章拍手，或點擊下方連結請我喝一杯咖啡，感謝支持\!
