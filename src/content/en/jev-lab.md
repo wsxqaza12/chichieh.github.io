@@ -6,10 +6,12 @@ description: >-
   kept at all, compared with Luna across 100 synthetic cases, and what filtering
   does to the next answer.
 tags: []
-sourceHash: '9957b70e8b72'
+sourceHash: '8b704414d801'
 ---
 
 I recently ran a small experiment using Jev on AI memory.
+
+![alt text](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-37.webp)
 
 This time the goal wasn't to have it generate more memories for an AI. We mainly wanted to test whether it could help decide if a piece of information should be saved at all.
 

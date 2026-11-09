@@ -6,8 +6,10 @@ description: >-
   retrieval, with consolidation, updating and forgetting in between. The season
   one finale of my Agent Memory series.
 tags: []
-sourceHash: '3682a3d4a7a7'
+sourceHash: '791c03125f9c'
 ---
+
+![How agent memory forms, updates and fades](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-34.webp)
 
 Across the first three essays, we've worked through three core questions.
 
@@ -27,7 +29,7 @@ Memory has its own lifecycle, which *Memory in the Age of AI Agents* calls dynam
 
 The survey splits dynamics into three big stages: formation, evolution and retrieval. Evolution in turn includes consolidation, updating and forgetting.
 
-![The memory lifecycle: formation, evolution and retrieval](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-5.webp)
+![The memory lifecycle: formation, evolution and retrieval](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-35.webp)
 
 From the moment a piece of information appears, it faces one decision after another: should it become memory, how does it get along with existing memories, should it be merged or retired, and finally, when should it be brought out and used?
 
@@ -138,7 +140,7 @@ Gradually learning a repeatedly validated piece of explicit experience into the 
 
 Even more fittingly, **COVE**, which came out this August, frames the question directly as "what to remember and what to internalize." It keeps volatile information like tool names and APIs in quickly editable external memory, hands only the more stable, generalizable reasoning patterns to parameter updates, and once it confirms the model has internalized something, it even releases the original external memory. That's the same trade-off of stability, editability and cost of retraction discussed above.
 
-![What to keep explicit and what to internalize](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-6.webp)
+![What to keep explicit and what to internalize](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-36.webp)
 
 As for what's suitable for internalization, first look at whether it's stable enough. A company rule that everything must stay backward compatible is relatively stable; an instruction like "don't deploy this week" obviously isn't. Second, has it been validated repeatedly? An experience that happened once might be a fluke; a pattern that works across many tasks looks more like a real rule. Generalization matters too: "the user has a meeting at 3 p.m. tomorrow" is too specific, but "check dependencies before changing an API" can be reused across tasks.
 
