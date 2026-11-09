@@ -6,7 +6,7 @@ description: >-
   RAG, context engineering and fine-tuning answer different questions. The first
   essay in my Agent Memory series pulls them apart.
 tags: []
-sourceHash: '1d93632c9e71'
+sourceHash: '53fb9f4513ce'
 ---
 
 We used to think that if we got RAG right and filled the context window, AI would get smart. Then you actually build an agent system and find that what hurts most often isn't that it can't answer something new. It's that it forgets the hard lesson the two of you learned together yesterday.
@@ -33,7 +33,7 @@ Anyway, in episode one we'll start by pulling apart the terms that are easiest t
 
 #They're all called memory, but they answer different questions
 
-![A Venn diagram of LLM memory, RAG, context engineering and agent memory](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image.webp)
+![A Venn diagram of LLM memory, RAG, context engineering and agent memory](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-29.webp)
 
 As the Venn diagram shows, the tangle of memory terms can roughly be cut into four related but different problem spaces: LLM memory, RAG, context engineering and agent memory.
 

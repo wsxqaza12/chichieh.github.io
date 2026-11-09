@@ -6,7 +6,7 @@ description: >-
   experiential and working memory each do a different job, and stacking them
   against memory's form gives you a map of the field.
 tags: []
-sourceHash: '897b459488a2'
+sourceHash: 'f9c52f55046a'
 ---
 
 Last time we talked about what an agent's memory actually looks like: the same memory can be written as text in a vector DB, learned into model parameters, or hidden in a KV cache. Once you know the forms memory can take, the next question is more practical: what is actually worth remembering?
@@ -21,7 +21,7 @@ This time let's take a different angle, again from the functions described in *M
 
 The survey roughly divides memory into three kinds: factual memory (what I know), experiential memory (what I've learned from the past) and working memory (what I'm handling right now). Put simply: facts, experience and the workbench. Let's go through them one by one.
 
-![The three functions of agent memory: factual, experiential and working](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-3.webp)
+![The three functions of agent memory: factual, experiential and working](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-31.webp)
 ---
 
 ## 1. Factual memory: what does the world look like right now?
@@ -150,7 +150,7 @@ This one is about function (what the memory is used for). It can play the role o
 * Experiential memory
 
 These are two different dimensions. You can think of them as a three-by-three grid, as shown:
-![A three-by-three grid of memory form against memory function](/content-images/raw/images/ChatGPT%20Image%202026%E5%B9%B48%E6%9C%8824%E6%97%A5%20%E4%B8%8B%E5%8D%8806_57_56.webp)
+![A three-by-three grid of memory form against memory function](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-32.webp)
 
 The horizontal axis asks what form the memory takes; the vertical axis asks what the agent is using it for right now. This matters a lot, because many things that look like different kinds of memory aren't mutually exclusive categories at all.
 
@@ -163,7 +163,7 @@ So what decides which kind of memory a piece of information belongs to isn't onl
 The grid is more of a map for understanding agent memory than nine fully separate drawers. The three functions keep flowing into each other. Today the agent gets a system upgrade task. It first finds in factual memory that an old API version is still running in production, then finds in experiential memory why the system blew up last time, and both memories get pulled onto the working-memory workbench. Then it actually runs the task and discovers an old mobile app version nobody had seen before is still connecting. That new finding can later become a new factual memory, and after a few rounds, an experiential memory: "Before upgrading, check mobile app compatibility, not just the web." It's a loop: pull facts and experience into working memory, produce new information through reasoning and action, and finally write it back into long-term memory. That's when memory really comes alive.
 
 Expand the grid further, and this figure places representative agent memory research from recent years back into this form × function space:
-![Representative agent memory research placed on the form × function grid](/content-images/raw/images/%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202026-08-24%20174822.webp)
+![Representative agent memory research placed on the form × function grid](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-33.webp)
 
 You'll see that almost all nine directions have already been explored, but the density of research is very uneven. Some work on context condensation, previous trajectories, vector databases and knowledge graphs; some internalize experience directly into model parameters; and further toward latent memory, more model-native approaches appear, like KV generation and compression, and latent repositories.
 

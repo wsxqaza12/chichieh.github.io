@@ -6,14 +6,14 @@ description: >-
   questions. A tour of token-level, parametric and latent memory, and where
   MEMORY.md, vector DBs and knowledge graphs fit.
 tags: []
-sourceHash: '533a5fd83de2'
+sourceHash: 'ccd5d00e8ecd'
 ---
 
 In the last essay we got one thing straight: the core of agent memory isn't just storage, so it isn't the same as a vector DB, and it isn't just archiving every past chat. But that immediately raises another question: where does an agent's memory actually live? In `MEMORY.md`? In a vector DB? In a knowledge graph? Or inside the model's brain?
 
 The answer is that it could be any of them. But there's something easy to mix up here: "where memory is stored" and "what memory looks like" are two different things. If you ask "where are my photos?", you might answer "in Google Drive." That answers where they're stored. If I ask "what is your photo?", the answer might be "a JPG image." That answers what it looks like. Agent memory works the same way.
 
-![Where memory is stored versus what form memory takes](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-1.webp)
+![Where memory is stored versus what form memory takes](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/image-30.webp)
 
 ---
 
