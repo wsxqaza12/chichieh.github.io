@@ -6,7 +6,7 @@ description: >-
   got expensive, so I pulled my twelve-year-old gaming PC and other old machines
   back into service as a home CI pool.
 tags: []
-sourceHash: 'ff56edf7cff0'
+sourceHash: '570ba7e5fd33'
 ---
 
 Recently I dug out the PC I built twelve years ago for gaming and put it to work running automated tests for my code.
@@ -27,4 +27,4 @@ I used to pick computers based only on whether games ran smoothly. Now what I lo
 
 As for my newly freed-up main machine, I actually just bought a Ryzen 9 9950X to put in it. That's a whole other saga, and I'll share it with you all later!
 
-![My twelve-year-old gaming PC](/content-images/raw/images/26d32bcf-ac1b-448e-9387-8e82eb7f8914.webp) ![An old PC back in service](/content-images/raw/images/2cccefe0-e94b-4e1d-be16-68f7773c3880.webp) ![Inside one of the old machines](/content-images/raw/images/04185179-cf4c-488a-9ffd-1ef971118bcc.webp) ![Part of the home CI pool](/content-images/raw/images/a294e157-7ce6-4597-aced-11dd50fe138a.webp)
+![My twelve-year-old gaming PC](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/CI%E9%9B%BB%E8%85%A6/26d32bcf-ac1b-448e-9387-8e82eb7f8914.webp) ![An old PC back in service](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/CI%E9%9B%BB%E8%85%A6/2cccefe0-e94b-4e1d-be16-68f7773c3880.webp) ![Inside one of the old machines](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/CI%E9%9B%BB%E8%85%A6/04185179-cf4c-488a-9ffd-1ef971118bcc.webp) ![Part of the home CI pool](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/CI%E9%9B%BB%E8%85%A6/a294e157-7ce6-4597-aced-11dd50fe138a.webp)

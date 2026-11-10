@@ -6,7 +6,7 @@ description: >-
   case shows how a claim becomes "policy," and how to separate notes from rules,
   gate actions, clean up and test.
 tags: []
-sourceHash: 'b98985d197b5'
+sourceHash: '517f264f9890'
 ---
 
 Lately I've been going through security research on agent memory, and the more I read, the more of a headache it becomes. Once AI gets a better memory, you also have to guard against people slipping their own demands into the working notes it will keep coming back to. Last time, we talked about how an AI might record "not yet confirmed" as "settled," which is why we keep the source of each memory, so it can be checked and corrected later. But what if someone deliberately exploits that process?
@@ -27,7 +27,7 @@ So guarding your database password well doesn't block this path. Agents take not
 
 The GhostWriter research from July 2026 lays this out clearly. Its example uses an email to poison contact information. Later, when the user makes an ordinary request to send a message, the agent retrieves the wrong address and uses it. Below I've taken the same two-stage idea and swapped in the quote story from above. Look at the right half: the user only asked the AI to prepare a quote and never asked for any discount.
 
-![A fake discount in a customer email gets saved as memory during the first task; days later, the AI reads it during a normal quoting task and applies the discount directly.](/content-images/raw/images/figure-01-delayed-impact.webp)
+![A fake discount in a customer email gets saved as memory during the first task; days later, the AI reads it during a normal quoting task and applies the discount directly.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/Memory6/figure-01-delayed-impact.webp)
 
 *Figure 1. A hypothetical quoting scenario, redrawn from GhostWriter's two-stage idea. The original example in the paper is poisoned contact information; this figure does not mean the quoting case has been experimentally verified.*
 
@@ -96,7 +96,7 @@ At that point I'd check the notes it actually left, which memories this conversa
 
 MemSecBench, from July 2026, breaks these checkpoints apart: data being stored, being retrieved and used later, and actually causing consequences are different things. A fix also has to confirm both that the malicious content no longer acts as valid guidance and that the normal memories are still there. The figure below follows the same idea. From the same problematic memory, make one copy each: one to test follow-up work, the other to test cleanup. That way you can see separately whether the AI gets led astray and whether the system can clear the problem.
 
-![The same memory with a fake discount mixed in is copied twice, one to test follow-up work and one to test cleanup; cleanup must remove the false rule while keeping normal data.](/content-images/raw/images/figure-02-evaluation-branches.webp)
+![The same memory with a fake discount mixed in is copied twice, one to test follow-up work and one to test cleanup; cleanup must remove the false rule while keeping normal data.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/Memory6/figure-02-evaluation-branches.webp)
 
 *Figure 2. Redrawn from MemSecBench's independent test branches. The top checks how contamination affects work, the bottom checks the memory after repair, and the two paths are tested separately.*
 

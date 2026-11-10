@@ -6,7 +6,7 @@ description: >-
   both packed, and why team-level memory is a different problem from personal
   memory.
 tags: []
-sourceHash: '6a6fe26db9e8'
+sourceHash: '243ddda0f273'
 ---
 
 Last Thursday I gave two talks back to back, at AWS Summit Taipei and Agile Taipei. I didn't expect both to be completely packed. Honestly, far more people came than I expected 😅 Thank you so much to everyone who made time to come, and it was really nice to see a lot of familiar faces in the audience.
@@ -23,5 +23,5 @@ This was also my first time pulling together the research I've been digging thro
 
 I've read a pile of papers and product docs for this lately, and I'll turn them into a few essays to share over time. Have you hit any memory-related pain points while building agents recently? I'd love to hear about them in the comments 🙌 And thanks again to AWS and Agile Taipei for having me~
 
-![Speaking at AWS Summit Taipei](/content-images/raw/images/AWS%20Sumbit.webp)
-![Speaking at Agile Taipei](/content-images/raw/images/Agile.webp)
+![Speaking at AWS Summit Taipei](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%B4%BB%E5%8B%95/images/AWS%20%E8%B7%9F%20Agile%20%E6%BC%94%E8%AC%9B/AWS%20Sumbit.webp)
+![Speaking at Agile Taipei](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%B4%BB%E5%8B%95/images/AWS%20%E8%B7%9F%20Agile%20%E6%BC%94%E8%AC%9B/Agile.webp)
