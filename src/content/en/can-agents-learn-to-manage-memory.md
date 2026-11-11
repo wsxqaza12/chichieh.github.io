@@ -6,7 +6,7 @@ description: >-
   notes. What recent research says about learned memory policies, and how to
   test them against the next real task.
 tags: []
-sourceHash: '211e02526b28'
+sourceHash: '814e342c22b1'
 ---
 
 The last two essays were about memory going wrong. Essay #5, "Remembering Isn't the Same as Remembering Right," looked at how an AI might record "not yet confirmed" as "settled," which is why every memory should keep its source, so it can be checked and corrected later. Essay #6, "When Memory Gets Attacked," went one step further: when someone deliberately exploits that process, a customer email claiming the boss agreed to 20% off can turn into an official term in the next quote. So working notes and company rules have to live in separate places, and permissions need one more check before anything goes out.
@@ -35,7 +35,7 @@ I make a point of keeping this distinction clear, because otherwise any talk of 
 - Move it from the everyday notes to an archive, where it isn't brought up proactively but can still be found
 - Delete the original record, so it can never be recovered
 
-![The same customer's data split into three layers: what goes on the meeting table this time, what moves to the archive, and what gets its original record deleted.](/content-images/raw/images/figure-01-three-layers.webp)
+![The same customer's data split into three layers: what goes on the meeting table this time, what moves to the archive, and what gets its original record deleted.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/memory7/figure-01-three-layers.webp)
 
 *Figure 1. For the same customer's data, putting it on the table this time, moving it to the archive, and deleting the original record have very different reach.*
 
@@ -55,7 +55,7 @@ But a special arrangement for one project can't become the standing practice for
 
 Auto-Dreamer, from May 2026, separates day-to-day recording from consolidation across many tasks. It trains a consolidator that compares older memories with the original task logs and rewrites them into a leaner version. Figure 2(A)(B) in the paper is a good way to see this split. Block A on the left saves records during each task, and block B on the right goes back afterward to tidy up what has accumulated. When you look at the figure, just get the relationship between these two blocks. You don't need to remember the tool names inside.
 
-![Blocks A and B of Auto-Dreamer's Figure 2: on the left, day-to-day recording for each task; on the right, offline consolidation across many tasks.](/content-images/raw/images/figure-02-auto-dreamer-ab.webp)
+![Blocks A and B of Auto-Dreamer's Figure 2: on the left, day-to-day recording for each task; on the right, offline consolidation across many tasks.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/memory7/figure-02-auto-dreamer-ab.webp)
 
 *Figure 2. Day-to-day recording and after-the-fact tidying are two different jobs. Original figure from Ye et al., Auto-Dreamer, Figure 2(A)(B), 2026, CC BY 4.0.*
 
@@ -75,7 +75,7 @@ Imagine asking an assistant to condense the customer material into one page ever
 
 For the management method to actually improve, the feedback has to connect to the results of later work. Which essential piece of information disappeared in this round of tidying? Which prep document actually saved someone from searching their email a few more times? Next time a similar meeting comes up, should the selection change? Moving from fixed rules to a learned memory policy that adjusts based on results, the real difference is whether that feedback loop gets connected back.
 
-![On the left, tidying by fixed rules ends once it's done; on the right, the results of the next task feed back to adjust the next round of tidying and selection.](/content-images/raw/images/figure-03-feedback-loop.webp)
+![On the left, tidying by fixed rules ends once it's done; on the right, the results of the next task feed back to adjust the next round of tidying and selection.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/memory7/figure-03-feedback-loop.webp)
 
 *Figure 3. The difference between fixed rules and management that adjusts based on results is whether the results of the next task get fed back.*
 
@@ -93,7 +93,7 @@ From the other direction, a note being read many times doesn't prove it's valuab
 
 Rather than looking at surface counts, I'd prefer to run a controlled experiment: temporarily hide a few notes, have the assistant redo the same test task, and see what changes in the result. Auto-Dreamer's Figure 2(D) uses exactly this kind of masking comparison to estimate whether each piece of tidied content actually helps the task, then feeds that signal into training. Content whose removal makes performance worse gets a high score, duplicate content whose removal makes no difference gets a low score, and content whose removal actually makes performance better gets penalized. This is pretty similar to how we went looking last time for the memory that made the quote go wrong. The numbers in the figure only illustrate the method. They don't mean a certain type of memory always gets that score.
 
-![Block D of Auto-Dreamer's Figure 2: temporarily masking part of memory and comparing task results to estimate each piece's contribution.](/content-images/raw/images/figure-04-auto-dreamer-d.webp)
+![Block D of Auto-Dreamer's Figure 2: temporarily masking part of memory and comparing task results to estimate each piece's contribution.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/memory7/figure-04-auto-dreamer-d.webp)
 
 *Figure 4. Temporarily mask part of memory and watch how the test results change. Original figure from Ye et al., Auto-Dreamer, Figure 2(D), 2026, CC BY 4.0.*
 
@@ -111,7 +111,7 @@ Step one is testing selection. Leave the memory store's data untouched and keep 
 
 Step two is testing maintenance. Copy the same memory store into two: one stays as is, and the other goes through the tidying process to be merged and rewritten. When tidying is done, test both against the same batch of new meeting requests. These test questions can't be leaked in advance to the model doing the tidying, or it can simply save answers for those specific questions. The new conversations you open for testing should only get the memory and tools that would normally be available, without bringing in the discussion from the tidying session. After all, sounding convincing while tidying and actually being able to find things in a fresh conversation next time are two completely different things.
 
-![The same memory store is copied twice, one kept as is and one handed to the tidying process, then the same batch of meeting requests is run in new conversations to compare results.](/content-images/raw/images/figure-05-evaluation-copies.webp)
+![The same memory store is copied twice, one kept as is and one handed to the tidying process, then the same batch of meeting requests is run in new conversations to compare results.](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E6%8A%80%E8%A1%93/images/memory7/figure-05-evaluation-copies.webp)
 
 *Figure 5. The unchanged and tidied memory stores run the same batch of meeting requests in new conversations. The approach builds on the branch testing in Figure 2 of the last essay.*
 
