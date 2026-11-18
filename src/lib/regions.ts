@@ -42,6 +42,9 @@ const RULES: [string, RegExp][] = [
 
 // 規則猜錯的個案，用網址 id 釘住
 const OVERRIDES: Record<string, string> = {
+  'companybrain': '記憶',
+  'aia分享宣傳': '記憶',
+  'aia年會感謝': '記憶',
   'e2d02dd25fd9': 'LLM', // 記憶體不夠? 來看 LLM 的壓縮技術（「記憶體」不是記憶）
   '42628a4362f7': 'LLM', // LLM 評估教學 | EleutherAI LM Evaluation Harness
 };
