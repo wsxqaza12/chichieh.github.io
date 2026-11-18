@@ -51,5 +51,6 @@ export function regionOf(id: string, title: string, override?: string, category?
   if (category === '雜談') return '雜談';
   if (OVERRIDES[id]) return OVERRIDES[id];
   const key = `${id} ${title}`;
-  return (RULES.find(([, re]) => re.test(key)) ?? ['LLM'])[0];
+  const fallback = category === '活動' ? '雜談' : 'LLM';
+  return RULES.find(([, re]) => re.test(key))?.[0] ?? fallback;
 }
