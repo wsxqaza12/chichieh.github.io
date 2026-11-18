@@ -46,8 +46,9 @@ test('adds metadata without changing body, comments, BOM or CRLF; repeated runs 
 test('uses website inclusion rules, including drafts and excluded social variants', () => {
   assert.equal(eligible('寫過的文章/趨勢談/OpenAI商業模式.md'), true);
   assert.equal(eligible('待發表的文章/new.md'), true);
+  assert.equal(eligible('寫過的文章/活動/new.md'), true);
   for (const file of ['raw/notes.md', '寫過的文章/趨勢談/new_FB.md',
-    '寫過的文章/雜談/The Man Who Can\'t Be Moved.md', '寫過的文章/活動/not-selected.md']) {
+    '寫過的文章/雜談/The Man Who Can\'t Be Moved.md', '寫過的文章/活動/GenAI小聚_2月_Facebook.md']) {
     assert.equal(eligible(file), false);
   }
 });
