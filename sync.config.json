@@ -16,15 +16,8 @@
     {
       "dir": "寫過的文章/活動",
       "category": "活動",
-      "includeFiles": [
-        "WiDS講者心得.md",
-        "商周.md",
-        "非凡新聞.md",
-        "公視媒體經驗.md",
-        "Pahub.md",
-        "R-Ladies.md",
-        "Antropic_hackathon.md",
-        "AWS 跟 Agile 演講.md"
+      "excludeFiles": [
+        "GenAI小聚_2月_Facebook.md"
       ]
     },
     {
