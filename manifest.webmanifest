@@ -1,0 +1,14 @@
+{
+  "name": "黃琪婕 ChiChieh Huang",
+  "short_name": "黃琪婕",
+  "description": "寫作地形圖：做 Generative AI 產品，也把它寫成中文。",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0E1613",
+  "theme_color": "#0E1613",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
