@@ -26,6 +26,7 @@ const T = en
     };
 const msgs = en
   ? {
+      verify: 'Please complete the verification and try again.',
       sending: 'Sending…',
       check: 'Almost there: check your inbox and click the link to confirm. (Not there? Look in spam.)',
       invalid: "That address doesn't look like it can receive mail. Typo?",
@@ -33,6 +34,7 @@ const msgs = en
       error: 'Something went wrong. Please try again in a moment.',
     }
   : {
+      verify: '請先完成驗證，再按訂閱。',
       sending: '送出中…',
       check: '差一步：到信箱點確認連結就完成了。（沒看到的話，看一下垃圾信匣。）',
       invalid: '這個 Email 看起來收不到信，檢查一下有沒有打錯？',
@@ -58,9 +60,13 @@ const msgs = en
       <input id={`sub-${variant}`} type="email" name="email" required autocomplete="email" inputmode="email" placeholder={T.placeholder} spellcheck="false" />
       <button class="btn go" type="submit">{T.send}<span aria-hidden="true">→</span></button>
     </div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAGPVlC48y3buBSc1" data-action="newsletter" data-size="flexible" data-appearance="interaction-only"></div>
+    <noscript>{en ? 'Enable JavaScript to verify your subscription request.' : '請開啟 JavaScript 以驗證訂閱請求。'}</noscript>
     <p class="msg" role="status" aria-live="polite"></p>
   </form>
 </section>
+
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
   .sub.band {
@@ -100,6 +106,8 @@ const msgs = en
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form));
       if (!/^\S+@\S+\.\S+$/.test(String(data.email ?? '').trim())) return show('invalid');
+      if (box.hasAttribute('data-busy')) return;
+      if (!data['cf-turnstile-response']) return show('verify');
       box.dataset.busy = '';
       show('sending');
       try {
@@ -110,6 +118,8 @@ const msgs = en
       } catch {
         show('error');
       } finally {
+        const widget = box.querySelector<HTMLElement>('.cf-turnstile')!;
+        (window as Window & { turnstile?: { reset: (element: HTMLElement) => void } }).turnstile?.reset(widget);
         delete box.dataset.busy;
       }
     });

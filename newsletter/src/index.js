@@ -65,6 +65,16 @@ async function subscribe(req, env) {
   const email = String(data.email ?? '').trim().toLowerCase();
   if (email.length > 254 || !EMAIL.test(email)) return reply('invalid', 400);
 
+  const challenge = data['cf-turnstile-response'];
+  if (typeof challenge !== 'string' || !challenge || challenge.length > 2048) return reply('verify', 403);
+  const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: challenge }),
+  });
+  if (!response.ok) return reply('error', 503);
+  const verification = await response.json();
+  if (!verification.success || verification.hostname !== 'chichieh-huang.com' || verification.action !== 'newsletter') return reply('verify', 403);
+
   // 同一個 IP 一小時最多 8 次
   const ip = req.headers.get('cf-connecting-ip') ?? 'unknown';
   const hourAgo = Date.now() - 3600_000;
@@ -79,6 +89,8 @@ async function subscribe(req, env) {
   const row = await env.DB.prepare('SELECT * FROM subscribers WHERE email = ?').bind(email).first();
   const t = now();
   if (!row) {
+    const slot = await reserveConfirmation(env.DB, email);
+    if (!slot) return reply('slow', 429);
     const token = newToken();
     await env.DB.prepare('INSERT INTO subscribers (email, lang, status, token, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(email, lang, 'pending', token, source, t, t).run();
     await sendConfirm(env, email, lang, token);
@@ -92,9 +104,23 @@ async function subscribe(req, env) {
   if (row.status === 'bounced' || row.status === 'complained') return reply('check');
   // pending 或 unsubscribed：重寄確認信，但 10 分鐘內只寄一次、總共最多 5 次
   const recent = row.confirm_sent_at && Date.now() - Date.parse(row.confirm_sent_at) < 600_000;
+  if (!recent && row.confirm_count < 5 && !await reserveConfirmation(env.DB, email)) return reply('slow', 429);
   await env.DB.prepare("UPDATE subscribers SET lang = ?, status = 'pending', updated_at = ? WHERE email = ?").bind(lang, t, email).run();
   if (!recent && row.confirm_count < 5) await sendConfirm(env, email, lang, row.token);
   return reply('check');
+}
+
+export async function reserveConfirmation(db, email) {
+  const timestamp = Date.now();
+  const hourAgo = timestamp - 3600_000;
+  const [, reservation] = await db.batch([
+    db.prepare('DELETE FROM confirmation_slots WHERE at <= ?').bind(hourAgo),
+    db.prepare(`INSERT INTO confirmation_slots (at, email)
+      SELECT ?, ? WHERE (SELECT COUNT(*) FROM confirmation_slots) < 10
+      AND NOT EXISTS (SELECT 1 FROM confirmation_slots WHERE email = ? AND at > ?)`)
+      .bind(timestamp, email, email, timestamp - 600_000),
+  ]);
+  return reservation.meta.changes === 1;
 }
 
 async function sendConfirm(env, email, lang, token) {

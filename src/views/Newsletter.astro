@@ -20,6 +20,7 @@ const states: Record<string, { h: string; p: string }> = en
       unsubscribed: { h: 'You’re unsubscribed', p: 'No more emails. If you change your mind, you can subscribe again below.' },
       expired: { h: 'This link is invalid or has expired', p: 'You can subscribe again below.' },
       invalid: { h: 'That address can’t receive mail', p: 'Check for a typo and try again.' },
+      verify: { h: 'Verification required', p: 'Enable JavaScript and try the form again.' },
       slow: { h: 'Too many tries', p: 'Please wait a little and try again.' },
       error: { h: 'Something went wrong', p: 'Please try again later, or email hi@chichieh-huang.com.' },
     }
@@ -30,6 +31,7 @@ const states: Record<string, { h: string; p: string }> = en
       unsubscribed: { h: '已取消訂閱', p: '不會再收到信了。改變主意的話，隨時可以在下面重新訂閱。' },
       expired: { h: '這個連結無效或已經過期', p: '可以在下面重新訂閱一次。' },
       invalid: { h: '這個 Email 看起來收不到信', p: '檢查一下有沒有打錯，再試一次。' },
+      verify: { h: '請先完成驗證', p: '請開啟 JavaScript，再送出表單。' },
       slow: { h: '嘗試太多次了', p: '等一下再試。' },
       error: { h: '出了點問題', p: '請稍後再試，或直接寄信到 hi@chichieh-huang.com。' },
     };

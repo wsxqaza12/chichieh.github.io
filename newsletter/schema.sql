@@ -39,3 +39,7 @@ CREATE TABLE IF NOT EXISTS deliveries (
 
 -- SES 的退信與檢舉紀錄
 CREATE TABLE IF NOT EXISTS events (at TEXT NOT NULL, type TEXT NOT NULL, email TEXT, detail TEXT);
+
+-- Reserve each confirmation before SES accepts it, including concurrent requests.
+CREATE TABLE IF NOT EXISTS confirmation_slots (at INTEGER NOT NULL, email TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS confirmation_slots_at ON confirmation_slots(at);
