@@ -6,7 +6,7 @@ description: >-
   was to explain the idea to a general audience, and on a November packed with
   talks.
 tags: []
-sourceHash: '4c475c45c811'
+sourceHash: 'ffc9a0cd1186'
 ---
 
 Thanks to Alyssa for inviting me to speak at "AI Impact Day: Good Things Happen in the Data Village" 🙏
@@ -20,6 +20,6 @@ On a side note, I accidentally took on too many talks in November. This was the 
 
 With one more in December, I'm on track for 33 talks this year. Honestly, I have no idea how it got to be this many 🤣
 
-![Speaking at AI Impact Day](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/image-1.webp)
+![Speaking at AI Impact Day](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/%E6%95%B8%E6%93%9A%E6%9D%91%E8%8E%8A/image-1.webp)
 
-![Speaking at AI Impact Day](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/image-1.webp)
+![Speaking at AI Impact Day](/content-images/%E5%AF%AB%E9%81%8E%E7%9A%84%E6%96%87%E7%AB%A0/%E9%9B%9C%E8%AB%87/images/%E6%95%B8%E6%93%9A%E6%9D%91%E8%8E%8A/image-1.webp)
